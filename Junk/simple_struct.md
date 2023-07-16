@@ -1,13 +1,13 @@
 # Simple Struct
 
-Just a code test looking at the idea of having a struct template as a basic 'block' of code for Toaster.  Currently called GameCOmponent.
+Just a code test looking at the idea of having a struct template as a basic 'block' of code for Toaster.  Currently called GameComponent.
 
 Game runs constantly on a main loop. In that loop the first 'block' gets called.  It is passed a set of parameters (the global game state).
 Each block can do whatever it likes, manipulate the screen, read the keyboard, play sound, update its own state.
-It can also update the paraneters it has been passed.  Once its work is completed, it calls the next block in the sequence
-passing the (possibly updated) paraneters to it.
+It can also update the parameters it has been passed.  Once its work is completed, it calls the next block in the sequence
+passing the (possibly updated) parameters to it.
 
-Because of C typing each strict needs to have the same member variables, signatures etc.  Each one will need, at a minimum:
+Because of C typing each struct needs to have the same member variables, signatures etc.  Each one will need, at a minimum:
 
 * a void pointer to any malloc'd state.  That state is likely to also be a struct so the pointer will need to be cast to the right type to be used
 * a 'constructor' function pointer to do any startup (eg malloc somehwere to striore the state): void <func>(GameComponent* input)
