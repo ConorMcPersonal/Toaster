@@ -10,9 +10,9 @@ passing the (possibly updated) parameters to it.
 Because of C typing each struct needs to have the same member variables, signatures etc.  Each one will need, at a minimum:
 
 * a void pointer to any malloc'd state.  That state is likely to also be a struct so the pointer will need to be cast to the right type to be used
-* a 'constructor' function pointer to do any startup (eg malloc somewhere to store the state): ``void <func>(GameComponent* input)``
-
-* a game function, called once per loop ``void <func>(GameComponent* input, GameParameters* params)``
+* a 'constructor' function pointer to do any startup (eg malloc somewhere to store the state): ``void <func>(GameComponent* input)`` (actually maybe this needs to accept a void pointer as input so the actual set-up of that can be done outide the GameComponent...but in turn that might make the contructor unnecessary!)
+* a reset function so the same components can be re-used across goes/"screens"/"layers"
+* a game function pointer, called once per loop ``void <func>(GameComponent* input, GameParameters* params)``
 
 These features are not in the sample as yet!
 
