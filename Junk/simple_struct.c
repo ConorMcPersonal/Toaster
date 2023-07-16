@@ -2,6 +2,7 @@
 #include <arch/zx.h>
 
 #include <stdio.h>
+#include <stdlib.h>
 
 /*  
 struct teststruct {
@@ -18,6 +19,17 @@ int main()
 
 }
 */
+
+typedef struct breadSlice {
+  int thickness;
+  int cookedness;
+} slice;
+
+struct breadToToast {
+  struct breadSlice *breads;
+  int totalSlices;
+  int currentSlice;
+};
 
 // 1.) Forward declaration: Here is the name of the structure
 // but member-details are omitted.
@@ -36,6 +48,7 @@ struct GameComponent_struct {
   int                        address;
   GameComponentFunc          func;
 };
+
 
 int print_address (GameComponent *input){
   printf("The address is %d \n", input->address);
@@ -71,12 +84,41 @@ int wait_cycle(GameComponent *input) {
     printf("\x16\x05\x05" "Max loop %d \n", input->address);
   }
   input->address = (int)ch + 1;
+
   return input->address;
+}
+
+int operate_toaster(GameComponent *input)
+{
+
+  int *ptrCurrentSlice = &(((struct breadToToast*)(input->address))->currentSlice);
+  if (*ptrCurrentSlice > 0) {
+    int stateOfSlice = --(((struct breadToToast*)(input->address))->breads[*ptrCurrentSlice].thickness);
+    if (stateOfSlice == 0) {
+      printf("\x16\x01\x0A" "Toast done. %d slices to go", *ptrCurrentSlice);
+      (*ptrCurrentSlice)--;
+    }
+  }
+  return *ptrCurrentSlice;
 }
 
 int main()
 {
   int i;
+  /* Set up the bread */
+  int totalSlices = rand()%200;
+  printf("We are going to toast %d slices\n", totalSlices);
+  slice *allTheSlices = malloc(sizeof(struct breadSlice) * totalSlices);
+  struct breadToToast allTheBread = { .breads = allTheSlices,
+                                      .totalSlices = totalSlices,
+                                      .currentSlice = totalSlices - 1
+                                    };
+  for (int i = 0; i < totalSlices; i++) {
+    /* Initialise the slices, all untoasted*/
+    allTheBread.breads[i].thickness = rand()%40;
+    allTheBread.breads[i].cookedness = 0;
+  }
+
   GameComponent input = {.address    = 16,
                         .func        = &print_address};
 
@@ -86,13 +128,18 @@ int main()
   GameComponent metronome = {.address      = 0,
                              .func         = &wait_cycle};
 
+  GameComponent toastBread = { .address     =(int) &allTheBread,
+                              .func        = &operate_toaster};
+
   for (i = 0; i < 1000; i++) {
     //input.func(&input);
     border.func(&border);
     metronome.func(&metronome);
+    toastBread.func(&toastBread);
     printf("\x16\x0A\x0B" "i = %d %d \n", i, *((char *)0x5C78));
   }
   printf("i = %d \n", i);
+  free(allTheSlices);
   return print_address(&input);
   //return 0;
 } 
