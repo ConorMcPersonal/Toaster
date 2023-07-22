@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #define MIN(a,b) (((a)<(b))?(a):(b))
 #define MAX(a,b) (((a)>(b))?(a):(b))
@@ -174,6 +175,9 @@ void RandomPopperFunc(GameComponent* input, GameParameters* params) {
 int main()
 {
   int i;
+  time_t t;
+  //set up randomization
+  srand((unsigned) time(&t));
   // Initialize the "game" - do the loop backwards
   GameComponent collector = {
     (void*)NULL, //ptr
