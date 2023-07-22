@@ -29,7 +29,8 @@ typedef struct GameComponent_struct  GameComponent;
 
 // 3.) The parameter to the function is listed, using the definition
 // from step 2.)  (note: Still no details on the members yet)
-typedef void (*GameComponentFunc)(GameComponent* input, GameParameters* params);
+//typedef void (*GameComponentFunc)(GameComponent* input, GameParameters* params);
+typedef void (*GameComponentFunc)(GameComponent*, GameParameters*);
 
 // 4.) Now we actually detail the members of the structure
 struct GameComponent_struct {
@@ -92,24 +93,24 @@ void SlotFunc(GameComponent* input, GameParameters* params) {
   // Now do the toasting thing
   if (state->bread) {
     state->power = 200; // Slot is on
-    state->temperature += (state->power - state->temperature) / 10; //temperature may be rising (or steadyish close to 200)
-    state->bread->temperature += (state->temperature - state->bread->temperature) / 10; //bread temperature also likely to be rising
+    state->temperature += ((state->power - state->temperature) / 10); //temperature may be rising (or steadyish close to 200)
+    state->bread->temperature += ((state->temperature - state->bread->temperature) / 10); //bread temperature also likely to be rising
     if (state->bread->moisture > 0) {
       //Dry it out before toastuing can commence
-      state->bread->moisture -= state->bread->temperature / 10;
+      state->bread->moisture -= (state->bread->temperature / 10);
     } else {
       //Can't toast at low temperatures!
-      state->bread->toastedness += MAX(0, (state->bread->temperature - 90) / 10);
+      state->bread->toastedness += MAX(0, ((state->bread->temperature - 90) / 10));
     }
     params->max_toast = MAX(state->bread->toastedness, params->max_toast);
   } else {
     //Cooling - make zero the ambient temp
-    state->temperature += (0 - state->temperature) / 10;
+    state->temperature += ((0 - state->temperature) / 10);
   }
 
   // Now output my state to screen!
-  //printf(PRINTAT"%c%c                    ", (char)state->x_coord, (char)state->y_coord); //Clear it
-  printf(PRINTAT"%c%cT: %d, P: %d         ", (char)state->x_coord, (char)state->y_coord, state->temperature, state->power);
+  //printf(PRINTAT"%c%cT: %d, P: %d         ", (char)(state->x_coord%256), (char)(state->y_coord%256), state->temperature, state->power);#
+  printf(PRINTAT"\x03\x05" "T: %d, P: %d         ", (char)(state->x_coord%256), (char)(state->y_coord%256), state->temperature, state->power);
 
 }
 
@@ -146,7 +147,7 @@ void NoOpFunc(GameComponent* input, GameParameters* params) {
 void DispatcherFunc(GameComponent* input, GameParameters* params) {
   DispatcherState* state = (DispatcherState*)input->ptr;
   if (params->slices != state->last_time_int) {
-    if (params->message_address == 0) {
+    if (params->message_address == 0) {//No message on the bus at this time
       BreadState* new_slice = malloc(sizeof(struct bread_state_struct));
       new_slice->temperature = 0;
       new_slice->moisture = 50 + rand()%50;
@@ -174,57 +175,69 @@ int main()
 {
   int i;
   // Initialize the "game" - do the loop backwards
-  GameComponent collector = {.func = &ToastCollectorFunc,  //Should this be &, or *, or nothing?
-                            .ptr = NULL, 
-                            .next = NULL};
+  GameComponent collector = {
+    (void*)NULL, //ptr
+    &ToastCollectorFunc,  //func
+    (GameComponent *)NULL //next - this ios end of the line
+  };
 
-  GameComponent smokeAlarm = {.func = &SmokeAlarmFunc,
-                              .ptr = NULL,
-                              .next = &collector};
+  GameComponent smokeAlarm = {
+    (void*)NULL, //ptr
+    &SmokeAlarmFunc, //func
+    &collector //next
+  };
 
-  SlotState s1state = {.slot_number = 1,
-                        .bread = NULL,
-                        .power = 0,
-                        .temperature = 0,
-                        .x_coord = 3,
-                        .y_coord = 5};
-  GameComponent slot1 = {.func = &SlotFunc,
-                          .ptr = (void*)&s1state,
-                          .next = &smokeAlarm};
+  SlotState s1state = {
+    1, //int       slot_number; // Identifier of this slot
+    0, //int       temperature;
+    0, //int       power;   //Current power level
+    3, //int       x_coord; //screen x-coord
+    5, //int       y_coord; //screen y-coord
+    (BreadState*) NULL //bread;
+  };
+  GameComponent slot1 = {
+    (void*)&s1state, //ptr
+    &SlotFunc, //func
+    &smokeAlarm //next
+  };
   
-  DispatcherState dispstate = {.last_time_int = -1};
-  GameComponent dispatcher = { .func = DispatcherFunc,
-                              .ptr = (void*)&dispstate,
-                              .next = &slot1};
+  DispatcherState dispstate = {-1}; //.last_time_int
+  GameComponent dispatcher = {
+    (void*)&dispstate, //ptr
+    &DispatcherFunc, //func
+    &slot1 //next
+  };
 
-  DispatcherState popstate = {.last_time_int = -1};
-  GameComponent popper = { .func = RandomPopperFunc,
-                              .ptr = (void*)&popstate,
-                              .next = &dispatcher};
+  DispatcherState popstate = {-1}; //.last_time_int
+  GameComponent popper = { 
+    (void*)&popstate, // ptr
+    &RandomPopperFunc, //func
+    &dispatcher //next
+  };
 
-  GameComponent ticker = {.func = TickFunc,
-                            .ptr = NULL, 
-                            .next = &popper
-                            };
+   GameComponent ticker = {
+                          (void*)NULL, //ptr
+                          &TickFunc, //func
+                          &popper //next
+                          };
 
   //Now the parameters
-  GameParameters params =  { .ticks = 0,
-                              .score = 0,
-                              .slices = 0,
-                              .game_over_flag = 0,
-                              .max_toast = 0,
-                              .message_address = 0,
-                              .message = NULL};
+  GameParameters params =  { 0, //.ticks = 
+                              0,//.score =
+                              0,//.slices = 
+                              0,//.game_over_flag = 
+                              0,//.max_toast = 
+                              0,//.message_address = 
+                              (void*)NULL//.message = 
+                           };
 
   for (i = 0; i < 1000; i++) {
     GameComponent* comp = &ticker;
+    //ticker.func(comp, &params);
     while (comp) {
-      //This line crashes the Spectrum - have tried many permutations
-      //(comp->func)(comp, &params);
-      NoOpFunc(comp, &params);
+      comp->func(comp, &params);
       comp = comp->next;
     }
-    printf(PRINTAT"\x01\x05" "Time  %d          ", i);
   }
   return params.score;
 } 
