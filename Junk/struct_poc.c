@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <input.h>
 
 #define MIN(a,b) (((a)<(b))?(a):(b))
 #define MAX(a,b) (((a)>(b))?(a):(b))
@@ -64,7 +65,8 @@ typedef struct slot_state_struct SlotState;
 void SlotFunc(GameComponent* input, GameParameters* params) {
   // What does a slot do?
   // Unpack state
-  SlotState* state = (SlotState*)input->ptr;
+  int bread_state_out = 0;
+  SlotState* state = (SlotState*)(input->ptr);
 
   //Check for a message
   int my_address = 100 + state->slot_number;
@@ -92,6 +94,7 @@ void SlotFunc(GameComponent* input, GameParameters* params) {
 
   // Now do the toasting thing
   if (state->bread) {
+    bread_state_out = 1;
     state->power = 200; // Slot is on
     state->temperature += ((state->power - state->temperature) / 10); //temperature may be rising (or steadyish close to 200)
     state->bread->temperature += ((state->temperature - state->bread->temperature) / 10); //bread temperature also likely to be rising
@@ -110,8 +113,18 @@ void SlotFunc(GameComponent* input, GameParameters* params) {
 
   // Now output my state to screen!
   //printf(PRINTAT"%c%cT: %d, P: %d         ", (char)(state->x_coord%256), (char)(state->y_coord%256), state->temperature, state->power);#
-  printf(PRINTAT"\x03\x05" "T: %d, P: %d         ", (char)(state->x_coord%256), (char)(state->y_coord%256), state->temperature, state->power);
+  printf(PRINTAT"\x03\x05" "T: %d, P: %d   %d   ", state->temperature
+                                              , state->power, bread_state_out);
 
+}
+
+void WaitKey(GameComponent* input, GameParameters* params) {
+    unsigned char c;
+    in_wait_key();
+    c = in_inkey();
+    in_wait_nokey();
+
+    printf("Key pressed is %c (0x%02X)\n", c, c);
 }
 
 void TickFunc(GameComponent* input, GameParameters* params) {
@@ -137,6 +150,7 @@ void SmokeAlarmFunc(GameComponent* input, GameParameters* params) {
   if (params->max_toast > 200) {
     zx_border(params->ticks % 8);
   }
+  params->max_toast = 0; //Reset for next loop
 }
 
 void NoOpFunc(GameComponent* input, GameParameters* params) {
@@ -156,6 +170,7 @@ void DispatcherFunc(GameComponent* input, GameParameters* params) {
       params->message = (void*)new_slice;
     }
   }
+  state->last_time_int = params->slices;
 }
 
 void RandomPopperFunc(GameComponent* input, GameParameters* params) {
@@ -163,10 +178,51 @@ void RandomPopperFunc(GameComponent* input, GameParameters* params) {
     DispatcherState* state = (DispatcherState*)input->ptr;
     //Min 20 ticks, then a 1-in 100 chance after that - beware int wraparound
     if ((params->ticks - 20 > state->last_time_int) || (params->ticks < state->last_time_int)) {
-      if (rand()%100 == 51) {
+      if (rand()%10 == 5) {
         params->message_address = 201;
       }
     }
+  }
+}
+
+void PopperFunc(GameComponent* input, GameParameters* params) {
+  int p_down;
+  if (params->message_address == 0) {
+    DispatcherState* state = (DispatcherState*)input->ptr;
+
+    p_down = in_key_pressed( IN_KEY_SCANCODE_p );
+    if (p_down) {
+      if (state->last_time_int) {
+        //Nothing to do
+      } else {
+        //New P action
+        params->message_address = 201;
+      }
+    }
+    state->last_time_int = p_down;
+  }
+}
+
+void SendToastFunc(GameComponent* input, GameParameters* params) {
+  int t_down;
+  if (params->message_address == 0) {
+    DispatcherState* state = (DispatcherState*)input->ptr;
+
+    t_down = in_key_pressed( IN_KEY_SCANCODE_t );
+    if (t_down) {
+      if (state->last_time_int) {
+        //Nothing to do
+      } else {
+        //New T action
+        BreadState* new_slice = malloc(sizeof(struct bread_state_struct));
+        new_slice->temperature = 0;
+        new_slice->moisture = 50 + rand()%50;
+        new_slice->toastedness = 0;
+        params->message_address = 101;
+        params->message = (void*)new_slice;
+      }
+    }
+    state->last_time_int = t_down;
   }
 }
 
@@ -204,14 +260,14 @@ int main()
   DispatcherState dispstate = {-1}; //.last_time_int
   GameComponent dispatcher = {
     (void*)&dispstate, //ptr
-    &DispatcherFunc, //func
+    &SendToastFunc, //func
     &slot1 //next
   };
 
   DispatcherState popstate = {-1}; //.last_time_int
   GameComponent popper = { 
     (void*)&popstate, // ptr
-    &RandomPopperFunc, //func
+    &PopperFunc, //func
     &dispatcher //next
   };
 
@@ -220,6 +276,13 @@ int main()
                           &TickFunc, //func
                           &popper //next
                           };
+
+  // Wait for a key press
+  GameComponent keywait = {
+    (void*)NULL, //ptr
+    &WaitKey,  //func
+    (GameComponent *)ticker //next
+  };
 
   //Now the parameters
   GameParameters params =  { 0, //.ticks = 
@@ -231,13 +294,17 @@ int main()
                               (void*)NULL//.message = 
                            };
 
+
   for (i = 0; i < 1000; i++) {
     GameComponent* comp = &ticker;
     //ticker.func(comp, &params);
     while (comp) {
       comp->func(comp, &params);
+      //printf(PRINTAT "\x01\x02" "MsgAddr = %d    ", params.message_address);
+      //WaitKey(comp, &params);
       comp = comp->next;
     }
   }
+  printf(PRINTAT "\x01\x0B" "Final score %d ", (params.slices * params.score));
   return params.score;
 } 
