@@ -89,6 +89,7 @@ void SlotFunc(GameComponent* input, GameParameters* params) {
       params->message_address = 20; // Bread collector
       params->message = (void*)state->bread;
       state->bread = NULL;
+      state->power = 0;
     }
   }
 
