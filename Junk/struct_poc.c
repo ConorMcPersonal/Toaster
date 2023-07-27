@@ -114,7 +114,7 @@ void SlotFunc(GameComponent* input, GameParameters* params) {
 
   // Now output my state to screen!
   //printf(PRINTAT"%c%cT: %d, P: %d         ", (char)(state->x_coord%256), (char)(state->y_coord%256), state->temperature, state->power);#
-  printf(PRINTAT"\x03\x05" "T: %d, P: %d   %d   ", state->temperature
+  printf(PRINTAT"\x03\x05" "T: %d    " PRINTAT "\x03\x06" "P: %d   "PRINTAT "\x0B\x06" "%d   ", state->temperature
                                               , state->power, bread_state_out);
 
 }
@@ -231,6 +231,8 @@ void SendToastFunc(GameComponent* input, GameParameters* params) {
 int main()
 {
   int i;
+  //Clear screen
+  zx_cls(PAPER_WHITE);
   // Initialize the "game" - do the loop backwards
   GameComponent collector = {
     (void*)NULL, //ptr
