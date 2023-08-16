@@ -6,6 +6,7 @@
 #include "game.h"
 #include "util.h"
 #include "slot_monitor.h"
+#include "control.h"
 
 // Compile with:
 // zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_GAME slot.c slot_monitor.c game.c -o game -create-app
