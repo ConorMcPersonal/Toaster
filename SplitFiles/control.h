@@ -8,4 +8,10 @@ struct control_buffer_struct {
 };
 typedef struct control_buffer_struct ControlBuffer;
 
+int buffer_push(unsigned char c, ControlBuffer* buff);
+
+unsigned char buffer_pop(ControlBuffer* buff);
+
+void initialise_control_buffer(ControlBuffer *buff);
+
 #endif

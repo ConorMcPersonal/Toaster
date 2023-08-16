@@ -10,6 +10,27 @@
 // Compile with:
 // zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_CONTROL control.c -o control -create-app
 
+int buffer_push(unsigned char c, ControlBuffer* buff) {
+    if (buff->bufferIndex > 30) {
+        return 0;
+    }
+    (buff->buffer)[buff->bufferIndex] = c;
+    buff->bufferIndex = buff->bufferIndex + 1;
+    (buff->buffer)[buff->bufferIndex] = 0;
+    return 1;
+}
+
+unsigned char buffer_pop(ControlBuffer* buff) {
+    unsigned char c;
+    if (buff->bufferIndex == 0) {
+        return 0;
+    }
+    buff->bufferIndex = buff->bufferIndex - 1;
+    c = (buff->buffer)[buff->bufferIndex];
+    (buff->buffer)[buff->bufferIndex] = 0;
+    return c;
+}
+
 void initialise_control_buffer(ControlBuffer *buff) {
     buff->bufferIndex = 0;
     buff->lastCharSeen = 0;
@@ -20,23 +41,22 @@ void command_entry_func(GameComponent* input, GameParameters* params) {
     unsigned char c;
     ControlBuffer *ctrlBuff = (ControlBuffer*)input->ptr;
     c = in_inkey();
+    if (c >= 'a' && c <= 'z') {
+        c -= 32;
+    }
     if (c && c != ctrlBuff->lastCharSeen) {
-        if (c == 'D' || c == 'd') {
-            if (ctrlBuff->bufferIndex > 0) {
-               (ctrlBuff->buffer)[ctrlBuff->bufferIndex] = 0;
-               ctrlBuff->bufferIndex = ctrlBuff->bufferIndex - 1;
-            }
+        if (c == 'D') {
+            buffer_pop(ctrlBuff);
         }
-        else if (ctrlBuff->bufferIndex < 30) {
-            (ctrlBuff->buffer)[ctrlBuff->bufferIndex] = c;
-            ctrlBuff->bufferIndex = ctrlBuff->bufferIndex + 1;
-            (ctrlBuff->buffer)[ctrlBuff->bufferIndex] = 0;
-            if (c == 'E' || c == 'e') {
-                // Execute any valid command at head of stack
-                ctrlBuff->bufferIndex = 0;
-                (ctrlBuff->buffer)[0] = 0;
-            }
+        else if (c == 'E') {
+            // Execute any valid command at head of stack
+            // For now just empty buffer
+            ctrlBuff->bufferIndex = 0;
+            (ctrlBuff->buffer)[0] = 0;
+        } else {
+            buffer_push(c, ctrlBuff);
         }
+
     }
     ctrlBuff->lastCharSeen = c;
     printf(PRINTAT "\x01\x17" "%-32s", ctrlBuff->buffer);
