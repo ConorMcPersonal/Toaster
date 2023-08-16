@@ -7,6 +7,8 @@
 #include "util.h"
 #include "slot_monitor.h"
 
+// Compile with:
+// zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_GAME slot.c slot_monitor.c game.c -o game -create-app
 
 void wait_key(GameComponent* input, GameParameters* params) {
     unsigned char c;
@@ -102,7 +104,7 @@ void send_toast_func(GameComponent* input, GameParameters* params) {
   }
 }
 
-
+#ifdef _TEST_GAME
 int main()
 {
   int i;
@@ -181,3 +183,4 @@ int main()
   printf(PRINTAT "\x01\x0B" "Final score %d ", (params.slices * params.score));
   return params.score;
 } 
+#endif
