@@ -9,7 +9,7 @@
 #include "control.h"
 
 // Compile with:
-// zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_GAME slot.c slot_monitor.c game.c -o game -create-app
+// zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_GAME slot.c slot_monitor.c game.c control.c -o game -create-app
 
 void wait_key(GameComponent* input, GameParameters* params) {
     unsigned char c;
@@ -139,25 +139,48 @@ int main()
     &smokeAlarm //next
   };
   
-  DispatcherState dispState = {-1}; //.last_time_int
-  GameComponent dispatcher = {
-    (void*)&dispState, //ptr
-    &send_toast_func, //func
-    &slot1 //next
-  };
+  /*
+  if (0) {
+    DispatcherState dispState = {-1}; //.last_time_int
+    GameComponent dispatcher = {
+      (void*)&dispState, //ptr
+      &send_toast_func, //func
+      &slot1 //next
+    };
 
-  DispatcherState popState = {-1}; //.last_time_int
-  GameComponent popper = { 
-    (void*)&popState, // ptr
-    &popper_func, //func
-    &dispatcher //next
-  };
+    DispatcherState popState = {-1}; //.last_time_int
+    GameComponent popper = { 
+      (void*)&popState, // ptr
+      &popper_func, //func
+      &dispatcher //next
+    };
 
-   GameComponent ticker = {
-                          (void*)NULL, //ptr
-                          &tick_func, //func
-                          &popper //next
-                          };
+    GameComponent ticker = {
+                            (void*)NULL, //ptr
+                            &tick_func, //func
+                            &popper //next
+                            };
+  } else {
+    */
+    ControlBuffer buff = {
+        0,
+        0,
+        NULL
+    };
+    initialise_control_buffer(&buff);
+    GameComponent ctrl = {
+        &buff,
+        &command_entry_func,
+        &slot1
+    };
+
+
+    GameComponent ticker = {
+                            (void*)NULL, //ptr
+                            &tick_func, //func
+                            &ctrl //next
+                            };
+  //}
 
   //Now the parameters
   GameParameters params =  { 0, //.ticks = 
