@@ -32,11 +32,12 @@ void toast_collector_func(GameComponent* input, GameParameters* params) {
   input;
   if (params->messageAddress == 20) {
     //Someone sent toast!
-     BreadState* bread = (BreadState*)params->message;
+    BreadState* bread = (BreadState*)params->message;
     params->score += 100 - abs(bread->toastedness - 100); //100 toastedness gets 100 points
     (params->slices) += 1;
     params->messageAddress = 0;
     params->message = NULL;
+    params->messageSourceAddress = NULL;
     //Give back memory
     free(bread);
   }
@@ -52,7 +53,7 @@ void smoke_alarm_func(GameComponent* input, GameParameters* params) {
   }
   params->maxToast = 0; //Reset for next loop
 }
-
+/*
 void dispatcher_func(GameComponent* input, GameParameters* params) {
   DispatcherState* state = (DispatcherState*)input->ptr;
   if (params->slices != state->last_time_int) {
@@ -110,6 +111,7 @@ void send_toast_func(GameComponent* input, GameParameters* params) {
     state->last_time_int = t_down;
   }
 }
+*/
 
 #ifdef _TEST_GAME
 int main()

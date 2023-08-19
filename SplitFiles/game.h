@@ -26,6 +26,7 @@ struct GameParameters_Struct {
   int       maxToast; // Who has most toastedness - is anything on fire?
   int       messageAddress;  //Who or what is the message being sent to?
   void*     message; //Pointer to a message structure of some kind - e.g. a command issued to a component
+  void*     messageSourceAddress; //Who emitted the message?  If it gets back there it should be binned
 };
 
 

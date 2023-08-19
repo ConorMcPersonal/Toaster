@@ -48,6 +48,7 @@ void execute_command(ControlBuffer *ctrlBuff, GameParameters* params) {
         if (d >= '0' && d <= '9') {
             //Valid formatting, try to pop that slot
             params->messageAddress = 200 + d - '0';
+            params->messageSourceAddress = (void *)ctrlBuff;
         } else {
             //Bad format - maybe indicate somehow?
             ;
@@ -64,6 +65,7 @@ void execute_command(ControlBuffer *ctrlBuff, GameParameters* params) {
             new_slice->moisture = ((e == 'B')? 75: 50) + rand()%50; //Brown takes longer
             new_slice->toastedness = 0;
             params->message = new_slice;
+            params->messageSourceAddress = (void *)ctrlBuff;
         } else {
             //Bad format - maybe indicate somehow?
             ;
@@ -77,12 +79,26 @@ void execute_command(ControlBuffer *ctrlBuff, GameParameters* params) {
 void command_entry_func(GameComponent* input, GameParameters* params) {
     unsigned char c;
     ControlBuffer *ctrlBuff = (ControlBuffer*)input->ptr;
+    //Check on uncaught message
+    if (params->messageAddress) {
+        if (params->messageSourceAddress == ctrlBuff) {
+            // This message has come back to here uncaught - remove it
+            if (params->messageAddress >= 100 && params->messageAddress < 200) {
+                BreadState* brd = (BreadState*)params->message;
+                free(brd);
+            }
+            params->message = NULL;
+            params->messageAddress = 0;
+            params->messageSourceAddress = NULL;
+        }
+    }
+
     c = in_inkey();
     if (c >= 'a' && c <= 'z') {
         c -= 32;
     }
     if (c && c != ctrlBuff->lastCharSeen) {
-        if (c == 'D') {
+        if (c == 'D' || c == 12) {
             buffer_pop(ctrlBuff);
         }
         else if (c == 'E') {
