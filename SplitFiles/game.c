@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <arch/zx.h>
+#include <sound.h>
 
 #include "game.h"
 #include "util.h"
@@ -24,6 +25,7 @@ void tick_func(GameComponent* input, GameParameters* params) {
   input;
   params->ticks += 1;
   printf(PRINTAT"\x01\x01" "Time  %d          ", params->ticks);
+ 
 }
 
 void toast_collector_func(GameComponent* input, GameParameters* params) {
@@ -44,7 +46,9 @@ void toast_collector_func(GameComponent* input, GameParameters* params) {
 void smoke_alarm_func(GameComponent* input, GameParameters* params) {
   input;
   if (params->maxToast > 200) {
+    bit_beepfx(BEEPFX_ALARM_1);
     zx_border(params->ticks % 8);
+    bit_beepfx(BEEPFX_ALARM_2);
   }
   params->maxToast = 0; //Reset for next loop
 }
@@ -80,6 +84,7 @@ void popper_func(GameComponent* input, GameParameters* params) {
     }
     state->last_time_int = p_down;
   }
+   bit_fx(BFX_EXPLOSION);
 }
 
 void send_toast_func(GameComponent* input, GameParameters* params) {
@@ -99,6 +104,7 @@ void send_toast_func(GameComponent* input, GameParameters* params) {
         new_slice->toastedness = 0;
         params->messageAddress = 101;
         params->message = (void*)new_slice;
+        bit_beepfx(BEEPFX_CLANG);
       }
     }
     state->last_time_int = t_down;
@@ -111,6 +117,8 @@ int main()
   int i;
   //Clear screen
   zx_cls(PAPER_WHITE);
+  bit_fx(BFX_KLAXON);
+
   // Initialize the "game" - do the loop backwards
   GameComponent collector = {
     (void*)NULL, //ptr
