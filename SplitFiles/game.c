@@ -215,6 +215,7 @@ int main()
     }
   }
   printf(PRINTAT "\x01\x0B" "Final score %d ", (params.slices * params.score));
+  bit_beepfx(BEEPFX_AWW);
   return params.score;
 } 
 #endif

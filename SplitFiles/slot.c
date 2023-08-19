@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <sound.h>
 
 #include "slot_monitor.h"
 #include "util.h"
@@ -35,6 +36,7 @@ void slot_func(GameComponent* input, GameParameters* params) {
       //Bread into the slot - let's TOAST!
       state->bread = (BreadState*)params->message;
       params->message = NULL;
+      bit_beepfx(BEEPFX_CLANG);
     }
   } else if (params->messageAddress == 200 + state->slotNumber) {
     params->messageAddress = 0;
@@ -42,8 +44,10 @@ void slot_func(GameComponent* input, GameParameters* params) {
     if (state->bread) {
       params->messageAddress = 20; // Bread collector
       params->message = (void*)state->bread;
+      params->messageSourceAddress = (void *)state;
       state->bread = NULL;
       state->power = 0;
+      bit_fx(BFX_EXPLOSION);
     }
   }
 
@@ -66,10 +70,6 @@ void slot_func(GameComponent* input, GameParameters* params) {
     state->temperature += ((0 - state->temperature) / 10);
   }
 
-  // Now output my state to screen!
-  //printf(PRINTAT"%c%cT: %d, P: %d         ", (char)(state->x_coord%256), (char)(state->y_coord%256), state->temperature, state->power);#
-  //printf(PRINTAT"\x03\x05" "T: %d    " PRINTAT "\x03\x06" "P: %d   "PRINTAT "\x0B\x06" "%d   ", state->temperature
-  //                                            , state->power, breadStateOut);
   state->slotMon->draw_slot(state->slotMon, state);
 
 }
