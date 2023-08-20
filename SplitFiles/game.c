@@ -53,65 +53,6 @@ void smoke_alarm_func(GameComponent* input, GameParameters* params) {
   }
   params->maxToast = 0; //Reset for next loop
 }
-/*
-void dispatcher_func(GameComponent* input, GameParameters* params) {
-  DispatcherState* state = (DispatcherState*)input->ptr;
-  if (params->slices != state->last_time_int) {
-    if (params->messageAddress == 0) {//No message on the bus at this time
-      BreadState* new_slice = malloc(sizeof(struct BreadStateStruct));
-      new_slice->temperature = 0;
-      new_slice->moisture = 50 + rand()%50;
-      new_slice->toastedness = 0;
-      params->messageAddress = 101;
-      params->message = (void*)new_slice;
-    }
-  }
-  state->last_time_int = params->slices;
-}
-
-void popper_func(GameComponent* input, GameParameters* params) {
-  int p_down;
-  if (params->messageAddress == 0) {
-    DispatcherState* state = (DispatcherState*)input->ptr;
-
-    p_down = in_key_pressed( IN_KEY_SCANCODE_p );
-    if (p_down) {
-      if (state->last_time_int) {
-        //Nothing to do
-      } else {
-        //New P action
-        params->messageAddress = 201;
-      }
-    }
-    state->last_time_int = p_down;
-  }
-   bit_fx(BFX_EXPLOSION);
-}
-
-void send_toast_func(GameComponent* input, GameParameters* params) {
-  int t_down;
-  if (params->messageAddress == 0) {
-    DispatcherState* state = (DispatcherState*)input->ptr;
-
-    t_down = in_key_pressed( IN_KEY_SCANCODE_t );
-    if (t_down) {
-      if (state->last_time_int) {
-        //Nothing to do
-      } else {
-        //New T action
-        BreadState* new_slice = malloc(sizeof(struct BreadStateStruct));
-        new_slice->temperature = 0;
-        new_slice->moisture = 50 + rand()%50;
-        new_slice->toastedness = 0;
-        params->messageAddress = 101;
-        params->message = (void*)new_slice;
-        bit_beepfx(BEEPFX_CLANG);
-      }
-    }
-    state->last_time_int = t_down;
-  }
-}
-*/
 
 #ifdef _TEST_GAME
 int main()
