@@ -3,7 +3,8 @@
 #ifndef _DEFINE_CONTROL_H
 #define _DEFINE_CONTROL_H
 
-#define CONTROL_BUFFER_SIZE 32
+// max stack depth
+#define CONTROL_BUFFER_SIZE 12
 
 struct control_buffer_struct {
     int  bufferIndex;

@@ -11,6 +11,56 @@
 // Compile with:
 // zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_CONTROL control.c -o control -create-app
 
+char* buffer_getcommand(const char c) {
+    char* retVal = "          ";
+    switch(c) {
+        case 0:
+            break;
+        case 'B':
+            retVal = "BROWN BREAD";
+            break;
+        case 'W':
+            retVal = "WHITE BREAD";
+            break;
+        case 'T':
+            retVal = "TOAST IT!";
+            break;
+        case 'P':
+            retVal = "POP SLOT";
+            break;
+        case '1':
+        case '2':
+        case '3':
+        case '4':
+        case '5':
+        case '6':
+        case '7':
+        case '8':
+        case '9':
+            sprintf(retVal, "SLOT %c", c);
+            break;
+        default:
+            retVal = "YOU WOT MATE?";
+    }
+    return retVal;
+}
+
+//show the stack on the screen
+void buffer_restack(const ControlBuffer* const buff) {
+    int i;
+    char* command;
+    const int buffer_index = buff->bufferIndex;
+    // first clean the buffer
+    for (i = 2; i <= CONTROL_BUFFER_SIZE; i++) {
+        printf(PRINTAT"%c%c""            \0", 21, i);
+    }
+    // now write out stack
+    for (i = 2; i <= buffer_index; i++) {
+        command = buffer_getcommand((buff->buffer[i - 1]));
+        printf(PRINTAT"%c%c""%s\0", 21, i, command);
+    }
+}
+
 int buffer_push(unsigned char c, ControlBuffer* buff) {
     if (buff->bufferIndex > CONTROL_BUFFER_SIZE - 2) {
         return 0;
@@ -23,7 +73,7 @@ int buffer_push(unsigned char c, ControlBuffer* buff) {
 
 unsigned char buffer_pop(ControlBuffer* buff) {
     unsigned char c;
-    if (buff->bufferIndex == 0) {
+    if (buff->bufferIndex == 1) {
         return 0;
     }
     buff->bufferIndex = buff->bufferIndex - 1;
@@ -33,7 +83,7 @@ unsigned char buffer_pop(ControlBuffer* buff) {
 }
 
 void initialise_control_buffer(ControlBuffer *buff) {
-    buff->bufferIndex = 0;
+    buff->bufferIndex = 1;
     buff->lastCharSeen = 0;
     buff->buffer = (unsigned char*)malloc(CONTROL_BUFFER_SIZE * sizeof(unsigned char));
 }
@@ -74,6 +124,7 @@ void execute_command(ControlBuffer *ctrlBuff, GameParameters* params) {
         //It's a bust
         buffer_push(c, ctrlBuff);
     }
+    buffer_restack(ctrlBuff);
 }
 
 void command_entry_func(GameComponent* input, GameParameters* params) {
@@ -111,10 +162,11 @@ void command_entry_func(GameComponent* input, GameParameters* params) {
         } else {
             buffer_push(c, ctrlBuff);
         }
-
+        buffer_restack(ctrlBuff);
     }
     ctrlBuff->lastCharSeen = c;
-    printf(PRINTAT "\x01\x17" "%-32s", ctrlBuff->buffer);
+//  printf(PRINTAT "\x01\x17" "%-32s", ctrlBuff->buffer);
+ 
 }
 
 #ifdef _TEST_CONTROL
