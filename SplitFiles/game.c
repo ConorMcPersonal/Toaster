@@ -47,9 +47,10 @@ void toast_collector_func(GameComponent* input, GameParameters* params) {
 void smoke_alarm_func(GameComponent* input, GameParameters* params) {
   input;
   if (params->maxToast > 200) {
-    bit_beepfx(BEEPFX_ALARM_1);
+    if (params->ticks % 2 == 0) {
+      bit_fx(BFX_BEEP);
+    }
     zx_border(params->ticks % 8);
-    bit_beepfx(BEEPFX_ALARM_2);
   }
   params->maxToast = 0; //Reset for next loop
 }
