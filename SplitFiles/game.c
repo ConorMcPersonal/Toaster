@@ -12,6 +12,20 @@
 // Compile with:
 // zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_GAME slot.c slot_monitor.c game.c control.c -o game -create-app
 
+void draw_tick_line(const unsigned int tick)
+{
+  const int increment = MAX_TICKS / 256;
+  const int ticks_left = MAX_TICKS - tick;
+  unsigned char point, previous_point;
+  previous_point = (ticks_left + 1) / increment;
+  point = ticks_left / increment;
+  if (previous_point != point) {
+    // zero out lower bit
+    int old_byte = *zx_pxy2saddr(previous_point, 191);
+    *zx_pxy2saddr(previous_point, 191) = (old_byte << 1);
+  }
+}
+
 void wait_key(GameComponent* input, GameParameters* params) {
     unsigned char c;
     in_wait_key();
@@ -24,7 +38,8 @@ void wait_key(GameComponent* input, GameParameters* params) {
 void tick_func(GameComponent* input, GameParameters* params) {
   input;
   params->ticks += 1;
-  printf(PRINTAT"\x01\x01" "Time  %d          ", params->ticks);
+  draw_tick_line(params->ticks);
+  //printf(PRINTAT"\x01\x01" "Time  %d          ", params->ticks);
  
 }
 
@@ -41,7 +56,7 @@ void toast_collector_func(GameComponent* input, GameParameters* params) {
     //Give back memory
     free(bread);
   }
-  printf(PRINTAT"\x01\x14" "Score %d Slices %d       ", params->score, params->slices);
+//  printf(PRINTAT"\x01\x14" "Score %d Slices %d       ", params->score, params->slices);
 }
 
 void smoke_alarm_func(GameComponent* input, GameParameters* params) {
@@ -144,8 +159,12 @@ int main()
                               (void*)NULL//.message = 
                            };
 
+  // draw starting time line
+  for (i = 0; i < 256; i++) {
+    *zx_pxy2saddr(i, 191) |= zx_px2bitmask(i);
+  }
 
-  for (i = 0; i < 1000; i++) {
+  for (i = 0; i < MAX_TICKS; i++) {
     GameComponent* comp = &ticker;
     //ticker.func(comp, &params);
     while (comp) {
@@ -158,6 +177,8 @@ int main()
   }
   printf(PRINTAT "\x01\x0B" "Final score %d ", (params.slices * params.score));
   bit_beepfx(BEEPFX_AWW);
+  //we malloc this so free it
+  free(buff.buffer);
   return params.score;
 } 
 #endif

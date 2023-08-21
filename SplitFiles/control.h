@@ -4,7 +4,10 @@
 #define _DEFINE_CONTROL_H
 
 // max stack depth
-#define CONTROL_BUFFER_SIZE 12
+static const unsigned int CONTROL_BUFFER_SIZE = 24;
+// length game runs for
+static const unsigned int MAX_TICKS = 1024;
+
 
 struct control_buffer_struct {
     int  bufferIndex;

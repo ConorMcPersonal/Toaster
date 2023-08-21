@@ -12,21 +12,21 @@
 // zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_CONTROL control.c -o control -create-app
 
 char* buffer_getcommand(const char c) {
-    char* retVal = "          ";
+    char* retVal = "   ";
     switch(c) {
         case 0:
             break;
         case 'B':
-            retVal = "BROWN BREAD";
+            retVal = "BnB";
             break;
         case 'W':
-            retVal = "WHITE BREAD";
+            retVal = "WtB";
             break;
         case 'T':
-            retVal = "TOAST IT!";
+            retVal = "TST";
             break;
         case 'P':
-            retVal = "POP SLOT";
+            retVal = "POP";
             break;
         case '1':
         case '2':
@@ -37,10 +37,10 @@ char* buffer_getcommand(const char c) {
         case '7':
         case '8':
         case '9':
-            sprintf(retVal, "SLOT %c", c);
+            sprintf(retVal, "S %c", c);
             break;
         default:
-            retVal = "YOU WOT MATE?";
+            retVal = "WOT";
     }
     return retVal;
 }
@@ -52,12 +52,12 @@ void buffer_restack(const ControlBuffer* const buff) {
     const int buffer_index = buff->bufferIndex;
     // first clean the buffer
     for (i = 2; i <= CONTROL_BUFFER_SIZE; i++) {
-        printf(PRINTAT"%c%c""            \0", 21, i);
+        printf(PRINTAT"%c%c""            \0", 29, i);
     }
     // now write out stack
     for (i = 2; i <= buffer_index; i++) {
         command = buffer_getcommand((buff->buffer[i - 1]));
-        printf(PRINTAT"%c%c""%s\0", 21, i, command);
+        printf(PRINTAT"%c%c""%s\0", 29, i, command);
     }
 }
 
@@ -197,7 +197,7 @@ int main() {
     while (c != 32) {
         c = in_inkey();
         command_entry_func(&gc, &params);
-        printf(PRINTAT "\x05\x05" "%d   ",c);
+        //printf(PRINTAT "\x05\x05" "%d   ",c);
     }
     return 0;
 }
