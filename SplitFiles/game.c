@@ -39,8 +39,6 @@ void tick_func(GameComponent* input, GameParameters* params) {
   input;
   params->ticks += 1;
   draw_tick_line(params->ticks);
-  //printf(PRINTAT"\x01\x01" "Time  %d          ", params->ticks);
- 
 }
 
 void toast_collector_func(GameComponent* input, GameParameters* params) {

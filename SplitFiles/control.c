@@ -14,13 +14,11 @@
 char* buffer_getcommand(const char c) {
     char* retVal = "   ";
     switch(c) {
-        case 0:
-            break;
         case 'B':
-            retVal = "BnB";
+            retVal = "BRN";
             break;
         case 'W':
-            retVal = "WtB";
+            retVal = "WHT";
             break;
         case 'T':
             retVal = "TST";
@@ -40,7 +38,7 @@ char* buffer_getcommand(const char c) {
             sprintf(retVal, "S %c", c);
             break;
         default:
-            retVal = "WOT";
+            retVal = "EH?";
     }
     return retVal;
 }
@@ -51,13 +49,13 @@ void buffer_restack(const ControlBuffer* const buff) {
     char* command;
     const int buffer_index = buff->bufferIndex;
     // first clean the buffer
-    for (i = 2; i <= CONTROL_BUFFER_SIZE; i++) {
-        printf(PRINTAT"%c%c""            \0", 29, i);
+    for (i = 1; i <= CONTROL_BUFFER_SIZE; i++) {
+        printf(PRINTAT"%c%c""   \0", 28, i);
     }
     // now write out stack
-    for (i = 2; i <= buffer_index; i++) {
+    for (i = 1; i <= buffer_index; i++) {
         command = buffer_getcommand((buff->buffer[i - 1]));
-        printf(PRINTAT"%c%c""%s\0", 29, i, command);
+        printf(PRINTAT"%c%c""%s\0", 28, i, command);
     }
 }
 
@@ -73,7 +71,7 @@ int buffer_push(unsigned char c, ControlBuffer* buff) {
 
 unsigned char buffer_pop(ControlBuffer* buff) {
     unsigned char c;
-    if (buff->bufferIndex == 1) {
+    if (buff->bufferIndex == 0) {
         return 0;
     }
     buff->bufferIndex = buff->bufferIndex - 1;
@@ -83,7 +81,7 @@ unsigned char buffer_pop(ControlBuffer* buff) {
 }
 
 void initialise_control_buffer(ControlBuffer *buff) {
-    buff->bufferIndex = 1;
+    buff->bufferIndex = 0;
     buff->lastCharSeen = 0;
     buff->buffer = (unsigned char*)malloc(CONTROL_BUFFER_SIZE * sizeof(unsigned char));
 }
@@ -124,7 +122,6 @@ void execute_command(ControlBuffer *ctrlBuff, GameParameters* params) {
         //It's a bust
         buffer_push(c, ctrlBuff);
     }
-    buffer_restack(ctrlBuff);
 }
 
 void command_entry_func(GameComponent* input, GameParameters* params) {
@@ -160,7 +157,7 @@ void command_entry_func(GameComponent* input, GameParameters* params) {
             //(ctrlBuff->buffer)[0] = 0;
             execute_command(ctrlBuff, params);
         } else {
-            buffer_push(c, ctrlBuff);
+            buffer_push(c, ctrlBuff); 
         }
         buffer_restack(ctrlBuff);
     }
@@ -197,7 +194,7 @@ int main() {
     while (c != 32) {
         c = in_inkey();
         command_entry_func(&gc, &params);
-        //printf(PRINTAT "\x05\x05" "%d   ",c);
+        printf(PRINTAT "\x05\x05" "%d   ",c);
     }
     return 0;
 }

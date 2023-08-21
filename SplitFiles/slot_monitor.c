@@ -117,7 +117,7 @@ int main_slot_monitor()
   zx_cls(PAPER_WHITE);
 
   for (i = 0; i < -256; ++i){
-    printf("%c", alphabet[i % 16]);
+//    printf("%c", alphabet[i % 16]);
     *attr = i;
     attr++;
   }
