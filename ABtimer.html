@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head><title>Timer test</title>
+<script lang="javacript">
+    var lastA;
+    var insertDiv;
+    var nowTime;
+    document.onkeydown = function(evt) {
+        nowTime = Date.now();
+        evt = evt || window.event;
+        if (evt.keyCode == 65) {
+            insertDiv.innerHTML = insertDiv.innerHTML + (nowTime - lastA).toString() + "<br />";
+            lastA = nowTime;
+        };
+        if (evt.keyCode == 66) {
+            insertDiv.innerHTML = insertDiv.innerHTML + (nowTime - lastA).toString() + " ";
+        };
+    };
+</script>
+</head>
+<body>
+<div id="here">Stuff will be printed here<br /></div>
+
+<script lang="javacript">
+    lastA = Date.now();
+    insertDiv = document.getElementById("here");
+</script>
+</body>
+</html>
