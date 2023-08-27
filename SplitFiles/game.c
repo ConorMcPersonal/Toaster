@@ -73,6 +73,13 @@ int main_game()
     int i;
     //Clear screen
     zx_cls(PAPER_WHITE);
+    printf(PRINTAT "\x01\x01" \
+      "Welcome to the " "\x10\x32H\x10\x34o\x10\x36t\x10\x35" "e\x10\x31l " "\x10\x32" "E" \
+      "\x10\x34" "x" "\x10\x36" "c" "\x10\x35" "e" "\x10\x31" "s\x10\x33s\x10\x30.");
+    printf(PRINTAT "\x01\x03" "We loved your job application to");
+    printf(PRINTAT "\x01\x04" "be our new breakfast Toast Host.");
+    printf(PRINTAT "\x01\x05" "But now stuff gets really real.");
+    printf(PRINTAT "\x01\x07" "\x12\x31\x10\x32" "Can you handle the pressure?\x12\x30\x10\x30");
     printf(PRINTAT "\x05\x0B" "Press any key to start");
     wait_for_a_key(NULL, NULL);
     zx_cls(PAPER_WHITE);
