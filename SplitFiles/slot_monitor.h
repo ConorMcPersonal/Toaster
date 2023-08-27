@@ -38,7 +38,7 @@ struct SlotMonitorStruct {
   void draw_slot(SlotMonitor*, SlotState*); //function to draw the monitor
 };
 
-SlotMonitor* get_slot_monitor(long x, long y);
+SlotMonitor* get_slot_monitor(unsigned char x, unsigned char y, int slotIndex);
 
 void slot_func(GameComponent* input, GameParameters* params);
 

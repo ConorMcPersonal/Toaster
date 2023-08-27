@@ -76,7 +76,7 @@ void draw_slot(SlotMonitor* slotMon, SlotState* slot) {
 
 }
 
-SlotMonitor* get_slot_monitor(long x, long y) {//, long x) {
+SlotMonitor* get_slot_monitor(unsigned char x, unsigned char y, int slotIndex) {
     long screenOffset;
     long attrOffset;
 
@@ -104,6 +104,7 @@ SlotMonitor* get_slot_monitor(long x, long y) {//, long x) {
     const unsigned char* attrs = (unsigned char*)"\x39\x39\x3B\x3B\x3A\x3A\x38\x38"; //DIMMER
     memcpy(slotMon->startAttributes, attrs, 7);
     memcpy(slotMon->startAttributes + 32, attrs, 7); //Next row down
+    printf(PRINTAT"%c%c""Slot %d", x, y - 1, slotIndex);
     return slotMon;
 }
 
@@ -117,12 +118,12 @@ int main_slot_monitor()
   zx_cls(PAPER_WHITE);
 
   for (i = 0; i < -256; ++i){
-    printf("%c", alphabet[i % 16]);
+//    printf("%c", alphabet[i % 16]);
     *attr = i;
     attr++;
   }
   printf("\n");
-  slotMon = get_slot_monitor(3l, 12l);//, 12l);
+  slotMon = get_slot_monitor(3, 12, 1);//, 12l);
   BreadState brd = {
     175,
     50,

@@ -12,21 +12,22 @@
 // zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_CONTROL control.c -o control -create-app
 
 char* buffer_getcommand(const char c) {
-    char* retVal = "          ";
+    char* retVal = "   ";
     switch(c) {
-        case 0:
-            break;
         case 'B':
-            retVal = "BROWN BREAD";
+            retVal = "Brown";
             break;
         case 'W':
-            retVal = "WHITE BREAD";
+            retVal = "White";
             break;
         case 'T':
-            retVal = "TOAST IT!";
+            retVal = "Toast it!";
             break;
         case 'P':
-            retVal = "POP SLOT";
+            retVal = "Pop it!";
+            break;
+        case 'G':
+            retVal = "baGel";
             break;
         case '1':
         case '2':
@@ -37,10 +38,10 @@ char* buffer_getcommand(const char c) {
         case '7':
         case '8':
         case '9':
-            sprintf(retVal, "SLOT %c", c);
+            sprintf(retVal, "slot %c", c);
             break;
         default:
-            retVal = "YOU WOT MATE?";
+            retVal = "EH?";
     }
     return retVal;
 }
@@ -50,14 +51,15 @@ void buffer_restack(const ControlBuffer* const buff) {
     int i;
     char* command;
     const int buffer_index = buff->bufferIndex;
-    // first clean the buffer
-    for (i = 2; i <= CONTROL_BUFFER_SIZE; i++) {
-        printf(PRINTAT"%c%c""            \0", 21, i);
+    // Write out commands
+    printf(PRINTAT"%c%c""%-12s", 18, 12, "Commands");
+    for (i = 0; i < buffer_index; ++i) {
+        command = buffer_getcommand((buff->buffer[i]));
+        printf(PRINTAT"%c%c""%-12s", 18, i + 13, command);
     }
-    // now write out stack
-    for (i = 2; i <= buffer_index; i++) {
-        command = buffer_getcommand((buff->buffer[i - 1]));
-        printf(PRINTAT"%c%c""%s\0", 21, i, command);
+    // Ensure the rest is cleared
+    for (; i <= CONTROL_BUFFER_SIZE; i++) {
+        printf(PRINTAT"%c%c""%-12s", 18, i + 13, " ");
     }
 }
 
@@ -73,7 +75,7 @@ int buffer_push(unsigned char c, ControlBuffer* buff) {
 
 unsigned char buffer_pop(ControlBuffer* buff) {
     unsigned char c;
-    if (buff->bufferIndex == 1) {
+    if (buff->bufferIndex == 0) {
         return 0;
     }
     buff->bufferIndex = buff->bufferIndex - 1;
@@ -83,7 +85,7 @@ unsigned char buffer_pop(ControlBuffer* buff) {
 }
 
 void initialise_control_buffer(ControlBuffer *buff) {
-    buff->bufferIndex = 1;
+    buff->bufferIndex = 0;
     buff->lastCharSeen = 0;
     buff->buffer = (unsigned char*)malloc(CONTROL_BUFFER_SIZE * sizeof(unsigned char));
 }
@@ -107,7 +109,7 @@ void execute_command(ControlBuffer *ctrlBuff, GameParameters* params) {
         //Push some bread to a slot
         d = buffer_pop(ctrlBuff);
         e = buffer_pop(ctrlBuff);
-        if (d >= '0' && d <= '9' && (e == 'W' || e == 'B'))  {
+        if (d >= '0' && d <= '9' && (e == 'W' || e == 'B' || e == 'G'))  {
             //Valid format
             params->messageAddress = 100 + d - '0';
             BreadState* new_slice = malloc(sizeof(struct BreadStateStruct));
@@ -124,7 +126,6 @@ void execute_command(ControlBuffer *ctrlBuff, GameParameters* params) {
         //It's a bust
         buffer_push(c, ctrlBuff);
     }
-    buffer_restack(ctrlBuff);
 }
 
 void command_entry_func(GameComponent* input, GameParameters* params) {
@@ -160,12 +161,12 @@ void command_entry_func(GameComponent* input, GameParameters* params) {
             //(ctrlBuff->buffer)[0] = 0;
             execute_command(ctrlBuff, params);
         } else {
-            buffer_push(c, ctrlBuff);
+            buffer_push(c, ctrlBuff); 
         }
         buffer_restack(ctrlBuff);
     }
     ctrlBuff->lastCharSeen = c;
-//  printf(PRINTAT "\x01\x17" "%-32s", ctrlBuff->buffer);
+    //printf(PRINTAT "\x01\x17" "%-32s", ctrlBuff->buffer);
  
 }
 

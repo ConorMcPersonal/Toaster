@@ -79,7 +79,7 @@ void slot_func(GameComponent* input, GameParameters* params) {
 int main() {
 
   int i;
-  SlotMonitor *testMon = get_slot_monitor(3, 5);
+  SlotMonitor *testMon = get_slot_monitor(3, 5, 1);
 
   SlotState s1state = {
     1, //int       slot_number; // Identifier of this slot
