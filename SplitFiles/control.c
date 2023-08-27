@@ -12,7 +12,7 @@
 // zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_CONTROL control.c -o control -create-app
 
 char* buffer_getcommand(const char c) {
-    char* retVal = "   ";
+    char* retVal = "         ";
     switch(c) {
         case 'B':
             retVal = "Brown";
@@ -41,7 +41,7 @@ char* buffer_getcommand(const char c) {
             sprintf(retVal, "slot %c", c);
             break;
         default:
-            retVal = "EH?";
+            retVal = "you wot??";
     }
     return retVal;
 }
@@ -91,8 +91,7 @@ void initialise_control_buffer(ControlBuffer *buff) {
 }
 
 void execute_command(ControlBuffer *ctrlBuff, GameParameters* params) {
-    unsigned char c, d, e;
-    
+    unsigned char c, d, e; 
     c = buffer_pop(ctrlBuff);
     if (c == 'P') {
         //Pop some toast
@@ -114,7 +113,20 @@ void execute_command(ControlBuffer *ctrlBuff, GameParameters* params) {
             params->messageAddress = 100 + d - '0';
             BreadState* new_slice = malloc(sizeof(struct BreadStateStruct));
             new_slice->temperature = 0;
-            new_slice->moisture = ((e == 'B')? 75: 50) + rand()%50; //Brown takes longer
+            switch(e) {
+                case 'W':
+                // white bread is driest
+                new_slice->moisture = 50 + rand()%50;
+                break;
+                case 'B':
+                // brown takes longer
+                new_slice->moisture = 75 + rand()%60;
+                break;
+                case 'G':
+                // Bagel is a gamble
+                new_slice->moisture = 25 + rand()%150;
+                break;
+            }
             new_slice->toastedness = 0;
             params->message = new_slice;
             params->messageSourceAddress = (void *)ctrlBuff;
