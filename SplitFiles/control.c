@@ -15,16 +15,19 @@ char* buffer_getcommand(const char c) {
     char* retVal = "   ";
     switch(c) {
         case 'B':
-            retVal = "BRN";
+            retVal = "Brown";
             break;
         case 'W':
-            retVal = "WHT";
+            retVal = "White";
             break;
         case 'T':
-            retVal = "TST";
+            retVal = "Toast it!";
             break;
         case 'P':
-            retVal = "POP";
+            retVal = "Pop it!";
+            break;
+        case 'G':
+            retVal = "baGel";
             break;
         case '1':
         case '2':
@@ -35,7 +38,7 @@ char* buffer_getcommand(const char c) {
         case '7':
         case '8':
         case '9':
-            sprintf(retVal, "S %c", c);
+            sprintf(retVal, "slot %c", c);
             break;
         default:
             retVal = "EH?";
@@ -48,14 +51,15 @@ void buffer_restack(const ControlBuffer* const buff) {
     int i;
     char* command;
     const int buffer_index = buff->bufferIndex;
-    // first clean the buffer
-    for (i = 1; i <= CONTROL_BUFFER_SIZE; i++) {
-        printf(PRINTAT"%c%c""   \0", 28, i);
+    // Write out commands
+    printf(PRINTAT"%c%c""%-12s", 18, 12, "Commands");
+    for (i = 0; i < buffer_index; ++i) {
+        command = buffer_getcommand((buff->buffer[i]));
+        printf(PRINTAT"%c%c""%-12s", 18, i + 13, command);
     }
-    // now write out stack
-    for (i = 1; i <= buffer_index; i++) {
-        command = buffer_getcommand((buff->buffer[i - 1]));
-        printf(PRINTAT"%c%c""%s\0", 28, i, command);
+    // Ensure the rest is cleared
+    for (; i <= CONTROL_BUFFER_SIZE; i++) {
+        printf(PRINTAT"%c%c""%-12s", 18, i + 13, " ");
     }
 }
 
@@ -105,7 +109,7 @@ void execute_command(ControlBuffer *ctrlBuff, GameParameters* params) {
         //Push some bread to a slot
         d = buffer_pop(ctrlBuff);
         e = buffer_pop(ctrlBuff);
-        if (d >= '0' && d <= '9' && (e == 'W' || e == 'B'))  {
+        if (d >= '0' && d <= '9' && (e == 'W' || e == 'B' || e == 'G'))  {
             //Valid format
             params->messageAddress = 100 + d - '0';
             BreadState* new_slice = malloc(sizeof(struct BreadStateStruct));
@@ -162,7 +166,7 @@ void command_entry_func(GameComponent* input, GameParameters* params) {
         buffer_restack(ctrlBuff);
     }
     ctrlBuff->lastCharSeen = c;
-//  printf(PRINTAT "\x01\x17" "%-32s", ctrlBuff->buffer);
+    //printf(PRINTAT "\x01\x17" "%-32s", ctrlBuff->buffer);
  
 }
 

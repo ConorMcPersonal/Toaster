@@ -26,13 +26,13 @@ void draw_tick_line(const unsigned int tick)
   }
 }
 
-void wait_key(GameComponent* input, GameParameters* params) {
+void wait_for_a_key(GameComponent* input, GameParameters* params) {
     unsigned char c;
     in_wait_key();
     c = in_inkey();
     in_wait_nokey();
 
-    printf(PRINTAT"\x01\x12""Key pressed is %c (0x%02X)\n", c, c);
+    //printf(PRINTAT"\x01\x12""Key pressed is %c (0x%02X)\n", c, c);
 }
 
 void tick_func(GameComponent* input, GameParameters* params) {
@@ -68,65 +68,44 @@ void smoke_alarm_func(GameComponent* input, GameParameters* params) {
   params->maxToast = 0; //Reset for next loop
 }
 
-#ifdef _TEST_GAME
-int main()
+int main_game()
 {
-  int i;
-  //Clear screen
-  zx_cls(PAPER_WHITE);
-  bit_fx(BFX_KLAXON);
+    int i;
+    //Clear screen
+    zx_cls(PAPER_WHITE);
+    printf(PRINTAT "\x05\x0B" "Press any key to start");
+    wait_for_a_key(NULL, NULL);
+    zx_cls(PAPER_WHITE);
+    bit_fx(BFX_KLAXON);
 
-  // Initialize the "game" - do the loop backwards
-  GameComponent collector = {
-    (void*)NULL, //ptr
-    &toast_collector_func,  //func
-    (GameComponent *)NULL //next - this is end of the line
-  };
-
-  GameComponent smokeAlarm = {
-    (void*)NULL, //ptr
-    &smoke_alarm_func, //func
-    &collector //next
-  };
-
-  SlotState s1state = {
-    1, //int       slot_number; // Identifier of this slot
-    0, //int       temperature;
-    0, //int       power;   //Current power level
-    3, //int       x_coord; //screen x-coord
-    5, //int       y_coord; //screen y-coord
-    (BreadState*) NULL, //bread
-    get_slot_monitor(3, 5) //slot monitor
-  };
-  GameComponent slot1 = {
-    (void*)&s1state, //ptr
-    &slot_func, //func
-    &smokeAlarm //next
-  };
-  
-  /*
-  if (0) {
-    DispatcherState dispState = {-1}; //.last_time_int
-    GameComponent dispatcher = {
-      (void*)&dispState, //ptr
-      &send_toast_func, //func
-      &slot1 //next
+    // Initialize the "game" - do the loop backwards
+    GameComponent collector = {
+      (void*)NULL, //ptr
+      &toast_collector_func,  //func
+      (GameComponent *)NULL //next - this is end of the line
     };
 
-    DispatcherState popState = {-1}; //.last_time_int
-    GameComponent popper = { 
-      (void*)&popState, // ptr
-      &popper_func, //func
-      &dispatcher //next
+    GameComponent smokeAlarm = {
+      (void*)NULL, //ptr
+      &smoke_alarm_func, //func
+      &collector //next
     };
 
-    GameComponent ticker = {
-                            (void*)NULL, //ptr
-                            &tick_func, //func
-                            &popper //next
-                            };
-  } else {
-    */
+    SlotState s1state = {
+      1, //int       slot_number; // Identifier of this slot
+      0, //int       temperature;
+      0, //int       power;   //Current power level
+      3, //int       x_coord; //screen x-coord
+      5, //int       y_coord; //screen y-coord
+      (BreadState*) NULL, //bread
+      get_slot_monitor(3, 5, 1) //slot monitor
+    };
+    GameComponent slot1 = {
+      (void*)&s1state, //ptr
+      &slot_func, //func
+      &smokeAlarm //next
+    };
+
     ControlBuffer buff = {
         0,
         0,
@@ -147,30 +126,33 @@ int main()
                             };
   //}
 
-  //Now the parameters
-  GameParameters params =  { 0, //.ticks = 
-                              0,//.score =
-                              0,//.slices = 
-                              0,//.game_over_flag = 
-                              0,//.max_toast = 
-                              0,//.message_address = 
-                              (void*)NULL//.message = 
-                           };
+    //Now the parameters
+    GameParameters params =  { 0, //.ticks = 
+                                0,//.score =
+                                0,//.slices = 
+                                0,//.game_over_flag = 
+                                0,//.max_toast = 
+                                0,//.message_address = 
+                                (void*)NULL//.message = 
+                            };
 
-  // draw starting time line
-  for (i = 0; i < 256; i++) {
-    *zx_pxy2saddr(i, 191) |= zx_px2bitmask(i);
-  }
+    // draw starting time line
+    for (i = 0; i < 256; i++) {
+      *zx_pxy2saddr(i, 191) |= zx_px2bitmask(i);
+    }
+    
+    printf(PRINTAT"%c%c""%-12s", 18, 12, "Commands");
+    printf(PRINTAT"%c%c""%-12s", 18, 3,  "Order Queue");
 
-  for (i = 0; i < MAX_TICKS; i++) {
-    GameComponent* comp = &ticker;
-    //ticker.func(comp, &params);
-    while (comp) {
-      comp->func(comp, &params);
-      //wait_key(comp, &params);
-      //printf(PRINTAT "\x01\x02" "MsgAddr = %d    ", params.message_address);
-      //WaitKey(comp, &params);
-      comp = comp->next;
+    for (i = 0; i < MAX_TICKS; i++) {
+      GameComponent* comp = &ticker;
+      //ticker.func(comp, &params);
+      while (comp) {
+        comp->func(comp, &params);
+        //wait_key(comp, &params);
+        //printf(PRINTAT "\x01\x02" "MsgAddr = %d    ", params.message_address);
+        //WaitKey(comp, &params);
+        comp = comp->next;
     }
   }
   printf(PRINTAT "\x01\x0B" "Final score %d ", (params.slices * params.score));
@@ -178,5 +160,12 @@ int main()
   //we malloc this so free it
   free(buff.buffer);
   return params.score;
+} 
+
+
+#ifdef _TEST_GAME
+int main()
+{
+    return main_game();
 } 
 #endif
