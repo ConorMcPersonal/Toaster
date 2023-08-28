@@ -84,8 +84,9 @@ int main_game()
     printf(PRINTAT "\x01\x07" "\x12\x31\x10\x32" "Can you handle the pressure?\x12\x30\x10\x30");
     printf(PRINTAT "\x05\x0B" "Press any key to start");
     wait_for_a_key(NULL, NULL);
-    int rando = *((int *)49161);
-    srand(rando);
+    // get a random seed based on frame count
+    int *rando = 23672;
+    srand(*rando);
     zx_cls(PAPER_WHITE);
     //bit_fx(BFX_KLAXON);
   
