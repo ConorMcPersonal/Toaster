@@ -11,20 +11,20 @@
 // Can be compiled with:
 // zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_MUSIC music.c -o music -create-app
 
-Note* step_music(Music* music) {
+Note* step_music(Music* music, Note* G_note) {
     Note* retVal = NULL;
     if (music->subCount > 0) {
         //Keep counting down
         music->subCount = music->subCount - 1;
 
-        if ((music->buffer[music->bufferIndex]) == 1 || G_Note.time != 0) {
+        if ((music->buffer[music->bufferIndex]) == 1 || G_note->time != 0) {
             //Pause, or at least do not update the note
             retVal = NULL;
             return retVal;
         }
-        G_Note.time  = music->buffer[music->bufferIndex + 2];
-        G_Note.pitch = music->buffer[music->bufferIndex + 3];
-        retVal = &G_Note;
+        G_note->time  = music->buffer[music->bufferIndex + 2];
+        G_note->pitch = music->buffer[music->bufferIndex + 3];
+        retVal = G_note;
     }
     if (music->subCount == 0) {
         //Time to move on
@@ -47,7 +47,7 @@ Note* step_music(Music* music) {
     return retVal;
 }
 
-void step_tunes(Music** tunes, int numTunes) {
+void step_tunes(Music** tunes, int numTunes, Note* G_note) {
     int i, have_note;
     Note* next_note;
     Note* play_note;
@@ -55,14 +55,14 @@ void step_tunes(Music** tunes, int numTunes) {
     play_note = NULL;
     for (i = 0; i < numTunes; ++i) {
         //try play_note = play_note || tunes[i]->incBuffer(tunes[i]);
-        next_note = tunes[i]->incBuffer(tunes[i]);
+        next_note = tunes[i]->incBuffer(tunes[i], G_note);
         if (have_note == 0 && next_note != NULL) {
             play_note = next_note;
             have_note = 1;
         }
     }
     if (have_note != 0) {
-        printf(PRINTAT"\x05\x15""%d %-10d", tunes[0]->bufferIndex, tunes[1]->bufferIndex);
+        //printf(PRINTAT"\x05\x15""%d %-10d", tunes[0]->bufferIndex, tunes[1]->bufferIndex);
         //printf(PRINTAT"\x05\x16""%u %-10u", play_note->time, play_note->pitch);
         bit_beep(play_note->time, play_note->pitch);
         play_note->time = 0;
@@ -115,13 +115,19 @@ int music_main()
         &step_music
     };
 
+    
+    Note G_Note = {
+        0, //time
+        0  //pitch
+    };
+
     i = 0;
     j = 0;
     Music* tunes[] = {&toast_track, &drum_track};
     //Clear screen
     zx_cls(PAPER_WHITE);
     while (1) {
-        step_tunes(tunes, 2);
+        step_tunes(tunes, 2, &G_Note);
         //for (j = 0; j < 1; ++j) {
             printf(PRINTAT"\x05\x05""%d %d %d %d", j, *rando, *(rando + 1), *(rando + 2));
         //}

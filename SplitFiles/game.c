@@ -8,9 +8,10 @@
 #include "util.h"
 #include "slot_monitor.h"
 #include "control.h"
+#include "music.h"
 
 // Compile with:
-// zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_GAME slot.c slot_monitor.c game.c control.c -o game -create-app
+// zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_GAME slot.c slot_monitor.c game.c control.c music.c -o game -create-app
 
 void draw_tick_line(const unsigned int tick)
 {
@@ -86,6 +87,60 @@ int main_game()
     srand(rando);
     zx_cls(PAPER_WHITE);
     bit_fx(BFX_KLAXON);
+  
+  // *******************************************************
+  // Music set-up
+  // *******************************************************
+    unsigned int drum_inst[] = {1, 34,
+            2, 1, 2, 4000,
+            1, 55,
+            2, 1, 2, 4000,
+            1, 55,
+            2, 1, 2, 4000,
+            1, 55,
+            2, 1, 2, 4000,
+            1, 55,
+            2, 1, 2, 4000,
+            1, 34,
+            2, 1, 2, 4000,
+            0
+    };
+    unsigned int toast_inst[] = {1, 294,
+                1, 294,
+                1, 294,
+                1, 294,
+                2, 4, 10, 7500,
+                1, 286,
+                2, 4, 10, 7500,
+                0
+    };
+
+    Music drum_track = {
+        (unsigned int *)&drum_inst,
+        0,
+        0,
+        0,
+        &step_music
+    };
+
+    Music toast_track = {
+        (unsigned int *)&toast_inst,
+        0,
+        0,
+        0,
+        &step_music
+    };
+
+    Note G_Note = {
+        0, //time
+        0  //pitch
+    };
+    
+    Music* tunes[] = {&toast_track, &drum_track};
+    // ****************************************************
+    //  Music set-up ends
+    // *******************************************************
+
 
     // Initialize the "game" - do the loop backwards
     GameComponent collector = {
@@ -162,6 +217,7 @@ int main_game()
         //printf(PRINTAT "\x01\x02" "MsgAddr = %d    ", params.message_address);
         //WaitKey(comp, &params);
         comp = comp->next;
+        step_tunes(tunes, 2, &G_Note);
     }
   }
   printf(PRINTAT "\x01\x0B" "Final score %d ", (params.slices * params.score));

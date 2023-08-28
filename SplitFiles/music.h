@@ -8,7 +8,7 @@ struct Note_Struct;
 typedef struct Music_Struct  Music;
 typedef struct Note_Struct   Note;
 
-typedef Note* (*MusicInc)(Music*);
+typedef Note* (*MusicInc)(Music*, Note*);
 
 struct Music_Struct {
   unsigned int *     buffer;      //The music expressed as a string of integers, zero-terminated (will loop round)
@@ -23,10 +23,7 @@ struct Note_Struct {
     unsigned int pitch; //Frequency in Hertz
 };
 
-Note G_Note = {
-    0, //time
-    0  //pitch
-};
-
+Note* step_music(Music* music, Note* G_note);
+void step_tunes(Music** tunes, int numTunes, Note* G_note);
 
 #endif
