@@ -79,7 +79,7 @@ int main_game()
     printf(PRINTAT "\x01\x03" "We loved your job application to");
     printf(PRINTAT "\x01\x04" "be our new breakfast Toast Host,");
     printf(PRINTAT "\x01\x05" "but now stuff gets really tasty.");
-    printf(PRINTAT "\x01\x07" "\x12\x31\x10\x32" "Can you handle the pressure?\x12\x30\x10\x30");
+    printf(PRINTAT "\x01\x07" "\x12\x31\x10\x32" "Can you take the heat?\x12\x30\x10\x30");
     printf(PRINTAT "\x05\x0B" "Press any key to start");
     wait_for_a_key(NULL, NULL);
     // get a random seed based on frame count
@@ -87,6 +87,7 @@ int main_game()
     srand(*rando);
     zx_cls(PAPER_WHITE);
     bit_fx(BFX_KLAXON);
+    printf("%d\n", *rando);
 
     // Initialize the "game" - do the loop backwards
     GameComponent collector = {

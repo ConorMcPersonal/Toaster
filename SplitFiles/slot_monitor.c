@@ -79,6 +79,7 @@ void draw_slot(SlotMonitor* slotMon, SlotState* slot) {
 SlotMonitor* get_slot_monitor(unsigned char x, unsigned char y, int slotIndex) {
     long screenOffset;
     long attrOffset;
+    int i;
 
     //Spectrum screen pixel arithmetic - three sections of 8 lines of 32 (8x8) characters.
     //All first rows, then all second rows and so on...
@@ -101,9 +102,23 @@ SlotMonitor* get_slot_monitor(unsigned char x, unsigned char y, int slotIndex) {
 
     //Set up attributes - Blue x2, Magenta x2, Red x2, Black x2 - all with white paper
     //const unsigned char* attrs = (unsigned char*)"\x79\x79\x7B\x7B\x7A\x7A\x78\x78"; //BRIGHT
-    const unsigned char* attrs = (unsigned char*)"\x39\x39\x3B\x3B\x3A\x3A\x38\x38"; //DIMMER
-    memcpy(slotMon->startAttributes, attrs, 7);
-    memcpy(slotMon->startAttributes + 32, attrs, 7); //Next row down
+    //const unsigned char* attrs = (unsigned char*)"\x39\x39\x3B\x3B\x3A\x3A\x38\x38"; //DIMMER
+    // zx_pxy2aaddr(x,y) returns char*
+    for (i = 0; i < 2; i++) {
+        int x1 = x - 1;
+        int y1 = i + y - 1;
+        *zx_cxy2aaddr(x1++, y1) = PAPER_WHITE + INK_BLACK;
+        *zx_cxy2aaddr(x1++, y1) = PAPER_WHITE + INK_BLACK;
+        *zx_cxy2aaddr(x1++, y1) = PAPER_WHITE + INK_RED;
+        *zx_cxy2aaddr(x1++, y1) = PAPER_WHITE + INK_RED;
+        *zx_cxy2aaddr(x1++, y1) = PAPER_WHITE + INK_MAGENTA;
+        *zx_cxy2aaddr(x1++, y1) = PAPER_WHITE + INK_MAGENTA;
+        *zx_cxy2aaddr(x1++, y1) = PAPER_WHITE + INK_BLUE;
+        *zx_cxy2aaddr(x1, y1) = PAPER_WHITE + INK_BLUE;
+    }
+    //memcpy(slotMon->startAttributes, attrs, 7);
+    //memcpy(slotMon->startAttributes + 32, attrs, 7); //Next row down
+    //*zx_cxy2aaddr(x + 1, y - 1) = PAPER_WHITE + INK_RED;
     printf(PRINTAT"%c%c""Slot %d", x, y - 1, slotIndex);
     return slotMon;
 }
