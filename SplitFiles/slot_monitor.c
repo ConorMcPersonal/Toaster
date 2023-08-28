@@ -17,6 +17,8 @@
 #include "slot_monitor.h"
 #include "util.h"
 
+int dirty_graphics = 0;
+
 // This function writes the bytes for the line into buffer
 void value_to_line(unsigned char* buffer, int byte_count, int value, int range, int min) {
     //How many bits to set
@@ -46,8 +48,41 @@ int line_to_mem(void* targetAddr, void* source, long size, long increment) {
     return offset;
 }
 
+void draw_value(const unsigned int slot, const int value, const unsigned int task,
+    const int range, const int max)
+{
+    if (value <= max) {
+        const unsigned int offset = slot * 4 * 8 + task * 3;
+        int i, j, x;
+        const unsigned int step_value = max / range;
+        x = 16;
+        for (i = 0; i < value; i+= step_value) {
+            for (j = 0; j < 2; j++) {
+                *zx_pxy2saddr(x, offset + j) |= zx_px2bitmask(x);
+            }
+            x++;
+        }
+        for (; i < max; i+= step_value) {
+            for (j = 0; j < 2; j++) {
+               unsigned char pByte = *zx_pxy2saddr(x, offset + j);
+               if (pByte != 0) {
+                    unsigned char mask_out = ~zx_px2bitmask(x);
+                    *zx_pxy2saddr(x, offset + j) &= mask_out;
+                }
+                //*zx_pxy2saddr(x, offset + j) ^= zx_px2bitmask(x);
+            }
+            x++;
+        }
+    }
+}
+
 void draw_slot(SlotMonitor* slotMon, SlotState* slot) {
-    unsigned char line[8]; 
+    draw_value(slot->slotNumber, slot->temperature, 0, 64, 256);
+    draw_value(slot->slotNumber, slot->power, 1, 64, 256);
+    draw_value(slot->slotNumber, slot->bread->moisture, 2, 64, 256);
+    draw_value(slot->slotNumber, slot->bread->toastedness, 3, 64, 256);
+
+/*  unsigned char line[8]; 
     int lineInc = 0;
     // Draw lines for Slot temp/power, Bread moisture/toastedness
     value_to_line(&(line[0]), 7, slot->temperature, 200, 0);
@@ -73,7 +108,7 @@ void draw_slot(SlotMonitor* slotMon, SlotState* slot) {
         value_to_line(&(line[0]), 7, 0, 200, 0);
     }
     lineInc += line_to_mem(slotMon->startPixels + lineInc, &line, 7, 256);
-
+*/
 }
 
 SlotMonitor* get_slot_monitor(unsigned char x, unsigned char y, int slotIndex) {
@@ -107,18 +142,15 @@ SlotMonitor* get_slot_monitor(unsigned char x, unsigned char y, int slotIndex) {
     for (i = 0; i < 2; i++) {
         int x1 = x - 1;
         int y1 = i + y - 1;
-        *zx_cxy2aaddr(x1++, y1) = PAPER_WHITE + INK_BLACK;
-        *zx_cxy2aaddr(x1++, y1) = PAPER_WHITE + INK_BLACK;
-        *zx_cxy2aaddr(x1++, y1) = PAPER_WHITE + INK_RED;
-        *zx_cxy2aaddr(x1++, y1) = PAPER_WHITE + INK_RED;
-        *zx_cxy2aaddr(x1++, y1) = PAPER_WHITE + INK_MAGENTA;
-        *zx_cxy2aaddr(x1++, y1) = PAPER_WHITE + INK_MAGENTA;
         *zx_cxy2aaddr(x1++, y1) = PAPER_WHITE + INK_BLUE;
-        *zx_cxy2aaddr(x1, y1) = PAPER_WHITE + INK_BLUE;
+        *zx_cxy2aaddr(x1++, y1) = PAPER_WHITE + INK_BLUE;
+        *zx_cxy2aaddr(x1++, y1) = PAPER_WHITE + INK_MAGENTA;
+        *zx_cxy2aaddr(x1++, y1) = PAPER_WHITE + INK_MAGENTA;
+        *zx_cxy2aaddr(x1++, y1) = PAPER_WHITE + INK_RED;
+        *zx_cxy2aaddr(x1++, y1) = PAPER_WHITE + INK_RED;
+        *zx_cxy2aaddr(x1++, y1) = PAPER_WHITE + INK_BLACK;
+        *zx_cxy2aaddr(x1, y1) = PAPER_WHITE + INK_BLACK;
     }
-    //memcpy(slotMon->startAttributes, attrs, 7);
-    //memcpy(slotMon->startAttributes + 32, attrs, 7); //Next row down
-    //*zx_cxy2aaddr(x + 1, y - 1) = PAPER_WHITE + INK_RED;
     printf(PRINTAT"%c%c""Slot %d", x, y - 1, slotIndex);
     return slotMon;
 }
