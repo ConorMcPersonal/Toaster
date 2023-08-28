@@ -26,11 +26,15 @@ void draw_tick_line(const unsigned int tick)
   }
 }
 
-void wait_for_a_key(GameComponent* input, GameParameters* params) {
+int wait_for_a_key(GameComponent* input, GameParameters* params) {
     unsigned char c;
-    in_wait_key();
+    int rando = 0;
+    while (in_inkey() == 0) {
+      rando++;
+    }
     c = in_inkey();
     in_wait_nokey();
+    return rando;
 
     //printf(PRINTAT"\x01\x12""Key pressed is %c (0x%02X)\n", c, c);
 }
@@ -81,13 +85,11 @@ int main_game()
     printf(PRINTAT "\x01\x05" "but now stuff gets really tasty.");
     printf(PRINTAT "\x01\x07" "\x12\x31\x10\x32" "Can you take the heat?\x12\x30\x10\x30");
     printf(PRINTAT "\x05\x0B" "Press any key to start");
-    wait_for_a_key(NULL, NULL);
+    int rando = wait_for_a_key(NULL, NULL);
     // get a random seed based on frame count
-    int *rando = 23672;
-    srand(*rando);
+    srand(rando);
     zx_cls(PAPER_WHITE);
     bit_fx(BFX_KLAXON);
-    printf("%d\n", *rando);
 
     // Initialize the "game" - do the loop backwards
     GameComponent collector = {
