@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sound.h>
+#include <stdbool.h>
 
 #include "slot_monitor.h"
 #include "util.h"
@@ -52,7 +53,10 @@ void slot_func(GameComponent* input, GameParameters* params) {
   }
 
   // Now do the toasting thing
+  bool update_required = false;
+  bool increment = true;
   if (state->bread) {
+    update_required = true;
     breadStateOut = 1;
     state->power = 200; // Slot is on
     state->temperature += ((state->power - state->temperature) / 10); //temperature may be rising (or steadyish close to 200)
@@ -67,10 +71,16 @@ void slot_func(GameComponent* input, GameParameters* params) {
     params->maxToast = MAX(state->bread->toastedness, params->maxToast);
   } else {
     //Cooling - make zero the ambient temp
-    state->temperature += ((0 - state->temperature) / 10);
+    int temp_diff = 0 - (state->temperature / 10);
+    if (temp_diff < 0) {
+      state->temperature += temp_diff;
+      update_required = true;
+      increment = false;
+    }
   }
-
-  state->slotMon->draw_slot(state->slotMon, state);
+  if (update_required) {
+    state->slotMon->draw_slot(state->slotMon, state, increment);
+  }
 
 }
 
