@@ -61,9 +61,7 @@ void toast_collector_func(GameComponent* input, GameParameters* params) {
 void smoke_alarm_func(GameComponent* input, GameParameters* params) {
   input;
   if (params->maxToast > 200) {
-    if (params->ticks % 2 == 0) {
-      bit_fx(BFX_BEEP);
-    }
+    params->effect = TUNE_EFFECT;
     zx_border(params->ticks % 8);
   }
   params->maxToast = 0; //Reset for next loop
@@ -91,52 +89,11 @@ int main_game()
   // *******************************************************
   // Music set-up
   // *******************************************************
-    unsigned int drum_inst[] = {1, 34,
-            2, 1, 2, 4000,
-            1, 55,
-            2, 1, 2, 4000,
-            1, 55,
-            2, 1, 2, 4000,
-            1, 55,
-            2, 1, 2, 4000,
-            1, 55,
-            2, 1, 2, 4000,
-            1, 34,
-            2, 1, 2, 4000,
-            0
-    };
-    unsigned int toast_inst[] = {1, 294,
-                1, 294,
-                1, 294,
-                1, 294,
-                2, 4, 10, 7500,
-                1, 286,
-                2, 4, 10, 7500,
-                0
-    };
 
-    Music drum_track = {
-        (unsigned int *)&drum_inst,
-        0,
-        0,
-        0,
-        &step_music
-    };
-
-    Music toast_track = {
-        (unsigned int *)&toast_inst,
-        0,
-        0,
-        0,
-        &step_music
-    };
-
-    Note G_Note = {
-        0, //time
-        0  //pitch
-    };
-    
-    Music* tunes[] = {&toast_track, &drum_track};
+    //Three-voice music player
+    MusicPlayer* music_player = get_music_player(3);
+    music_player->add_music(music_player, TUNE_DRUM, 2);
+    music_player->add_music(music_player, TUNE_TOAST, 1);
     // ****************************************************
     //  Music set-up ends
     // *******************************************************
@@ -217,8 +174,13 @@ int main_game()
         //printf(PRINTAT "\x01\x02" "MsgAddr = %d    ", params.message_address);
         //WaitKey(comp, &params);
         comp = comp->next;
-        step_tunes(tunes, 2, &G_Note);
-    }
+        music_player->play(music_player);
+      }
+      //Check for a new sound effect
+      if (params.effect != NULL) {
+        music_player->add_music_if_different(music_player, params.effect, 0);
+        params.effect = NULL;
+      }
   }
   printf(PRINTAT "\x01\x0B" "Final score %d ", (params.slices * params.score));
   bit_beepfx(BEEPFX_AWW);

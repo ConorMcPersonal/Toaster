@@ -7,67 +7,118 @@
 #include "game.h"
 #include "util.h"
 #include "music.h"
+#ifdef _TEST_MUSIC
+#include "tune_library.c"
+#endif
 
 // Can be compiled with:
 // zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_MUSIC music.c -o music -create-app
 
-Note* step_music(Music* music, Note* G_note) {
+Note* step_music(Music* music, Note* note) {
     Note* retVal = NULL;
     if (music->subCount > 0) {
         //Keep counting down
         music->subCount = music->subCount - 1;
 
-        if ((music->buffer[music->bufferIndex]) == 1 || G_note->time != 0) {
+        if ((music->buffer[music->bufferIndex]) == 1 || note->time != 0) {
             //Pause, or at least do not update the note
-            retVal = NULL;
-            return retVal;
+            return NULL;
         }
-        G_note->time  = music->buffer[music->bufferIndex + 2];
-        G_note->pitch = music->buffer[music->bufferIndex + 3];
-        retVal = G_note;
+        note->time  = music->buffer[music->bufferIndex + 2];
+        note->pitch = music->buffer[music->bufferIndex + 3];
+        retVal = note;
     }
     if (music->subCount == 0) {
         //Time to move on
         music->bufferIndex = music->bufferIndex + music->nextInc;
         if (music->buffer[music->bufferIndex] == 0) {
             //Loop back to the start
-            music->bufferIndex = 0;
+            music->bufferIndex = music->startIndex;
         }
-        //Set up next command
-        if (music->buffer[music->bufferIndex] == 1) {
-            //A pause
-            music->subCount = music->buffer[music->bufferIndex + 1];
-            music->nextInc = 2;
-        } else if (music->buffer[music->bufferIndex] == 2) {
-            //Play a note
-            music->subCount = music->buffer[music->bufferIndex + 1];
-            music->nextInc = 4;
+        if (music->bufferIndex >= 0) {
+            //Set up next command
+            if (music->buffer[music->bufferIndex] == 1) {
+                //A pause
+                music->subCount = music->buffer[music->bufferIndex + 1];
+                music->nextInc = 2;
+            } else if (music->buffer[music->bufferIndex] == 2) {
+                //Play a note
+                music->subCount = music->buffer[music->bufferIndex + 1];
+                music->nextInc = 4;
+            }
         }
     }
     return retVal;
 }
 
-void step_tunes(Music** tunes, int numTunes, Note* G_note) {
-    int i, have_note;
+void step_player(MusicPlayer* player) {
+    int i;
     Note* next_note;
     Note* play_note;
-    have_note = 0;
     play_note = NULL;
-    for (i = 0; i < numTunes; ++i) {
-        //try play_note = play_note || tunes[i]->incBuffer(tunes[i]);
-        next_note = tunes[i]->incBuffer(tunes[i], G_note);
-        if (have_note == 0 && next_note != NULL) {
-            play_note = next_note;
-            have_note = 1;
+    for (i = 0; i < player->voiceCount; ++i) {
+        if ((player->tunes + i)->buffer != NULL) {
+            next_note = step_music((player->tunes + i), player->note);
+            if (play_note == NULL) {
+                play_note = next_note;
+            }
+        }
+        if ((player->tunes + i)->bufferIndex < 0) {
+            //This sound is played out - remove it
+            (player->tunes + i)->buffer = NULL;
         }
     }
-    if (have_note != 0) {
-        //printf(PRINTAT"\x05\x15""%d %-10d", tunes[0]->bufferIndex, tunes[1]->bufferIndex);
-        //printf(PRINTAT"\x05\x16""%u %-10u", play_note->time, play_note->pitch);
+    if (play_note != NULL) {
         bit_beep(play_note->time, play_note->pitch);
         play_note->time = 0;
     }
+}
 
+//Add a tune to a voice.  If it's voice 0 it'll be played once - the rest all loop
+void add_music(MusicPlayer* player, unsigned int* tune, unsigned char index) {
+    if (index >= player->voiceCount) {
+        bit_beep(1000, 1000);
+        return;
+    }
+    Music* thisTune = player->tunes + index;
+    thisTune->buffer = tune;
+    thisTune->startIndex = (index == 0)? -1: 0;
+    thisTune->bufferIndex = 0;
+    thisTune->nextInc = 0;
+    thisTune->subCount = 0;
+    return;
+}
+
+void add_music_if_different(MusicPlayer* player, unsigned int* tune, unsigned char index) {
+    if (index >= player->voiceCount) {
+        return;
+    }
+    if ((player->tunes + index)->buffer != tune) {
+        player->add_music(player, tune, index);
+    }
+}
+
+//Constructor for a Music Player
+MusicPlayer* get_music_player(unsigned char voiceCount) {
+    MusicPlayer* player = (MusicPlayer*)malloc(sizeof(MusicPlayer));
+    Music* tunesArray = (Music*)malloc(voiceCount * sizeof(Music));
+    Note* theNote = (Note*)malloc(sizeof(Note));
+    theNote->time = 0;
+    for (int i = 0; i < voiceCount; ++i) {
+        //Initialise
+        tunesArray[i].bufferIndex = 0;
+        tunesArray[i].nextInc = 0;
+        tunesArray[i].startIndex = 0;
+        tunesArray[i].subCount = 0;
+        tunesArray[i].buffer = NULL;
+    }
+    player->add_music = &add_music;
+    player->note = theNote;
+    player->tunes = tunesArray;
+    player->voiceCount = voiceCount;
+    player->play = &step_player;
+    player->add_music_if_different = &add_music_if_different;
+    return player;
 }
 
 int music_main()
@@ -99,39 +150,35 @@ int music_main()
                 0
     };
 
-    Music drum_track = {
-        (unsigned int *)&drum_inst,
-        0,
-        0,
-        0,
-        &step_music
+    unsigned int test_effect_inst[] = {
+          2, 4, 10, 1500
+        , 2, 4, 10, 7500
+        , 2, 4, 10, 4500
+        , 2, 4, 10, 1500
+        , 2, 4, 10, 7500
+        , 2, 4, 10, 1500
+        , 2, 4, 10, 7500
+        , 2, 4, 10, 1500
+        , 2, 4, 10, 7500
+        , 0
     };
 
-    Music toast_track = {
-        (unsigned int *)&toast_inst,
-        0,
-        0,
-        0,
-        &step_music
-    };
-
-    
-    Note G_Note = {
-        0, //time
-        0  //pitch
-    };
-
+    MusicPlayer *mPlayer = get_music_player(3);
+    mPlayer->add_music(mPlayer, (unsigned int*)&drum_inst, 2);
+    mPlayer->add_music(mPlayer, (unsigned int*)&toast_inst, 1);
     i = 0;
     j = 0;
-    Music* tunes[] = {&toast_track, &drum_track};
     //Clear screen
     zx_cls(PAPER_WHITE);
     while (1) {
-        step_tunes(tunes, 2, &G_Note);
+        mPlayer->play(mPlayer);
         //for (j = 0; j < 1; ++j) {
             printf(PRINTAT"\x05\x05""%d %d %d %d", j, *rando, *(rando + 1), *(rando + 2));
         //}
         j += 1;
+        if ((j % 500) == 0) {
+            mPlayer->add_music(mPlayer, (unsigned int*)&test_effect_inst, 0);
+        }
     }
     return 0;
 }
