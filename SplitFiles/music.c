@@ -126,46 +126,9 @@ int music_main()
     int i, j;
     unsigned char *rando = (unsigned char *)23672;
 
-    unsigned int drum_inst[] = {1, 34,
-                2, 1, 2, 4000,
-                1, 55,
-                2, 1, 2, 4000,
-                1, 55,
-                2, 1, 2, 4000,
-                1, 55,
-                2, 1, 2, 4000,
-                1, 55,
-                2, 1, 2, 4000,
-                1, 34,
-                2, 1, 2, 4000,
-                0
-    };
-    unsigned int toast_inst[] = {1, 294,
-                1, 294,
-                1, 294,
-                1, 294,
-                2, 4, 10, 7500,
-                1, 286,
-                2, 4, 10, 7500,
-                0
-    };
-
-    unsigned int test_effect_inst[] = {
-          2, 4, 10, 1500
-        , 2, 4, 10, 7500
-        , 2, 4, 10, 4500
-        , 2, 4, 10, 1500
-        , 2, 4, 10, 7500
-        , 2, 4, 10, 1500
-        , 2, 4, 10, 7500
-        , 2, 4, 10, 1500
-        , 2, 4, 10, 7500
-        , 0
-    };
-
     MusicPlayer *mPlayer = get_music_player(3);
-    mPlayer->add_music(mPlayer, (unsigned int*)&drum_inst, 2);
-    mPlayer->add_music(mPlayer, (unsigned int*)&toast_inst, 1);
+    mPlayer->add_music(mPlayer, TUNE_DRUM, 2);
+    mPlayer->add_music(mPlayer, TUNE_TOAST, 1);
     i = 0;
     j = 0;
     //Clear screen
@@ -177,7 +140,7 @@ int music_main()
         //}
         j += 1;
         if ((j % 500) == 0) {
-            mPlayer->add_music(mPlayer, (unsigned int*)&test_effect_inst, 0);
+            mPlayer->add_music(mPlayer, TUNE_EFFECT, 0);
         }
     }
     return 0;
