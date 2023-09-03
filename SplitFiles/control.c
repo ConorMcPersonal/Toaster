@@ -7,6 +7,7 @@
 #include "game.h"
 #include "util.h"
 #include "slot_monitor.h"
+#include "music.h"
 
 // Compile with:
 // zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_CONTROL control.c -o control -create-app
@@ -162,6 +163,7 @@ void command_entry_func(GameComponent* input, GameParameters* params) {
         c -= 32;
     }
     if (c && c != ctrlBuff->lastCharSeen) {
+        params->effect = TUNE_EFFECT_TICK;
         if (c == 'D' || c == 12) {
             buffer_pop(ctrlBuff);
         }

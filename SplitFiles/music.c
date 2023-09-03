@@ -125,6 +125,8 @@ int music_main()
 {
     int i, j;
     unsigned char *rando = (unsigned char *)23672;
+    unsigned int* effects[] = {TUNE_EFFECT_SHORT_BEEP, TUNE_EFFECT_UP, TUNE_EFFECT_DOWN, TUNE_EFFECT_BEEP, NULL};
+    int effectIndex = 0;
 
     MusicPlayer *mPlayer = get_music_player(3);
     mPlayer->add_music(mPlayer, TUNE_DRUM, 2);
@@ -140,7 +142,16 @@ int music_main()
         //}
         j += 1;
         if ((j % 500) == 0) {
-            mPlayer->add_music(mPlayer, TUNE_EFFECT, 0);
+            mPlayer->add_music(mPlayer, effects[effectIndex], 0);
+            effectIndex += 1;
+            if (effects[effectIndex] == NULL) {
+                effectIndex = 0;
+            }
+            //if ((j % 1000) == 0) {
+            //    mPlayer->add_music(mPlayer, TUNE_EFFECT_DOWN, 0);
+            //} else {
+            //    mPlayer->add_music(mPlayer, TUNE_EFFECT_UP, 0);
+            //}
         }
     }
     return 0;

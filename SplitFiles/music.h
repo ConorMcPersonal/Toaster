@@ -48,4 +48,9 @@ MusicPlayer* get_music_player(unsigned char);
 extern unsigned int* TUNE_DRUM;
 extern unsigned int* TUNE_TOAST;
 extern unsigned int* TUNE_EFFECT;
+extern unsigned int* TUNE_EFFECT_UP;
+extern unsigned int* TUNE_EFFECT_DOWN;
+extern unsigned int* TUNE_EFFECT_BEEP;
+extern unsigned int* TUNE_EFFECT_SHORT_BEEP;
+extern unsigned int* TUNE_EFFECT_TICK;
 #endif

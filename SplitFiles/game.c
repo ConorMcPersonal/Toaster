@@ -12,6 +12,9 @@
 
 // Compile with:
 // zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_GAME slot.c slot_monitor.c game.c control.c music.c -o game -create-app
+#ifdef _TEST_GAME
+#include "tune_library.c"
+#endif
 
 void draw_tick_line(const unsigned int tick)
 {
@@ -84,7 +87,7 @@ int main_game()
     int rando = *((int *)49161);
     srand(rando);
     zx_cls(PAPER_WHITE);
-    bit_fx(BFX_KLAXON);
+    //bit_fx(BFX_KLAXON);
   
   // *******************************************************
   // Music set-up
@@ -94,6 +97,7 @@ int main_game()
     MusicPlayer* music_player = get_music_player(3);
     music_player->add_music(music_player, TUNE_DRUM, 2);
     music_player->add_music(music_player, TUNE_TOAST, 1);
+    music_player->add_music(music_player, TUNE_EFFECT_BEEP, 0);
     // ****************************************************
     //  Music set-up ends
     // *******************************************************
