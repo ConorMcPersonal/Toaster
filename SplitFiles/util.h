@@ -9,4 +9,8 @@
 #define SCREENSTART 0x4000
 #define ATTRSTART   0x5800
 
+// frame counter
+void start_frame_count();
+extern unsigned int G_frames;
+
 #endif
