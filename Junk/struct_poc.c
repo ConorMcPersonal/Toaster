@@ -165,8 +165,11 @@ void DispatcherFunc(GameComponent* input, GameParameters* params) {
     if (params->message_address == 0) {//No message on the bus at this time
       BreadState* new_slice = malloc(sizeof(struct bread_state_struct));
       new_slice->temperature = 0;
+      new_slice->old_temperature = 0;
       new_slice->moisture = 50 + rand()%50;
+      new_slice->old_moisture = new_slice->moisture;
       new_slice->toastedness = 0;
+      new_slice->old_toastedness = 0;
       params->message_address = 101;
       params->message = (void*)new_slice;
     }

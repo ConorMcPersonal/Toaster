@@ -3,11 +3,15 @@
 
 
 #include "game.h"
+#include <stdbool.h>
 
 struct BreadStateStruct {
   int      temperature;
+  int      old_temperature;  
   int      moisture;
+  int      old_moisture;
   int      toastedness;
+  int      old_toastedness;
 };
 typedef struct BreadStateStruct BreadState;
 
@@ -22,7 +26,9 @@ typedef struct SlotMonitorStruct  SlotMonitor;
 struct SlotStateStruct {
   int       slotNumber; // Identifier of this slot
   int       temperature;
+  int       old_temperature;
   int       power;   //Current power level
+  int       old_power;
   int       xCoord; //screen x-coord
   int       yCoord; //screen y-coord
   BreadState* bread;
@@ -35,7 +41,7 @@ struct SlotMonitorStruct {
   unsigned char yBase;            // Y coordinate
   unsigned char *startPixels;     //where to start drawing pixels
   unsigned char *startAttributes; //where to write the attributes updates
-  void draw_slot(SlotMonitor*, SlotState*); //function to draw the monitor
+  void draw_slot(SlotMonitor*, SlotState*, bool); //function to draw the monitor
 };
 
 SlotMonitor* get_slot_monitor(unsigned char x, unsigned char y, int slotIndex);

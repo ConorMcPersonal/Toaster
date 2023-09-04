@@ -13,7 +13,7 @@
 // zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_CONTROL control.c -o control -create-app
 
 char* buffer_getcommand(const char c) {
-    char* retVal = "         ";
+    const char* retVal = "         ";
     switch(c) {
         case 'B':
             retVal = "Brown";
@@ -39,12 +39,12 @@ char* buffer_getcommand(const char c) {
         case '7':
         case '8':
         case '9':
-            sprintf(retVal, "slot %c", c);
+            sprintf((char *)retVal, "slot %c", c);
             break;
         default:
             retVal = "you wot??";
     }
-    return retVal;
+    return (char *)retVal;
 }
 
 //show the stack on the screen
@@ -125,7 +125,7 @@ void execute_command(ControlBuffer *ctrlBuff, GameParameters* params) {
                 break;
                 case 'G':
                 // Bagel is a gamble
-                new_slice->moisture = 25 + rand()%150;
+                new_slice->moisture = 50 + rand()%150;
                 break;
             }
             new_slice->toastedness = 0;
