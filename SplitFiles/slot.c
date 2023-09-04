@@ -17,6 +17,7 @@
 #include "slot_monitor.h"
 #include "util.h"
 #include "game.h"
+#include "music.h"
 
 void slot_func(GameComponent* input, GameParameters* params) {
   // What does a slot do?
@@ -37,7 +38,8 @@ void slot_func(GameComponent* input, GameParameters* params) {
       //Bread into the slot - let's TOAST!
       state->bread = (BreadState*)params->message;
       params->message = NULL;
-      bit_beepfx(BEEPFX_CLANG);
+      //bit_beepfx(BEEPFX_CLANG);
+      params->effect = TUNE_EFFECT_DOWN; 
     }
   } else if (params->messageAddress == 200 + state->slotNumber) {
     params->messageAddress = 0;
@@ -48,7 +50,8 @@ void slot_func(GameComponent* input, GameParameters* params) {
       params->messageSourceAddress = (void *)state;
       state->bread = NULL;
       state->power = 0;
-      bit_fx(BFX_EXPLOSION);
+      params->effect = TUNE_EFFECT_UP; 
+      //bit_fx(BFX_EXPLOSION);
     }
   }
 

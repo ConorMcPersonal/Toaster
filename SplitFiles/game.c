@@ -8,9 +8,13 @@
 #include "util.h"
 #include "slot_monitor.h"
 #include "control.h"
+#include "music.h"
 
 // Compile with:
-// zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_GAME slot.c slot_monitor.c game.c control.c -o game -create-app
+// zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_GAME slot.c slot_monitor.c game.c control.c music.c -o game -create-app
+#ifdef _TEST_GAME
+#include "tune_library.c"
+#endif
 
 void draw_tick_line(const unsigned int tick)
 {
@@ -64,9 +68,7 @@ void toast_collector_func(GameComponent* input, GameParameters* params) {
 void smoke_alarm_func(GameComponent* input, GameParameters* params) {
   input;
   if (params->maxToast > 200) {
-    if (params->ticks % 2 == 0) {
-      bit_fx(BFX_BEEP);
-    }
+    params->effect = TUNE_EFFECT;
     zx_border(params->ticks % 8);
   }
   params->maxToast = 0; //Reset for next loop
@@ -89,7 +91,24 @@ int main_game()
     // get a random seed based on frame count
     srand(rando);
     zx_cls(PAPER_WHITE);
-    bit_fx(BFX_KLAXON);
+
+    //bit_fx(BFX_KLAXON);
+  
+  // *******************************************************
+  // Music set-up
+  // *******************************************************
+
+    //Three-voice music player
+    MusicPlayer* music_player = get_music_player(3);
+    music_player->add_music(music_player, TUNE_DRUM, 2);
+    music_player->add_music(music_player, TUNE_TOAST, 1);
+    music_player->add_music(music_player, TUNE_EFFECT_BEEP, 0);
+    // ****************************************************
+    //  Music set-up ends
+    // *******************************************************
+
+
+
 
     // Initialize the "game" - do the loop backwards
     GameComponent collector = {
@@ -168,7 +187,13 @@ int main_game()
         //printf(PRINTAT "\x01\x02" "MsgAddr = %d    ", params.message_address);
         //WaitKey(comp, &params);
         comp = comp->next;
-    }
+        music_player->play(music_player);
+      }
+      //Check for a new sound effect
+      if (params.effect != NULL) {
+        music_player->add_music_if_different(music_player, params.effect, 0);
+        params.effect = NULL;
+      }
   }
   printf(PRINTAT "\x01\x0B" "Final score %d ", (params.slices * params.score));
   bit_beepfx(BEEPFX_AWW);
