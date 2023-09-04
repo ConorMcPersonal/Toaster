@@ -11,7 +11,7 @@
 #include "music.h"
 
 // Compile with:
-// zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_GAME slot.c slot_monitor.c game.c control.c music.c -o game -create-app
+// zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_GAME slot.c slot_monitor.c game.c control.c music.c util.c -o game -create-app
 #ifdef _TEST_GAME
 #include "tune_library.c"
 #endif
@@ -76,6 +76,7 @@ void smoke_alarm_func(GameComponent* input, GameParameters* params) {
 
 int main_game()
 {
+    start_frame_count();
     int i;
     //Clear screen
     zx_cls(PAPER_WHITE);
@@ -92,6 +93,7 @@ int main_game()
     srand(rando);
     zx_cls(PAPER_WHITE);
 
+    printf("%d", G_frames);
     //bit_fx(BFX_KLAXON);
   
   // *******************************************************
@@ -199,6 +201,9 @@ int main_game()
   bit_beepfx(BEEPFX_AWW);
   //we malloc this so free it
   free(buff.buffer);
+  while (1) {
+    printf(PRINTAT "\x01\x09" "Frame count %d ", (G_frames));
+  }
   return params.score;
 } 
 
