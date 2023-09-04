@@ -205,9 +205,9 @@ int main_game()
   bit_beepfx(BEEPFX_AWW);
   //we malloc this so free it
   free(buff.buffer);
-  while (1) {
-    printf(PRINTAT "\x01\x09" "Frame count %d ", (G_frames));
-  }
+  //while (1) {
+  //  printf(PRINTAT "\x01\x09" "Frame count %d ", (G_frames));
+  //}
   return params.score;
 } 
 

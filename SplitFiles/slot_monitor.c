@@ -22,12 +22,12 @@
 int plot_value(const unsigned int slot, const int value, const unsigned int task,
     const int range, const int max, bool increment, const int old_value)
 {
-    if (value <= max) {
+    if (value <= max && old_value >= 0) {
         const unsigned int offset = slot * 4 * 8 + task * 4;
         int i, j, x;
         const unsigned int step_value = max / range;
+        x = 16 + old_value / step_value;
         if (increment) {
-            x = 16 + old_value / step_value;
             for (i = old_value; i < value; i+= step_value) {
                 for (j = 0; j < 3; j++) {
                     if (x > 16) { // avoid negative charting
@@ -38,13 +38,12 @@ int plot_value(const unsigned int slot, const int value, const unsigned int task
             }
         }
         else {
-            x = 16 + value / step_value;
-            for (i = value; i < old_value; i+= step_value) {
+            for (i = old_value; i >= value; i-= step_value) {
                 for (j = 0; j < 3; j++) {
                     unsigned char mask_out = ~zx_px2bitmask(x);
                     *zx_pxy2saddr(x, offset + j) &= mask_out;
                 }
-                x++;
+                x--;
             }
         }
     }

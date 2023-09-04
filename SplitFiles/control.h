@@ -6,7 +6,7 @@
 // max stack depth
 static const unsigned int CONTROL_BUFFER_SIZE = 10;
 // length game runs for
-static const unsigned int MAX_TICKS = 8192;
+static const unsigned int MAX_TICKS = 4096;
 
 
 struct control_buffer_struct {
