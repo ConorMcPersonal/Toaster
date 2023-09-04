@@ -180,7 +180,10 @@ int main_game()
     printf(PRINTAT"%c%c""%-12s", 18, 12, "Commands");
     printf(PRINTAT"%c%c""%-12s", 18, 3,  "Order Queue");
 
+
     for (i = 0; i < MAX_TICKS; i++) {
+      int last_frame_count = G_frames;
+
       GameComponent* comp = &ticker;
       //ticker.func(comp, &params);
       while (comp) {
@@ -196,6 +199,7 @@ int main_game()
         music_player->add_music_if_different(music_player, params.effect, 0);
         params.effect = NULL;
       }
+      printf(PRINTAT"\x01\x0B""%d   ", G_frames - last_frame_count);
   }
   printf(PRINTAT "\x01\x0B" "Final score %d ", (params.slices * params.score));
   bit_beepfx(BEEPFX_AWW);
