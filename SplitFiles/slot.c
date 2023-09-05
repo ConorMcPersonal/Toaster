@@ -5,7 +5,7 @@
 //////////////////////////////////////////////////////////
 
 // Can be compiled with:
-// zcc +zx -vn -startup=0 -clib=sdcc_iy -D_TEST_SLOT slot.c slot_monitor.c game.c -o slot -create-app
+// zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_SLOT slot.c slot_monitor.c music.c -o slot -create-app
 
 #include <arch/zx.h>
 
