@@ -19,10 +19,11 @@
 #include "game.h"
 #include "music.h"
 
+#define TMAX 200
+
 void slot_func(GameComponent* input, GameParameters* params) {
   // What does a slot do?
   // Unpack state
-  int breadStateOut = 0;
   SlotState* state = (SlotState*)(input->ptr);
 
   //Check for a message
@@ -37,6 +38,7 @@ void slot_func(GameComponent* input, GameParameters* params) {
     } else {
       //Bread into the slot - let's TOAST!
       state->bread = (BreadState*)params->message;
+      state->power = TMAX;
       params->message = NULL;
       //bit_beepfx(BEEPFX_CLANG);
       params->effect = TUNE_EFFECT_DOWN; 
@@ -58,28 +60,31 @@ void slot_func(GameComponent* input, GameParameters* params) {
   // Now do the toasting thing
   bool update_required = false;
   bool increment = true;
-  if (state->bread) {
+  if (state->power != state->temperature) {
     update_required = true;
-    breadStateOut = 1;
-    state->power = 200; // Slot is on
-    state->temperature += ((state->power - state->temperature) / 10); //temperature may be rising (or steadyish close to 200)
-    state->bread->temperature += ((state->temperature - state->bread->temperature) / 10); //bread temperature also likely to be rising
+    increment = (state->power > state->temperature);
+    // Update the tick-wise integration of observed temperature differences
+    state->thermalAggregation += (state->power - state->temperature);
+    // Calculate new temperature from that
+    state->temperature = (int)(((long)TMAX * state->thermalAggregation) / state->thermalMass);
+#ifdef _TEST_SLOT
+    printf(PRINTAT"\x02\x0B""%d %d %d", state->thermalAggregation, state->temperature, state->power);
+#endif
+  }
+  if (state->bread) {
+    state->bread->thermalAggregation += (state->temperature - state->bread->temperature); //bread temperature also likely to be rising
+    state->bread->temperature = (int)(((long)TMAX * state->bread->thermalAggregation) / state->bread->thermalMass);
     if (state->bread->moisture > 0) {
-      //Dry it out before toastuing can commence
-      state->bread->moisture -= (state->bread->temperature / 10);
+      //Dry it out before toasting can commence
+      state->bread->moisture -= MIN(state->bread->moisture, (state->bread->temperature / 10));
     } else {
       //Can't toast at low temperatures!
       state->bread->toastedness += MAX(0, ((state->bread->temperature - 90) / 10));
     }
+#ifdef _TEST_SLOT
+    printf(PRINTAT"\x02\x0C""%d %d %d %d", state->bread->moisture, state->bread->temperature, state->bread->toastedness, state->bread->thermalAggregation);
+#endif
     params->maxToast = MAX(state->bread->toastedness, params->maxToast);
-  } else {
-    //Cooling - make zero the ambient temp
-    int temp_diff = 0 - (state->temperature / 10);
-    if (temp_diff < 0) {
-      state->temperature += temp_diff;
-      update_required = true;
-      increment = false;
-    }
   }
   if (update_required) {
     state->slotMon->draw_slot(state->slotMon, state, increment);
@@ -97,9 +102,13 @@ int main() {
   SlotState s1state = {
     1, //int       slot_number; // Identifier of this slot
     0, //int       temperature;
+    0,
     0, //int       power;   //Current power level
+    0,
     testMon->xBase, //int       x_coord; //screen x-coord
     testMon->yBase, //int       y_coord; //screen y-coord
+    8192, //thermal mass - quite low for the slot
+    0,    //thermalAggregation
     (BreadState*) NULL, //bread;
     (SlotMonitor *)testMon
   };
@@ -122,19 +131,24 @@ int main() {
 
   BreadState brd = {
     0,
+    0,
     100,
-    0
+    0,
+    0,
+    0,
+    32768, //thermalMass - high for bread
+    0      //thermalAggregation
   };
 
 
   s1state.power = 0;
-  for (i = 0; i < 50; ++i) {
+  for (i = 0; i < 200; ++i) {
     slot_func(&comp, &params);
     s1state.power += 1;
   }
 
   s1state.bread = &brd;
-  for (i = 0; i < 100; ++i) {
+  for (i = 0; i < 500; ++i) {
     slot_func(&comp, &params);
   }
 

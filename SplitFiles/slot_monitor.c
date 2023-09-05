@@ -140,6 +140,8 @@ int main_slot_monitor()
     200,
     15,
     12,
+    8192,
+    0,
     &brd
   };
   for (i = state.temperature; i > 0; --i) {

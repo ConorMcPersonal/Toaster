@@ -114,18 +114,22 @@ void execute_command(ControlBuffer *ctrlBuff, GameParameters* params) {
             params->messageAddress = 100 + d - '0';
             BreadState* new_slice = malloc(sizeof(struct BreadStateStruct));
             new_slice->temperature = 0;
+            new_slice->thermalAggregation = 0;
             switch(e) {
                 case 'W':
-                // white bread is driest
+                // white bread is driest and quickest to toast
                 new_slice->moisture = 50 + rand()%50;
+                new_slice->thermalMass = 12350;
                 break;
                 case 'B':
                 // brown takes longer
                 new_slice->moisture = 75 + rand()%60;
+                new_slice->thermalMass = 16384;
                 break;
                 case 'G':
-                // Bagel is a gamble
+                // Bagel is a gamble, and slow
                 new_slice->moisture = 50 + rand()%150;
+                new_slice->thermalMass = 32767;
                 break;
             }
             new_slice->toastedness = 0;
