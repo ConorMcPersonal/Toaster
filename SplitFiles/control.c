@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <arch/zx.h>
+#include <stdbool.h>
 
 #include "control.h"
 #include "game.h"
@@ -11,6 +12,40 @@
 
 // Compile with:
 // zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_CONTROL control.c -o control -create-app
+
+bool fetch_bread(const char c)
+{
+    int i;
+    bool bread_found = false;
+    for (i = 0; i < MAX_ORDER_LIST; i++) {
+        if (breadBin[i] == c) {
+            bread_found = true;
+            reorderBreadBin(i);
+            break;
+        }
+    }
+    return bread_found;
+}
+
+char* get_bread(const char c) {
+    const char* retVal = "         ";
+    switch (c) {
+        case 'B':
+            retVal = "Brown";
+            break;
+        case 'W':
+            retVal = "White";
+            break;
+        case 'C':
+            retVal = "Ciabatta";
+            break;
+        case 'G':
+        default:
+            retVal = "baGel";
+            break;
+    }
+    return retVal;
+}
 
 char* buffer_getcommand(const char c) {
     const char* retVal = "         ";
@@ -45,6 +80,16 @@ char* buffer_getcommand(const char c) {
             retVal = "you wot??";
     }
     return (char *)retVal;
+}
+
+//show the bread on the screen
+void bread_restack()
+{
+    int i;
+    printf(PRINTAT"%c%c""%-12s", 18, 3,  "Order Queue");
+    for (i =0; i < MAX_ORDER_LIST; i++) {
+        printf(PRINTAT"%c%c%s", 18, i + 4, get_bread(breadBin[i]));
+    }
 }
 
 //show the stack on the screen
@@ -127,19 +172,35 @@ void execute_command(ControlBuffer *ctrlBuff, GameParameters* params) {
             new_slice->thermalAggregation = 0;
             switch(e) {
                 case 'W':
-                // white bread is driest and quickest to toast
-                new_slice->moisture = 50 + rand()%50;
-                new_slice->thermalMass = 62;
+                if (fetch_bread(e)) {
+                    // white bread is driest and quickest to toast
+                    new_slice->moisture = 50 + rand()%50;
+                    new_slice->thermalMass = 62;
+                    bread_restack();
+                } else {
+                    // failure - do nothing until user fixes stack
+                    buffer_push(c, ctrlBuff);
+                }
                 break;
                 case 'B':
-                // brown takes longer
-                new_slice->moisture = 75 + rand()%60;
-                new_slice->thermalMass = 82;
+                if (fetch_bread(e)) {
+                    // brown takes longer
+                    new_slice->moisture = 75 + rand()%60;
+                    new_slice->thermalMass = 82;
+                    bread_restack();
+                }else {
+                    buffer_push(c, ctrlBuff);
+                }
                 break;
                 case 'G':
-                // Bagel is a gamble, and slow
-                new_slice->moisture = 50 + rand()%150;
-                new_slice->thermalMass = 164;
+                if (fetch_bread(e)) {
+                    // Bagel is a gamble and slow
+                    new_slice->moisture = 50 + rand()%150;
+                    new_slice->thermalMass = 164;
+                    bread_restack();
+                }else {
+                    buffer_push(c, ctrlBuff);
+                }
                 break;
             }
             new_slice->toastedness = 0;
