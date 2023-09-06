@@ -180,7 +180,9 @@ void execute_command(ControlBuffer *ctrlBuff, GameParameters* params) {
                     bread_restack();
                 } else {
                     // failure - do nothing until user fixes stack
-                    buffer_push(c, ctrlBuff);
+                    free(new_slice);
+                    buffer_push('x', ctrlBuff);
+                    return;
                 }
                 break;
                 case 'B':
@@ -190,7 +192,9 @@ void execute_command(ControlBuffer *ctrlBuff, GameParameters* params) {
                     new_slice->thermalMass = 82;
                     bread_restack();
                 }else {
-                    buffer_push(c, ctrlBuff);
+                    free(new_slice);
+                    buffer_push('x', ctrlBuff);
+                    return;
                 }
                 break;
                 case 'G':
@@ -200,7 +204,9 @@ void execute_command(ControlBuffer *ctrlBuff, GameParameters* params) {
                     new_slice->thermalMass = 164;
                     bread_restack();
                 }else {
-                    buffer_push(c, ctrlBuff);
+                    free(new_slice);
+                    buffer_push('x', ctrlBuff);
+                    return;
                 }
                 break;
             }
