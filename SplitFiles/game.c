@@ -208,6 +208,7 @@ int main_game()
     }
     
     printf(PRINTAT"%c%c""%-12s", 18, 12, "Commands");
+    printf(PRINTAT"%c%c""%-12s", 18, 3,  "Order Queue");
     bread_restack();
 
 

@@ -86,9 +86,9 @@ char* buffer_getcommand(const char c) {
 void bread_restack()
 {
     int i;
-    printf(PRINTAT"%c%c""%-12s", 18, 3,  "Order Queue");
     for (i =0; i < MAX_ORDER_LIST; i++) {
-        printf(PRINTAT"%c%c%s", 18, i + 4, get_bread(breadBin[i]));
+        printf(PRINTAT"%c%c" "         ", 18, i + 4);
+        printf(PRINTAT"%c%c" "%s", 18, i + 4, get_bread(breadBin[i]));
     }
 }
 
@@ -99,9 +99,10 @@ void buffer_restack(ControlBuffer* buff) {
     const int bufferIndex = buff->bufferIndex;
     int prevBufferIndex = buff->prevBufferIndex;
     // Write out commands
-    if (prevBufferIndex < 0) { //Do this once
-        printf(PRINTAT"%c%c""%-12s", 18, 12, "Commands");
-        prevBufferIndex = 0;
+    //printf(PRINTAT"%c%c""%-12s", 18, 12, "Commands");
+    for (i = 0; i < buffer_index; ++i) {
+        command = buffer_getcommand((buff->buffer[i]));
+        printf(PRINTAT"%c%c""%-12s", 18, i + 13, command);
     }
     if (prevBufferIndex < bufferIndex) {
         for (i = prevBufferIndex; i < bufferIndex; ++i) {
