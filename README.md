@@ -3,7 +3,7 @@ The greatest ever Spectrum game based purely around toast and the art and scienc
 
 Really.
 
-Developed on z88dk for the Crap Games Competition.
+Developed on z88dk for the Crap Games Competition (https://csscgc23.blogspot.com/).
 
 Useful links:
 https://github.com/z88dk/z88dk/blob/master/README.md
