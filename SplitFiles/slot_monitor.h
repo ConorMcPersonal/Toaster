@@ -11,7 +11,7 @@ struct BreadStateStruct {
   int      old_moisture;
   int      toastedness;
   int      old_toastedness;
-  unsigned int      thermalMass;
+  unsigned char     thermalMass;
   unsigned int      thermalAggregation;
 };
 typedef struct BreadStateStruct BreadState;
@@ -32,7 +32,7 @@ struct SlotStateStruct {
   int       old_power;
   int       xCoord; //screen x-coord
   int       yCoord; //screen y-coord
-  unsigned int       thermalMass;
+  unsigned char      thermalMass;
   unsigned int       thermalAggregation;
   BreadState* bread;
   SlotMonitor* slotMon;

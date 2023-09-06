@@ -66,14 +66,14 @@ void slot_func(GameComponent* input, GameParameters* params) {
     // Update the tick-wise integration of observed temperature differences
     state->thermalAggregation += (state->power - state->temperature);
     // Calculate new temperature from that
-    state->temperature = (int)(((long)TMAX * state->thermalAggregation) / state->thermalMass);
+    state->temperature = state->thermalAggregation / state->thermalMass;
 #ifdef _TEST_SLOT
     printf(PRINTAT"\x02\x0B""%d %d %d", state->thermalAggregation, state->temperature, state->power);
 #endif
   }
   if (state->bread) {
     state->bread->thermalAggregation += (state->temperature - state->bread->temperature); //bread temperature also likely to be rising
-    state->bread->temperature = (int)(((long)TMAX * state->bread->thermalAggregation) / state->bread->thermalMass);
+    state->bread->temperature = state->bread->thermalAggregation / state->bread->thermalMass;
     if (state->bread->moisture > 0) {
       //Dry it out before toasting can commence
       state->bread->moisture -= MIN(state->bread->moisture, (state->bread->temperature / 10));
@@ -92,9 +92,8 @@ void slot_func(GameComponent* input, GameParameters* params) {
 
 }
 
-#ifdef _TEST_SLOT
 
-int main() {
+int slot_main() {
 
   int i;
   SlotMonitor *testMon = get_slot_monitor(3, 5, 1);
@@ -107,7 +106,7 @@ int main() {
     0,
     testMon->xBase, //int       x_coord; //screen x-coord
     testMon->yBase, //int       y_coord; //screen y-coord
-    8192, //thermal mass - quite low for the slot
+    41, //thermal mass - quite low for the slot
     0,    //thermalAggregation
     (BreadState*) NULL, //bread;
     (SlotMonitor *)testMon
@@ -136,7 +135,7 @@ int main() {
     0,
     0,
     0,
-    32768, //thermalMass - high for bread
+    (unsigned char)164,   //thermalMass - high for bread
     0      //thermalAggregation
   };
 
@@ -155,4 +154,9 @@ int main() {
   return 1;
  
 }
+
+#ifdef _TEST_SLOT
+  int main() {
+    return slot_main();
+  }
 #endif

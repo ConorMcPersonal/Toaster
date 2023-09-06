@@ -119,17 +119,17 @@ void execute_command(ControlBuffer *ctrlBuff, GameParameters* params) {
                 case 'W':
                 // white bread is driest and quickest to toast
                 new_slice->moisture = 50 + rand()%50;
-                new_slice->thermalMass = 12350;
+                new_slice->thermalMass = 62;
                 break;
                 case 'B':
                 // brown takes longer
                 new_slice->moisture = 75 + rand()%60;
-                new_slice->thermalMass = 16384;
+                new_slice->thermalMass = 82;
                 break;
                 case 'G':
                 // Bagel is a gamble, and slow
                 new_slice->moisture = 50 + rand()%150;
-                new_slice->thermalMass = 32767;
+                new_slice->thermalMass = 164;
                 break;
             }
             new_slice->toastedness = 0;

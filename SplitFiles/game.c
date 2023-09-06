@@ -130,7 +130,7 @@ int main_game()
       0, //old power
       3, //int       x_coord; //screen x-coord
       5, //int       y_coord; //screen y-coord
-      8192, //thermalMass
+      41, //thermalMass
       0, //thermalAggregation
       (BreadState*) NULL, //bread
       get_slot_monitor(3, 5, 1) //slot monitor
