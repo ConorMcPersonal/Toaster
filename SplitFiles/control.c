@@ -175,12 +175,15 @@ void execute_command(ControlBuffer *ctrlBuff, GameParameters* params) {
                 case 'W':
                 if (fetch_bread(e)) {
                     // white bread is driest and quickest to toast
-                    new_slice->moisture = 50 + rand()%50;
+                    new_slice->old_moisture = 64 + rand()%48;
                     new_slice->thermalMass = 62;
                     bread_restack();
                 } else {
                     // failure - do nothing until user fixes stack
+                    // restack with an error message, so it's worse
                     free(new_slice);
+                    buffer_push(e, ctrlBuff);
+                    buffer_push(d, ctrlBuff);
                     buffer_push('x', ctrlBuff);
                     return;
                 }
@@ -188,11 +191,15 @@ void execute_command(ControlBuffer *ctrlBuff, GameParameters* params) {
                 case 'B':
                 if (fetch_bread(e)) {
                     // brown takes longer
-                    new_slice->moisture = 75 + rand()%60;
+                    new_slice->old_moisture = 96 + rand()%64;
                     new_slice->thermalMass = 82;
                     bread_restack();
-                }else {
+                } else {
+                    // failure - do nothing until user fixes stack
+                    // restack with an error message, so it's worse
                     free(new_slice);
+                    buffer_push(e, ctrlBuff);
+                    buffer_push(d, ctrlBuff);
                     buffer_push('x', ctrlBuff);
                     return;
                 }
@@ -200,21 +207,29 @@ void execute_command(ControlBuffer *ctrlBuff, GameParameters* params) {
                 case 'G':
                 if (fetch_bread(e)) {
                     // Bagel is a gamble and slow
-                    new_slice->moisture = 50 + rand()%150;
+                    new_slice->old_moisture = 64 + rand()%192;
                     new_slice->thermalMass = 164;
                     bread_restack();
                 }else {
                     free(new_slice);
+                    buffer_push(e, ctrlBuff);
+                    buffer_push(d, ctrlBuff);
                     buffer_push('x', ctrlBuff);
                     return;
                 }
                 break;
             }
             new_slice->toastedness = 0;
+            new_slice->moisture = new_slice->old_moisture;
+            //draw the initial moisture setting
+            draw_moisture(d, new_slice->old_moisture, MAX_RANGE);
             params->message = new_slice;
             params->messageSourceAddress = (void *)ctrlBuff;
         } else {
-            //Bad format - maybe indicate somehow?
+        // restack with error message too
+           buffer_push(e, ctrlBuff);
+           buffer_push(d, ctrlBuff);
+           buffer_push('x', ctrlBuff);
             ;
         }
     } else {
