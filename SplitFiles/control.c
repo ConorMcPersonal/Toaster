@@ -48,20 +48,29 @@ char* buffer_getcommand(const char c) {
 }
 
 //show the stack on the screen
-void buffer_restack(const ControlBuffer* const buff) {
+void buffer_restack(ControlBuffer* buff) {
     int i;
     char* command;
-    const int buffer_index = buff->bufferIndex;
+    const int bufferIndex = buff->bufferIndex;
+    int prevBufferIndex = buff->prevBufferIndex;
     // Write out commands
-    printf(PRINTAT"%c%c""%-12s", 18, 12, "Commands");
-    for (i = 0; i < buffer_index; ++i) {
-        command = buffer_getcommand((buff->buffer[i]));
-        printf(PRINTAT"%c%c""%-12s", 18, i + 13, command);
+    if (prevBufferIndex < 0) { //Do this once
+        printf(PRINTAT"%c%c""%-12s", 18, 12, "Commands");
+        prevBufferIndex = 0;
     }
-    // Ensure the rest is cleared
-    for (; i <= CONTROL_BUFFER_SIZE; i++) {
-        printf(PRINTAT"%c%c""%-12s", 18, i + 13, " ");
+    if (prevBufferIndex < bufferIndex) {
+        for (i = prevBufferIndex; i < bufferIndex; ++i) {
+            command = buffer_getcommand((buff->buffer[i]));
+            printf(PRINTAT"%c%c""%-12s", 18, i + 13, command);
+        }
     }
+    if (prevBufferIndex > bufferIndex) {
+        // Ensure the rest is cleared
+        for (i = prevBufferIndex; i >= bufferIndex; --i) {
+            printf(PRINTAT"%c%c""%-12s", 18, i + 13, " ");
+        }
+    }
+    buff->prevBufferIndex = bufferIndex;
 }
 
 int buffer_push(unsigned char c, ControlBuffer* buff) {
@@ -87,6 +96,7 @@ unsigned char buffer_pop(ControlBuffer* buff) {
 
 void initialise_control_buffer(ControlBuffer *buff) {
     buff->bufferIndex = 0;
+    buff->prevBufferIndex = -1;
     buff->lastCharSeen = 0;
     buff->buffer = (unsigned char*)malloc(CONTROL_BUFFER_SIZE * sizeof(unsigned char));
 }

@@ -144,6 +144,7 @@ int main_game()
     ControlBuffer buff = {
         0,
         0,
+        0,
         NULL
     };
     initialise_control_buffer(&buff);
