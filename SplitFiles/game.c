@@ -12,9 +12,6 @@
 
 // Compile with:
 // zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_GAME slot.c slot_monitor.c game.c control.c music.c util.c -o game -create-app
-#ifdef _TEST_GAME
-#include "tune_library.c"
-#endif
 
 void draw_tick_line(const unsigned int tick)
 {
@@ -133,6 +130,8 @@ int main_game()
       0, //old power
       3, //int       x_coord; //screen x-coord
       5, //int       y_coord; //screen y-coord
+      41, //thermalMass
+      0, //thermalAggregation
       (BreadState*) NULL, //bread
       get_slot_monitor(3, 5, 1) //slot monitor
     };
@@ -143,6 +142,7 @@ int main_game()
     };
 
     ControlBuffer buff = {
+        0,
         0,
         0,
         NULL

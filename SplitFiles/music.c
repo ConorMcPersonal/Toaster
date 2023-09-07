@@ -7,9 +7,9 @@
 #include "game.h"
 #include "util.h"
 #include "music.h"
-#ifdef _TEST_MUSIC
+//#ifdef _TEST_MUSIC
 #include "tune_library.c"
-#endif
+//#endif
 
 // Can be compiled with:
 // zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_MUSIC music.c -o music -create-app

@@ -11,6 +11,7 @@ static const unsigned int MAX_TICKS = 4096;
 
 struct control_buffer_struct {
     int  bufferIndex;
+    int  prevBufferIndex;
     unsigned char lastCharSeen;
     unsigned char* buffer;
 };
