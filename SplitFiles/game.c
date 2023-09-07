@@ -13,6 +13,8 @@
 // Compile with:
 // zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_GAME slot.c slot_monitor.c game.c control.c music.c util.c -o game -create-app
 
+#define FRAMES_PER_LOOP 2
+
 void draw_tick_line(const unsigned int tick)
 {
   const int increment = MAX_TICKS / 256;
@@ -90,7 +92,7 @@ int main_game()
     srand(rando);
     zx_cls(PAPER_WHITE);
 
-    printf("%d", G_frames);
+    //printf("%d", G_frames);
     //bit_fx(BFX_KLAXON);
   
   // *******************************************************
@@ -98,7 +100,8 @@ int main_game()
   // *******************************************************
 
     //Three-voice music player
-    MusicPlayer* music_player = get_music_player(3);
+    MusicPlayer* music_player = get_music_player(4);
+    music_player->add_music(music_player, TUNE_TIMING, 3);
     music_player->add_music(music_player, TUNE_DRUM, 2);
     music_player->add_music(music_player, TUNE_TOAST, 1);
     music_player->add_music(music_player, TUNE_EFFECT_BEEP, 0);
@@ -199,7 +202,11 @@ int main_game()
         music_player->add_music_if_different(music_player, params.effect, 0);
         params.effect = NULL;
       }
-      printf(PRINTAT"\x01\x0B""%d   ", G_frames - last_frame_count);
+      //Run at a constant rate
+      while (G_frames < last_frame_count + FRAMES_PER_LOOP && (G_frames - last_frame_count) > 0) {
+        ;
+      }  
+      //printf(PRINTAT"\x01\x0B""%d   ", G_frames - last_frame_count);
   }
   printf(PRINTAT "\x01\x0B" "Final score %d ", (params.slices * params.score));
   bit_beepfx(BEEPFX_AWW);
