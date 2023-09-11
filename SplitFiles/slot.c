@@ -58,19 +58,14 @@ void slot_func(GameComponent* input, GameParameters* params) {
   }
 
   // Now do the toasting thing
-  bool update_required = false;
-  bool increment = true;
-  if (state->power != state->temperature) {
-    update_required = true;
-    increment = (state->power > state->temperature);
-    // Update the tick-wise integration of observed temperature differences
-    state->thermalAggregation += (state->power - state->temperature);
-    // Calculate new temperature from that
-    state->temperature = state->thermalAggregation / state->thermalMass;
+  // Update the tick-wise integration of observed temperature differences
+  state->thermalAggregation += (state->power - state->temperature);
+  // Calculate new temperature from that
+  state->temperature = state->thermalAggregation / state->thermalMass;
 #ifdef _TEST_SLOT
     printf(PRINTAT"\x02\x0B""%d %d %d", state->thermalAggregation, state->temperature, state->power);
 #endif
-  }
+
   if (state->bread) {
     state->bread->thermalAggregation += (state->temperature - state->bread->temperature); //bread temperature also likely to be rising
     state->bread->temperature = state->bread->thermalAggregation / state->bread->thermalMass;
@@ -86,9 +81,8 @@ void slot_func(GameComponent* input, GameParameters* params) {
 #endif
     params->maxToast = MAX(state->bread->toastedness, params->maxToast);
   }
-  if (update_required) {
-    state->slotMon->draw_slot(state->slotMon, state, increment);
-  }
+  state->slotMon->draw_slot(state->slotMon, state);
+
 
 }
 
@@ -101,9 +95,7 @@ int slot_main() {
   SlotState s1state = {
     1, //int       slot_number; // Identifier of this slot
     0, //int       temperature;
-    0,
     0, //int       power;   //Current power level
-    0,
     testMon->xBase, //int       x_coord; //screen x-coord
     testMon->yBase, //int       y_coord; //screen y-coord
     41, //thermal mass - quite low for the slot
@@ -130,13 +122,10 @@ int slot_main() {
 
   BreadState brd = {
     0,
-    0,
     100,
     0,
-    0,
-    0,
     (unsigned char)164,   //thermalMass - high for bread
-    0      //thermalAggregation
+    0                     //thermalAggregation
   };
 
 

@@ -89,9 +89,6 @@ int main_game()
     // get a random seed based on frame count
     srand(rando);
     zx_cls(PAPER_WHITE);
-
-    printf("%d", G_frames);
-    //bit_fx(BFX_KLAXON);
   
   // *******************************************************
   // Music set-up
@@ -125,9 +122,7 @@ int main_game()
     SlotState s1state = {
       1, //int       slot_number; // Identifier of this slot
       0, //int       temperature;
-      0, //old temp
       0, //int       power;   //Current power level
-      0, //old power
       3, //int       x_coord; //screen x-coord
       5, //int       y_coord; //screen y-coord
       41, //thermalMass
@@ -188,9 +183,6 @@ int main_game()
       //ticker.func(comp, &params);
       while (comp) {
         comp->func(comp, &params);
-        //wait_key(comp, &params);
-        //printf(PRINTAT "\x01\x02" "MsgAddr = %d    ", params.message_address);
-        //WaitKey(comp, &params);
         comp = comp->next;
         music_player->play(music_player);
       }
@@ -199,16 +191,15 @@ int main_game()
         music_player->add_music_if_different(music_player, params.effect, 0);
         params.effect = NULL;
       }
-      printf(PRINTAT"\x01\x0B""%d   ", G_frames - last_frame_count);
-  }
-  printf(PRINTAT "\x01\x0B" "Final score %d ", (params.slices * params.score));
-  bit_beepfx(BEEPFX_AWW);
-  //we malloc this so free it
-  free(buff.buffer);
-  //while (1) {
-  //  printf(PRINTAT "\x01\x09" "Frame count %d ", (G_frames));
-  //}
-  return params.score;
+      //Min one frame per loop
+      while (G_frames == last_frame_count) {}
+    }
+    printf(PRINTAT "\x01\x0B" "Final score %d ", (params.slices * params.score));
+    bit_beepfx(BEEPFX_AWW);
+    //we malloc this so free it
+    free(buff.buffer);
+
+    return params.score;
 } 
 
 
