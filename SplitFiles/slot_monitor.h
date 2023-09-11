@@ -48,6 +48,8 @@ struct SlotMonitorStruct {
 
 SlotMonitor* get_slot_monitor(unsigned char x, unsigned char y, int slotIndex);
 
+SlotState* get_slot(unsigned char x, unsigned char y, int slotIndex, int thermalMass);
+
 void slot_func(GameComponent* input, GameParameters* params);
 
 #endif

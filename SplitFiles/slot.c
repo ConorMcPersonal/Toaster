@@ -86,11 +86,24 @@ void slot_func(GameComponent* input, GameParameters* params) {
 
 }
 
+SlotState* get_slot(unsigned char x, unsigned char y, int slotIndex, int thermalMass) {
+    SlotState* slot = malloc(sizeof(SlotState));
+    slot->slotNumber = slotIndex;
+    slot->bread = NULL;
+    slot->power = 0;
+    slot->temperature = 0;
+    slot->thermalAggregation = 0;
+    slot->thermalMass = thermalMass;
+    slot->xCoord = x;
+    slot->yCoord = y;
+    slot->slotMon = get_slot_monitor(x, y, slotIndex);
+    return slot;
+}
 
 int slot_main() {
 
   int i;
-  SlotMonitor *testMon = get_slot_monitor(3, 5, 1);
+  /*SlotMonitor *testMon = get_slot_monitor(3, 5, 1);
 
   SlotState s1state = {
     1, //int       slot_number; // Identifier of this slot
@@ -102,10 +115,12 @@ int slot_main() {
     0,    //thermalAggregation
     (BreadState*) NULL, //bread;
     (SlotMonitor *)testMon
-  };
+  };*/
+
+  SlotState* s1state = get_slot(3, 5, 1, 41);
 
   GameComponent comp = {
-    &s1state,
+    s1state,
     &slot_func,
     NULL
   };
@@ -129,13 +144,13 @@ int slot_main() {
   };
 
 
-  s1state.power = 0;
+  s1state->power = 0;
   for (i = 0; i < 200; ++i) {
     slot_func(&comp, &params);
-    s1state.power += 1;
+    s1state->power += 1;
   }
 
-  s1state.bread = &brd;
+  s1state->bread = &brd;
   for (i = 0; i < 500; ++i) {
     slot_func(&comp, &params);
   }

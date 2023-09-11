@@ -119,21 +119,32 @@ int main_game()
       &collector //next
     };
 
-    SlotState s1state = {
-      1, //int       slot_number; // Identifier of this slot
-      0, //int       temperature;
-      0, //int       power;   //Current power level
-      3, //int       x_coord; //screen x-coord
-      5, //int       y_coord; //screen y-coord
-      41, //thermalMass
-      0, //thermalAggregation
-      (BreadState*) NULL, //bread
-      get_slot_monitor(3, 5, 1) //slot monitor
-    };
+    SlotState* s1state = get_slot(3, 5, 1, 41);
     GameComponent slot1 = {
-      (void*)&s1state, //ptr
+      (void*)s1state, //ptr
       &slot_func, //func
       &smokeAlarm //next
+    };
+
+    SlotState* s2state = get_slot(3, 10, 2, 41);
+    GameComponent slot2 = {
+      (void*)s2state, //ptr
+      &slot_func, //func
+      &slot1 //next
+    };
+
+    SlotState* s3state = get_slot(3, 15, 3, 41);
+    GameComponent slot3 = {
+      (void*)s3state, //ptr
+      &slot_func, //func
+      &slot2 //next
+    };
+
+    SlotState* s4state = get_slot(3, 20, 4, 41);
+    GameComponent slot4 = {
+      (void*)s4state, //ptr
+      &slot_func, //func
+      &slot3 //next
     };
 
     ControlBuffer buff = {
@@ -146,7 +157,7 @@ int main_game()
     GameComponent ctrl = {
         &buff,
         &command_entry_func,
-        &slot1
+        &slot4
     };
 
 
