@@ -2,16 +2,9 @@
 #define _DEFINE_SLOT_MONITOR_H
 
 #include "game.h"
+#include "bread.h"
 #include <stdbool.h>
 
-struct BreadStateStruct {
-  int               temperature;  
-  int               moisture;
-  int               toastedness;
-  unsigned char     thermalMass;
-  unsigned int      thermalAggregation;
-};
-typedef struct BreadStateStruct BreadState;
 
 // 1.) Forward declaration: Here is the name of the structure
 // but member-details are omitted.
