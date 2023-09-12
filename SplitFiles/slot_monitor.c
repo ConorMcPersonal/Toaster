@@ -18,6 +18,20 @@
 #include "slot_monitor.h"
 #include "util.h"
 
+void draw_moisture(const int slot, const int moisture, const int max)
+{
+    //draw initial moisture
+    const unsigned int step = max / 64; //TO-DO: fix magic number
+    const int offset = slot * 4 * 8 + 8;
+    int x = 16;
+    for (int i = 0; i < moisture; i+= step) {
+        *zx_pxy2saddr(x, offset) |= zx_px2bitmask(x);
+        *zx_pxy2saddr(x, offset + 1) |= zx_px2bitmask(x);
+        *zx_pxy2saddr(x, offset + 2) |= zx_px2bitmask(x);
+        x++;
+    }
+
+}
 
 int plot_value(SlotMonitor* slotMon, const int value, const unsigned int task,
     const int range, const int max, const int old_value)
@@ -52,6 +66,7 @@ int plot_value(SlotMonitor* slotMon, const int value, const unsigned int task,
     }
     return value;
 }
+
 
 void draw_slot(SlotMonitor* slotMon, SlotState* slot) {
     // Removed - only works for a one slot setup static bool wipe_out = false; 
