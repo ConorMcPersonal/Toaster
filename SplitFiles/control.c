@@ -100,7 +100,7 @@ void buffer_restack(ControlBuffer* buff) {
     int prevBufferIndex = buff->prevBufferIndex;
     // Write out commands
     //printf(PRINTAT"%c%c""%-12s", 18, 12, "Commands");
-    for (i = 0; i < buffer_index; ++i) {
+    for (i = 0; i < bufferIndex; ++i) {
         command = buffer_getcommand((buff->buffer[i]));
         printf(PRINTAT"%c%c""%-12s", 18, i + 13, command);
     }
@@ -112,7 +112,7 @@ void buffer_restack(ControlBuffer* buff) {
     }
     if (prevBufferIndex > bufferIndex) {
         // Ensure the rest is cleared
-        for (i = prevBufferIndex; i >= bufferIndex; --i) {
+        for (i = prevBufferIndex; i > bufferIndex; --i) {
             printf(PRINTAT"%c%c""%-12s", 18, i + 13, " ");
         }
     }
@@ -142,7 +142,7 @@ unsigned char buffer_pop(ControlBuffer* buff) {
 
 void initialise_control_buffer(ControlBuffer *buff) {
     buff->bufferIndex = 0;
-    buff->prevBufferIndex = -1;
+    buff->prevBufferIndex = 0;
     buff->lastCharSeen = 0;
     buff->buffer = (unsigned char*)malloc(CONTROL_BUFFER_SIZE * sizeof(unsigned char));
 }
@@ -158,8 +158,8 @@ void execute_command(ControlBuffer *ctrlBuff, GameParameters* params) {
             params->messageAddress = 200 + d - '0';
             params->messageSourceAddress = (void *)ctrlBuff;
         } else {
-            //Bad format - maybe indicate somehow?
-            ;
+            // bad format - report error
+            buffer_push('x', ctrlBuff);
         }
     } else if (c == 'T') {
         //Push some bread to a slot
@@ -195,8 +195,6 @@ void execute_command(ControlBuffer *ctrlBuff, GameParameters* params) {
                     new_slice->thermalMass = 82;
                     bread_restack();
                 } else {
-                    // failure - do nothing until user fixes stack
-                    // restack with an error message, so it's worse
                     free(new_slice);
                     buffer_push(e, ctrlBuff);
                     buffer_push(d, ctrlBuff);
