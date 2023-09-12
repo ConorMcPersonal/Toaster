@@ -18,6 +18,20 @@
 #include "slot_monitor.h"
 #include "util.h"
 
+void draw_moisture(const int slot, const int moisture, const int max)
+{
+    //draw initial moisture
+    const unsigned int step = max / 64; //TO-DO: fix magic number
+    const int offset = slot * 4 * 8 + 8;
+    int x = 16;
+    for (int i = 0; i < moisture; i+= step) {
+        *zx_pxy2saddr(x, offset) |= zx_px2bitmask(x);
+        *zx_pxy2saddr(x, offset + 1) |= zx_px2bitmask(x);
+        *zx_pxy2saddr(x, offset + 2) |= zx_px2bitmask(x);
+        x++;
+    }
+
+}
 
 int plot_value(const unsigned int slot, const int value, const unsigned int task,
     const int range, const int max, bool increment, const int old_value)
@@ -53,15 +67,16 @@ int plot_value(const unsigned int slot, const int value, const unsigned int task
 void draw_slot(SlotMonitor* slotMon, SlotState* slot, bool increment) {
     static bool wipe_out = false;
     slot->old_temperature = plot_value(slot->slotNumber, slot->temperature, 0, 64,
-        256, increment, slot->old_temperature);
+        MAX_RANGE, increment, slot->old_temperature);
     slot->old_power = plot_value(slot->slotNumber, slot->power, 1, 64,
-        256, increment, slot->old_power);
+        MAX_RANGE, increment, slot->old_power);
     if (slot->bread) {
         wipe_out = false;
+        //bread is always drying while taoster is on
         slot->bread->old_moisture = plot_value(slot->slotNumber, slot->bread->moisture, 2, 64,
-            256, increment, slot->bread->old_moisture);
+            MAX_RANGE, false, slot->bread->old_moisture);
         slot->bread->old_toastedness = plot_value(slot->slotNumber, slot->bread->toastedness, 3, 64,
-            256, increment, slot->bread->old_toastedness);
+            MAX_RANGE, increment, slot->bread->old_toastedness);
     } else if (wipe_out == false){
         //no bread so wipe it - once
         wipe_out = true;
