@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <arch/zx.h>
+#include <stdbool.h>
 
 #include "control.h"
 #include "game.h"
@@ -11,6 +12,40 @@
 
 // Compile with:
 // zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_CONTROL control.c -o control -create-app
+
+bool fetch_bread(const char c)
+{
+    int i;
+    bool bread_found = false;
+    for (i = 0; i < MAX_ORDER_LIST; i++) {
+        if (breadBin[i] == c) {
+            bread_found = true;
+            reorderBreadBin(i);
+            break;
+        }
+    }
+    return bread_found;
+}
+
+char* get_bread(const char c) {
+    const char* retVal = "         ";
+    switch (c) {
+        case 'B':
+            retVal = "Brown";
+            break;
+        case 'W':
+            retVal = "White";
+            break;
+        case 'C':
+            retVal = "Ciabatta";
+            break;
+        case 'G':
+        default:
+            retVal = "baGel";
+            break;
+    }
+    return retVal;
+}
 
 char* buffer_getcommand(const char c) {
     const char* retVal = "         ";
@@ -47,6 +82,16 @@ char* buffer_getcommand(const char c) {
     return (char *)retVal;
 }
 
+//show the bread on the screen
+void bread_restack()
+{
+    int i;
+    for (i =0; i < MAX_ORDER_LIST; i++) {
+        printf(PRINTAT"%c%c" "         ", 18, i + 4);
+        printf(PRINTAT"%c%c" "%s", 18, i + 4, get_bread(breadBin[i]));
+    }
+}
+
 //show the stack on the screen
 void buffer_restack(ControlBuffer* buff) {
     int i;
@@ -54,9 +99,10 @@ void buffer_restack(ControlBuffer* buff) {
     const int bufferIndex = buff->bufferIndex;
     int prevBufferIndex = buff->prevBufferIndex;
     // Write out commands
-    if (prevBufferIndex < 0) { //Do this once
-        printf(PRINTAT"%c%c""%-12s", 18, 12, "Commands");
-        prevBufferIndex = 0;
+    //printf(PRINTAT"%c%c""%-12s", 18, 12, "Commands");
+    for (i = 0; i < bufferIndex; ++i) {
+        command = buffer_getcommand((buff->buffer[i]));
+        printf(PRINTAT"%c%c""%-12s", 18, i + 13, command);
     }
     if (prevBufferIndex < bufferIndex) {
         for (i = prevBufferIndex; i < bufferIndex; ++i) {
@@ -66,7 +112,7 @@ void buffer_restack(ControlBuffer* buff) {
     }
     if (prevBufferIndex > bufferIndex) {
         // Ensure the rest is cleared
-        for (i = prevBufferIndex; i >= bufferIndex; --i) {
+        for (i = prevBufferIndex; i > bufferIndex; --i) {
             printf(PRINTAT"%c%c""%-12s", 18, i + 13, " ");
         }
     }
@@ -96,7 +142,7 @@ unsigned char buffer_pop(ControlBuffer* buff) {
 
 void initialise_control_buffer(ControlBuffer *buff) {
     buff->bufferIndex = 0;
-    buff->prevBufferIndex = -1;
+    buff->prevBufferIndex = 0;
     buff->lastCharSeen = 0;
     buff->buffer = (unsigned char*)malloc(CONTROL_BUFFER_SIZE * sizeof(unsigned char));
 }
@@ -112,8 +158,8 @@ void execute_command(ControlBuffer *ctrlBuff, GameParameters* params) {
             params->messageAddress = 200 + d - '0';
             params->messageSourceAddress = (void *)ctrlBuff;
         } else {
-            //Bad format - maybe indicate somehow?
-            ;
+            // bad format - report error
+            buffer_push('x', ctrlBuff);
         }
     } else if (c == 'T') {
         //Push some bread to a slot
@@ -127,26 +173,61 @@ void execute_command(ControlBuffer *ctrlBuff, GameParameters* params) {
             new_slice->thermalAggregation = 0;
             switch(e) {
                 case 'W':
-                // white bread is driest and quickest to toast
-                new_slice->moisture = 50 + rand()%50;
-                new_slice->thermalMass = 62;
+                if (fetch_bread(e)) {
+                    // white bread is driest and quickest to toast
+                    new_slice->old_moisture = 64 + rand()%48;
+                    new_slice->thermalMass = 62;
+                    bread_restack();
+                } else {
+                    // failure - do nothing until user fixes stack
+                    // restack with an error message, so it's worse
+                    free(new_slice);
+                    buffer_push(e, ctrlBuff);
+                    buffer_push(d, ctrlBuff);
+                    buffer_push('x', ctrlBuff);
+                    return;
+                }
                 break;
                 case 'B':
-                // brown takes longer
-                new_slice->moisture = 75 + rand()%60;
-                new_slice->thermalMass = 82;
+                if (fetch_bread(e)) {
+                    // brown takes longer
+                    new_slice->old_moisture = 96 + rand()%64;
+                    new_slice->thermalMass = 82;
+                    bread_restack();
+                } else {
+                    free(new_slice);
+                    buffer_push(e, ctrlBuff);
+                    buffer_push(d, ctrlBuff);
+                    buffer_push('x', ctrlBuff);
+                    return;
+                }
                 break;
                 case 'G':
-                // Bagel is a gamble, and slow
-                new_slice->moisture = 50 + rand()%150;
-                new_slice->thermalMass = 164;
+                if (fetch_bread(e)) {
+                    // Bagel is a gamble and slow
+                    new_slice->old_moisture = 64 + rand()%192;
+                    new_slice->thermalMass = 164;
+                    bread_restack();
+                }else {
+                    free(new_slice);
+                    buffer_push(e, ctrlBuff);
+                    buffer_push(d, ctrlBuff);
+                    buffer_push('x', ctrlBuff);
+                    return;
+                }
                 break;
             }
             new_slice->toastedness = 0;
+            new_slice->moisture = new_slice->old_moisture;
+            //draw the initial moisture setting
+            draw_moisture(d, new_slice->old_moisture, MAX_RANGE);
             params->message = new_slice;
             params->messageSourceAddress = (void *)ctrlBuff;
         } else {
-            //Bad format - maybe indicate somehow?
+        // restack with error message too
+           buffer_push(e, ctrlBuff);
+           buffer_push(d, ctrlBuff);
+           buffer_push('x', ctrlBuff);
             ;
         }
     } else {

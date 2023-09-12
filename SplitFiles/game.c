@@ -13,6 +13,33 @@
 // Compile with:
 // zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_GAME slot.c slot_monitor.c game.c control.c music.c util.c -o game -create-app
 
+char breadBin[MAX_ORDER_LIST];
+
+//handle bread creation
+char getBread(const int breadType)
+{
+  switch (breadType) {
+    case 1:
+      return 'W';
+    case 2:
+      return 'G';
+    case 3:
+      return 'B';
+    default:
+      return 'C';
+  }
+}
+
+void reorderBreadBin(const int slot)
+{
+  int i;
+  char newBread = getBread(rand()%4);
+  for (i = slot; i < MAX_ORDER_LIST - 1; i++) {
+    breadBin[i] = breadBin[i + 1];
+  }
+  breadBin[MAX_ORDER_LIST - 1] = newBread;
+}
+
 void draw_tick_line(const unsigned int tick)
 {
   const int increment = MAX_TICKS / 256;
@@ -89,6 +116,11 @@ int main_game()
     // get a random seed based on frame count
     srand(rando);
     zx_cls(PAPER_WHITE);
+
+    for (i = 0; i < MAX_ORDER_LIST; i++) {
+      breadBin[i] = getBread(rand()%4);
+    }
+    
   
   // *******************************************************
   // Music set-up
@@ -185,6 +217,7 @@ int main_game()
     
     printf(PRINTAT"%c%c""%-12s", 18, 12, "Commands");
     printf(PRINTAT"%c%c""%-12s", 18, 3,  "Order Queue");
+    bread_restack();
 
 
     for (i = 0; i < MAX_TICKS; i++) {

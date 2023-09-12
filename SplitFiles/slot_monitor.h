@@ -4,6 +4,8 @@
 #include "game.h"
 #include <stdbool.h>
 
+#define MAX_RANGE 256
+
 struct BreadStateStruct {
   int               temperature;  
   int               moisture;
@@ -51,5 +53,7 @@ SlotMonitor* get_slot_monitor(unsigned char x, unsigned char y, int slotIndex);
 SlotState* get_slot(unsigned char x, unsigned char y, int slotIndex, int thermalMass);
 
 void slot_func(GameComponent* input, GameParameters* params);
+
+void draw_moisture(const int slot, const int moisture, const int max);
 
 #endif
