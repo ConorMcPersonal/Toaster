@@ -9,40 +9,33 @@
 #include "util.h"
 #include "slot_monitor.h"
 #include "music.h"
+#include "bread.h"
 
 // Compile with:
 // zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_CONTROL control.c -o control -create-app
 
-bool fetch_bread(const char c)
+BreadType* fetch_bread(BreadBin* bin, const char c)
 {
     int i;
-    bool bread_found = false;
-    for (i = 0; i < MAX_ORDER_LIST; i++) {
-        if (breadBin[i] == c) {
-            bread_found = true;
-            reorderBreadBin(i);
+    BreadType retVal = NULL;
+    for (i = 0; i < VISIBLE_BIN; i++) {
+        if (NULL == bin->breadTypes[i]) {
+            //already exhausted list
+            break;
+        }
+        else if (bin->breadTypes[i]->letter_desc == c) {
+            retVal = bin->breadTypes[i];
+            reorderBreadBin(bin, i);
             break;
         }
     }
-    return bread_found;
+    return retVal;
 }
 
-char* get_bread(const char c) {
+char* get_bread(BreadBin* bin, unsigned int i) {
     const char* retVal = "         ";
-    switch (c) {
-        case 'B':
-            retVal = "Brown";
-            break;
-        case 'W':
-            retVal = "White";
-            break;
-        case 'C':
-            retVal = "Ciabatta";
-            break;
-        case 'G':
-        default:
-            retVal = "baGel";
-            break;
+    if (bin->breadTypes[i] != NULL) {
+        retVal = bin-[i]->desc;
     }
     return retVal;
 }
@@ -86,16 +79,16 @@ char* buffer_getcommand(const char c) {
 }
 
 //show the bread on the screen
-void bread_restack()
+void bread_restack(BreadBin* bin)
 {
     int i;
-    for (i =0; i < MAX_ORDER_LIST; i++) {
+    for (i =0; i < VISIBLE_BIN; i++) {
         printf(PRINTAT"%c%c" "         ", ORDER_X_COORD, i + ORDER_Y_COORD);
         printf(PRINTAT"%c%c" "%s", ORDER_X_COORD, i + ORDER_Y_COORD, get_bread(breadBin[i]));
     }
 }
 
-//show the stack on the screen
+//show the command stack on the screen
 void buffer_restack(ControlBuffer* buff) {
     int i;
     char* command;
@@ -162,7 +155,7 @@ void execute_command(ControlBuffer *ctrlBuff, GameParameters* params) {
         //Push some bread to a slot
         d = buffer_pop(ctrlBuff);
         e = buffer_pop(ctrlBuff);
-        if (d >= '0' && d <= '9' && (e == 'W' || e == 'B' || e == 'G' || e == 'C'))  {
+        if (d >= '0' && d <= '9' && IsBreadTypeVisible(e))  {
             //Valid format
             params->messageAddress = 100 + d - '0';
             BreadState* new_slice = malloc(sizeof(struct BreadStateStruct));

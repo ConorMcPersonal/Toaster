@@ -4,6 +4,7 @@
 #include <arch/zx.h>
 #include <sound.h>
 
+#include "bread.h"
 #include "game.h"
 #include "util.h"
 #include "slot_monitor.h"
@@ -30,14 +31,21 @@ char getBread(const int breadType)
   }
 }
 
-void reorderBreadBin(const int slot)
+//drop the bin down one
+void reorderBreadBin(BreadBin* bin, const int slot)
 {
   int i;
-  char newBread = getBread(rand()%4);
-  for (i = slot; i < MAX_ORDER_LIST - 1; i++) {
-    breadBin[i] = breadBin[i + 1];
+  for (i = slot; i < BREADBINSIZE - 2; i++) {
+    if (bin->breadTypes[i + 1] == NULL) {
+      free(bin->breadTypes[i]);
+      bin->readTypes[i] = NULL;
+      return;
+    } else {
+        bin->breadTypes[i] = bin->breadTypes[i + 1];
+    }
   }
-  breadBin[MAX_ORDER_LIST - 1] = newBread;
+  free(bin->breadTypes[BREADBINSIZE - 1]);
+  bin->breadTypes[BREADBINSIZE - 1] = NULL;
 }
 
 void draw_tick_line(const unsigned int tick)

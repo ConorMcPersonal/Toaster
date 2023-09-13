@@ -47,7 +47,7 @@ typedef struct dispatcher_struct DispatcherState;
 #define MAX_ORDER_LIST 5
 extern char breadBin[MAX_ORDER_LIST];
 
-void reorderBreadBin(const int slot);
+void reorderBreadBin(BreadBin* bin, const int slot);
 char getBread(const int breadType);
 
 #endif

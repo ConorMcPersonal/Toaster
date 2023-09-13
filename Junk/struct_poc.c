@@ -220,7 +220,6 @@ void SendToastFunc(GameComponent* input, GameParameters* params) {
         //New T action
         BreadState* new_slice = malloc(sizeof(struct bread_state_struct));
         new_slice->temperature = 0;
-        new_slice->moisture = 50 + rand()%50;
         new_slice->toastedness = 0;
         params->message_address = 101;
         params->message = (void*)new_slice;
