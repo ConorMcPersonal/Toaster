@@ -7,12 +7,9 @@
 #define MAX_RANGE 256
 
 struct BreadStateStruct {
-  int      temperature;
-  int      old_temperature;  
-  int      moisture;
-  int      old_moisture;
-  int      toastedness;
-  int      old_toastedness;
+  int               temperature;  
+  int               moisture;
+  int               toastedness;
   unsigned char     thermalMass;
   unsigned int      thermalAggregation;
 };
@@ -27,17 +24,15 @@ struct SlotMonitorStruct;
 typedef struct SlotMonitorStruct  SlotMonitor;
 
 struct SlotStateStruct {
-  int       slotNumber; // Identifier of this slot
-  int       temperature;
-  int       old_temperature;
-  int       power;   //Current power level
-  int       old_power;
-  int       xCoord; //screen x-coord
-  int       yCoord; //screen y-coord
+  int                slotNumber; // Identifier of this slot
+  int                temperature;
+  int                power;   //Current power level 
+  int                xCoord; //screen x-coord
+  int                yCoord; //screen y-coord
   unsigned char      thermalMass;
   unsigned int       thermalAggregation;
-  BreadState* bread;
-  SlotMonitor* slotMon;
+  BreadState*        bread;
+  SlotMonitor*       slotMon;
 };
 typedef struct SlotStateStruct SlotState;
 
@@ -46,10 +41,16 @@ struct SlotMonitorStruct {
   unsigned char yBase;            // Y coordinate
   unsigned char *startPixels;     //where to start drawing pixels
   unsigned char *startAttributes; //where to write the attributes updates
-  void draw_slot(SlotMonitor*, SlotState*, bool); //function to draw the monitor
+  int           slot_old_temperature;
+  int           slot_old_power;
+  int           bread_old_moisture;
+  int           bread_old_toastedness;
+  void draw_slot(SlotMonitor*, SlotState*); //function to draw the monitor
 };
 
 SlotMonitor* get_slot_monitor(unsigned char x, unsigned char y, int slotIndex);
+
+SlotState* get_slot(unsigned char x, unsigned char y, int slotIndex, int thermalMass);
 
 void slot_func(GameComponent* input, GameParameters* params);
 

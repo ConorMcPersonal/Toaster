@@ -58,19 +58,14 @@ void slot_func(GameComponent* input, GameParameters* params) {
   }
 
   // Now do the toasting thing
-  bool update_required = false;
-  bool increment = true;
-  if (state->power != state->temperature) {
-    update_required = true;
-    increment = (state->power > state->temperature);
-    // Update the tick-wise integration of observed temperature differences
-    state->thermalAggregation += (state->power - state->temperature);
-    // Calculate new temperature from that
-    state->temperature = state->thermalAggregation / state->thermalMass;
+  // Update the tick-wise integration of observed temperature differences
+  state->thermalAggregation += (state->power - state->temperature);
+  // Calculate new temperature from that
+  state->temperature = state->thermalAggregation / state->thermalMass;
 #ifdef _TEST_SLOT
     printf(PRINTAT"\x02\x0B""%d %d %d", state->thermalAggregation, state->temperature, state->power);
 #endif
-  }
+
   if (state->bread) {
     state->bread->thermalAggregation += (state->temperature - state->bread->temperature); //bread temperature also likely to be rising
     state->bread->temperature = state->bread->thermalAggregation / state->bread->thermalMass;
@@ -86,34 +81,46 @@ void slot_func(GameComponent* input, GameParameters* params) {
 #endif
     params->maxToast = MAX(state->bread->toastedness, params->maxToast);
   }
-  if (update_required) {
-    state->slotMon->draw_slot(state->slotMon, state, increment);
-  }
+  state->slotMon->draw_slot(state->slotMon, state);
+
 
 }
 
+SlotState* get_slot(unsigned char x, unsigned char y, int slotIndex, int thermalMass) {
+    SlotState* slot = malloc(sizeof(SlotState));
+    slot->slotNumber = slotIndex;
+    slot->bread = NULL;
+    slot->power = 0;
+    slot->temperature = 0;
+    slot->thermalAggregation = 0;
+    slot->thermalMass = thermalMass;
+    slot->xCoord = x;
+    slot->yCoord = y;
+    slot->slotMon = get_slot_monitor(x, y, slotIndex);
+    return slot;
+}
 
 int slot_main() {
 
   int i;
-  SlotMonitor *testMon = get_slot_monitor(3, 5, 1);
+  /*SlotMonitor *testMon = get_slot_monitor(3, 5, 1);
 
   SlotState s1state = {
     1, //int       slot_number; // Identifier of this slot
     0, //int       temperature;
-    0,
     0, //int       power;   //Current power level
-    0,
     testMon->xBase, //int       x_coord; //screen x-coord
     testMon->yBase, //int       y_coord; //screen y-coord
     41, //thermal mass - quite low for the slot
     0,    //thermalAggregation
     (BreadState*) NULL, //bread;
     (SlotMonitor *)testMon
-  };
+  };*/
+
+  SlotState* s1state = get_slot(3, 5, 1, 41);
 
   GameComponent comp = {
-    &s1state,
+    s1state,
     &slot_func,
     NULL
   };
@@ -130,23 +137,20 @@ int slot_main() {
 
   BreadState brd = {
     0,
-    0,
     100,
     0,
-    0,
-    0,
     (unsigned char)164,   //thermalMass - high for bread
-    0      //thermalAggregation
+    0                     //thermalAggregation
   };
 
 
-  s1state.power = 0;
+  s1state->power = 0;
   for (i = 0; i < 200; ++i) {
     slot_func(&comp, &params);
-    s1state.power += 1;
+    s1state->power += 1;
   }
 
-  s1state.bread = &brd;
+  s1state->bread = &brd;
   for (i = 0; i < 500; ++i) {
     slot_func(&comp, &params);
   }

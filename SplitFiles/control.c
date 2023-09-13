@@ -65,6 +65,9 @@ char* buffer_getcommand(const char c) {
         case 'G':
             retVal = "baGel";
             break;
+        case 'C':
+            retVal = "Ciabatta";
+            break;
         case '1':
         case '2':
         case '3':
@@ -87,8 +90,8 @@ void bread_restack()
 {
     int i;
     for (i =0; i < MAX_ORDER_LIST; i++) {
-        printf(PRINTAT"%c%c" "         ", 18, i + 4);
-        printf(PRINTAT"%c%c" "%s", 18, i + 4, get_bread(breadBin[i]));
+        printf(PRINTAT"%c%c" "         ", ORDER_X_COORD, i + ORDER_Y_COORD);
+        printf(PRINTAT"%c%c" "%s", ORDER_X_COORD, i + ORDER_Y_COORD, get_bread(breadBin[i]));
     }
 }
 
@@ -99,21 +102,15 @@ void buffer_restack(ControlBuffer* buff) {
     const int bufferIndex = buff->bufferIndex;
     int prevBufferIndex = buff->prevBufferIndex;
     // Write out commands
-    //printf(PRINTAT"%c%c""%-12s", 18, 12, "Commands");
-    for (i = 0; i < bufferIndex; ++i) {
-        command = buffer_getcommand((buff->buffer[i]));
-        printf(PRINTAT"%c%c""%-12s", 18, i + 13, command);
-    }
     if (prevBufferIndex < bufferIndex) {
         for (i = prevBufferIndex; i < bufferIndex; ++i) {
             command = buffer_getcommand((buff->buffer[i]));
-            printf(PRINTAT"%c%c""%-12s", 18, i + 13, command);
+            printf(PRINTAT"%c%c""%-12s", CONTROL_X_COORD, i + CONTROL_Y_COORD, command);
         }
-    }
-    if (prevBufferIndex > bufferIndex) {
+    } else if (prevBufferIndex > bufferIndex) {
         // Ensure the rest is cleared
-        for (i = prevBufferIndex; i > bufferIndex; --i) {
-            printf(PRINTAT"%c%c""%-12s", 18, i + 13, " ");
+        for (i = prevBufferIndex; i >= bufferIndex; --i) {
+            printf(PRINTAT"%c%c""%-12s", CONTROL_X_COORD, i + CONTROL_Y_COORD, " ");
         }
     }
     buff->prevBufferIndex = bufferIndex;
@@ -165,7 +162,7 @@ void execute_command(ControlBuffer *ctrlBuff, GameParameters* params) {
         //Push some bread to a slot
         d = buffer_pop(ctrlBuff);
         e = buffer_pop(ctrlBuff);
-        if (d >= '0' && d <= '9' && (e == 'W' || e == 'B' || e == 'G'))  {
+        if (d >= '0' && d <= '9' && (e == 'W' || e == 'B' || e == 'G' || e == 'C'))  {
             //Valid format
             params->messageAddress = 100 + d - '0';
             BreadState* new_slice = malloc(sizeof(struct BreadStateStruct));
@@ -175,7 +172,7 @@ void execute_command(ControlBuffer *ctrlBuff, GameParameters* params) {
                 case 'W':
                 if (fetch_bread(e)) {
                     // white bread is driest and quickest to toast
-                    new_slice->old_moisture = 64 + rand()%48;
+                    new_slice->moisture = 64 + rand()%48;
                     new_slice->thermalMass = 62;
                     bread_restack();
                 } else {
@@ -191,7 +188,7 @@ void execute_command(ControlBuffer *ctrlBuff, GameParameters* params) {
                 case 'B':
                 if (fetch_bread(e)) {
                     // brown takes longer
-                    new_slice->old_moisture = 96 + rand()%64;
+                    new_slice->moisture = 96 + rand()%64;
                     new_slice->thermalMass = 82;
                     bread_restack();
                 } else {
@@ -205,8 +202,22 @@ void execute_command(ControlBuffer *ctrlBuff, GameParameters* params) {
                 case 'G':
                 if (fetch_bread(e)) {
                     // Bagel is a gamble and slow
-                    new_slice->old_moisture = 64 + rand()%192;
+                    new_slice->moisture = 64 + rand()%192;
                     new_slice->thermalMass = 164;
+                    bread_restack();
+                }else {
+                    free(new_slice);
+                    buffer_push(e, ctrlBuff);
+                    buffer_push(d, ctrlBuff);
+                    buffer_push('x', ctrlBuff);
+                    return;
+                }
+                break;
+                case 'C':
+                if (fetch_bread(e)) {
+                    // Ciabatta is dry and slow
+                    new_slice->moisture = 32 + rand()%12;
+                    new_slice->thermalMass = 200;
                     bread_restack();
                 }else {
                     free(new_slice);
@@ -218,9 +229,6 @@ void execute_command(ControlBuffer *ctrlBuff, GameParameters* params) {
                 break;
             }
             new_slice->toastedness = 0;
-            new_slice->moisture = new_slice->old_moisture;
-            //draw the initial moisture setting
-            draw_moisture(d, new_slice->old_moisture, MAX_RANGE);
             params->message = new_slice;
             params->messageSourceAddress = (void *)ctrlBuff;
         } else {
