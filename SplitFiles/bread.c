@@ -155,17 +155,20 @@ int main() {
     BreadBin* bin = get_bread_bin();
     BreadType* type;
     BreadState* bread;
+    int sliceCount = 0;
     int startFrame, endFrame;
     while (1) {
         startFrame = G_frames;
-        endFrame = startFrame + 50;
+        endFrame = startFrame + 20;
         type = rand_bread_type(bin);
         printf(PRINTAT"\x05\x05""%s      ", type->desc);
         bread = get_bread(bin, type->letter);
-        printf(PRINTAT"\x05\x06""%s %d %d           ", bread->type->desc, bread->thermalMass, bread->moisture);
+        ++sliceCount;
+        printf(PRINTAT"\x05\x06""%c %-3d %-3d %-15s           ", bread->type->letter, bread->thermalMass, bread->moisture, bread->type->desc);
         while (G_frames != endFrame) {
-            printf(PRINTAT"\x05\x07"" %d %d           ", G_frames, endFrame);
+            printf(PRINTAT"\x05\x07"" %d %d  %d         ", G_frames, endFrame, sliceCount);
         }
+        free(bread);
     }
 
 }
