@@ -43,11 +43,4 @@ struct dispatcher_struct {
 };
 typedef struct dispatcher_struct DispatcherState;
 
-//what orders are waiting
-#define MAX_ORDER_LIST 5
-extern char breadBin[MAX_ORDER_LIST];
-
-void reorderBreadBin(BreadBin* bin, const int slot);
-char getBread(const int breadType);
-
 #endif

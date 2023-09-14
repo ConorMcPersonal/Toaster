@@ -1,15 +1,13 @@
 #ifndef _DEFINE_BREAD_H
 #define _DEFINE_BREAD_H
 
+
+#include <stdbool.h>
 #define BREADBINSIZE 26
 
 // 1.) Forward declaration: Here is the name of the structure
 // but member-details are omitted.
 struct BreadBinStruct;
-
-// 2.) typedef of the structure
-// Still no details on the members.
-typedef struct BreadBinStruct  BreadBin;
 
 struct BreadTypeStruct {
   unsigned int      temperature;
@@ -20,24 +18,11 @@ struct BreadTypeStruct {
   unsigned int      old_toastedness;
   unsigned int      thermalMass;
   unsigned int      thermalAggregation;
-  char*             desc;
-  char              letter_desc;
+  char              desc[10];
+  char              letter_desc[1];
 };
 
 typedef struct BreadTypeStruct BreadType;
-/*
-struct BreadTypeStruct {
-    unsigned char     letter;
-    int               thermalMass;      //This mass
-    int               massVariability;  //Plus or minus this amount
-    int               moisture;         //This moisture
-    int               moistureVariability;  //Plus or minus...
-    int               cost;
-    int               callProb;         //Actually an integer, higher number = more likely
-    char*             desc;
-};
-typedef struct BreadTypeStruct BreadType;
-*/
 
 struct BreadBinStruct {
     BreadType* breadTypes[BREADBINSIZE];        //will be an array of 26 pointers 
@@ -50,14 +35,16 @@ BreadBin*   get_bread_bin(void);
 BreadType*  create_bread_type(void);
 
 /* Bread creators*/
-BreadType* getWhiteBread(void);
-BreadType* getBrownBread(void);
-BreadType* getBagelBread(void);
-BreadType* getCiabbataBread(void);
+BreadType* getWhiteBread(BreadType* slice);
+BreadType* getBrownBread(BreadType* slice);
+BreadType* getBagelBread(BreadType* slice);
+BreadType* getCiabattaBread(BreadType* slice);
 
 #define VISIBLEBIN 5
-bool IsBreadTypeVisible(BreadBin* bin, char bT);
 
+bool IsBreadTypeVisible(BreadBin* bin, unsigned char bT);
+
+void reorderBreadBin(BreadBin* bin, const int slot);
 
 
 #endif

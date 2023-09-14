@@ -4,26 +4,29 @@
 #include <arch/zx.h>
 #include <stdbool.h>
 
+#include "bread.h"
 #include "control.h"
 #include "game.h"
 #include "util.h"
 #include "slot_monitor.h"
 #include "music.h"
-#include "bread.h"
 
 // Compile with:
 // zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_CONTROL control.c -o control -create-app
 
+BreadBin* theBreadBin;
+
+
 BreadType* fetch_bread(BreadBin* bin, const char c)
 {
     int i;
-    BreadType retVal = NULL;
-    for (i = 0; i < VISIBLE_BIN; i++) {
+    BreadType* retVal = NULL;
+    for (i = 0; i < VISIBLEBIN; i++) {
         if (NULL == bin->breadTypes[i]) {
             //already exhausted list
             break;
         }
-        else if (bin->breadTypes[i]->letter_desc == c) {
+        else if ((bin->breadTypes[i]->letter_desc)[0] == c) {
             retVal = bin->breadTypes[i];
             reorderBreadBin(bin, i);
             break;
@@ -35,7 +38,7 @@ BreadType* fetch_bread(BreadBin* bin, const char c)
 char* get_bread(BreadBin* bin, unsigned int i) {
     const char* retVal = "         ";
     if (bin->breadTypes[i] != NULL) {
-        retVal = bin-[i]->desc;
+        retVal = bin->breadTypes[i]->desc;
     }
     return retVal;
 }
@@ -82,9 +85,9 @@ char* buffer_getcommand(const char c) {
 void bread_restack(BreadBin* bin)
 {
     int i;
-    for (i =0; i < VISIBLE_BIN; i++) {
+    for (i =0; i < VISIBLEBIN; i++) {
         printf(PRINTAT"%c%c" "         ", ORDER_X_COORD, i + ORDER_Y_COORD);
-        printf(PRINTAT"%c%c" "%s", ORDER_X_COORD, i + ORDER_Y_COORD, get_bread(breadBin[i]));
+        printf(PRINTAT"%c%c" "%s", ORDER_X_COORD, i + ORDER_Y_COORD, get_bread(bin,i));
     }
 }
 
@@ -135,6 +138,8 @@ void initialise_control_buffer(ControlBuffer *buff) {
     buff->prevBufferIndex = 0;
     buff->lastCharSeen = 0;
     buff->buffer = (unsigned char*)malloc(CONTROL_BUFFER_SIZE * sizeof(unsigned char));
+    theBreadBin = get_bread_bin();
+    bread_restack(theBreadBin);
 }
 
 void execute_command(ControlBuffer *ctrlBuff, GameParameters* params) {
@@ -155,76 +160,15 @@ void execute_command(ControlBuffer *ctrlBuff, GameParameters* params) {
         //Push some bread to a slot
         d = buffer_pop(ctrlBuff);
         e = buffer_pop(ctrlBuff);
-        if (d >= '0' && d <= '9' && IsBreadTypeVisible(e))  {
+        if (d >= '0' && d <= '9' && IsBreadTypeVisible(theBreadBin, e))  {
             //Valid format
             params->messageAddress = 100 + d - '0';
-            BreadState* new_slice = malloc(sizeof(struct BreadStateStruct));
-            new_slice->temperature = 0;
-            new_slice->thermalAggregation = 0;
-            switch(e) {
-                case 'W':
-                if (fetch_bread(e)) {
-                    // white bread is driest and quickest to toast
-                    new_slice->moisture = 64 + rand()%48;
-                    new_slice->thermalMass = 62;
-                    bread_restack();
-                } else {
-                    // failure - do nothing until user fixes stack
-                    // restack with an error message, so it's worse
-                    free(new_slice);
-                    buffer_push(e, ctrlBuff);
-                    buffer_push(d, ctrlBuff);
-                    buffer_push('x', ctrlBuff);
-                    return;
-                }
-                break;
-                case 'B':
-                if (fetch_bread(e)) {
-                    // brown takes longer
-                    new_slice->moisture = 96 + rand()%64;
-                    new_slice->thermalMass = 82;
-                    bread_restack();
-                } else {
-                    free(new_slice);
-                    buffer_push(e, ctrlBuff);
-                    buffer_push(d, ctrlBuff);
-                    buffer_push('x', ctrlBuff);
-                    return;
-                }
-                break;
-                case 'G':
-                if (fetch_bread(e)) {
-                    // Bagel is a gamble and slow
-                    new_slice->moisture = 64 + rand()%192;
-                    new_slice->thermalMass = 164;
-                    bread_restack();
-                }else {
-                    free(new_slice);
-                    buffer_push(e, ctrlBuff);
-                    buffer_push(d, ctrlBuff);
-                    buffer_push('x', ctrlBuff);
-                    return;
-                }
-                break;
-                case 'C':
-                if (fetch_bread(e)) {
-                    // Ciabatta is dry and slow
-                    new_slice->moisture = 32 + rand()%12;
-                    new_slice->thermalMass = 200;
-                    bread_restack();
-                }else {
-                    free(new_slice);
-                    buffer_push(e, ctrlBuff);
-                    buffer_push(d, ctrlBuff);
-                    buffer_push('x', ctrlBuff);
-                    return;
-                }
-                break;
-            }
-            new_slice->toastedness = 0;
+            BreadType* new_slice = fetch_bread(theBreadBin, e);
+            bread_restack(theBreadBin);
             params->message = new_slice;
             params->messageSourceAddress = (void *)ctrlBuff;
         } else {
+
         // restack with error message too
            buffer_push(e, ctrlBuff);
            buffer_push(d, ctrlBuff);

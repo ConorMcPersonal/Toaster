@@ -11,23 +11,24 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <input.h>
 #include <string.h>
 #include <stdbool.h>
+#include <string.h>
 
 #include "bread.h"
 #include "util.h"
 
 
 // create a breadbin of randomly chosen breads
-BreadBin* get_bread_bin() {
+BreadBin* get_bread_bin(void) {
     int i;
-    BreadBin* bin = malloc(sizeof(BreadBinStruct));
+    BreadBin* bin = malloc(sizeof(BreadBin));
     for (i = 0; i < BREADBINSIZE; i++) {
         // Should we test for NULL here? Game is broken if we get NULL
         // so not bother for now
-        bin->breadTypes[i] = createBreadType();
+        bin->breadTypes[i] = create_bread_type();
     }
+    return bin;
 }
 
 // free the resources
@@ -36,7 +37,7 @@ void clean_bread_bin(BreadBin* bin) {
     for (i = 0; i < BREADBINSIZE; i++) {
         if (NULL != bin->breadTypes[i]) {
             free(bin->breadTypes[i]);
-            breadTypes[i] = NULL;
+            bin->breadTypes[i] = NULL;
         }
     }
     free(bin);
@@ -52,27 +53,27 @@ BreadType* create_bread_type(void)
     //          20% bagel
     //          15% ciabbatta
     int rando_bread = rand()%100;
-    switch (true) {
-        case (rando_bread < 35):
-            return getWhiteBread();
-        case (rando_bread < 65):
-            return getBrownBread();
-        case (rando_bread < 85):
-            return getBagelBread();
-        default:
-            return getCiabbataBread();
+    BreadType* slice = malloc(sizeof(BreadType));
+    if (rando_bread < 35) {
+            return getWhiteBread(slice);
     }
+    else if (rando_bread < 65) {
+            return getBrownBread(slice);
+    }
+    else if (rando_bread < 85) {
+            return getBagelBread(slice);
+    }
+    return getCiabattaBread(slice);
 }
 
 
 // bread type constructors - change these to change what different
 // types of bread might be like
-BreadType* getWhiteBread(void)
+BreadType* getWhiteBread(BreadType* slice)
 {
     //driest bread, quickest to toast
-    BreadType* slice = malloc(sizeof(BreadTypeStruct));
-    slice->desc = "White";
-    slice->letter_desc = "W";
+    strcpy(slice->desc, "White\0");
+    memcpy(slice->letter_desc, "W", 1);
     slice->moisture = 64 + rand()%48;
     slice->old_moisture = slice->moisture;
     slice->temperature = 0;
@@ -80,14 +81,14 @@ BreadType* getWhiteBread(void)
     slice->toastedness = 0;
     slice->old_toastedness = 0;
     slice->thermalMass = 64 + rand()%16;
+    return slice;
 }
 
-BreadType* getBrownBread(void)
+BreadType* getBrownBread(BreadType* slice)
 {
     //more moist than white
-    BreadType* slice = malloc(sizeof(BreadTypeStruct));
-    slice->desc = "Brown";
-    slice->letter_desc = "B";
+    strcpy(slice->desc, "Brown\0");
+    memcpy(slice->letter_desc, "B", 1);
     slice->moisture = 80 + rand()%64;
     slice->old_moisture = slice->moisture;
     slice->temperature = 0;
@@ -95,14 +96,14 @@ BreadType* getBrownBread(void)
     slice->toastedness = 0;
     slice->old_toastedness = 0;
     slice->thermalMass = 80 + rand()%32;
+    return slice;
 }
 
-BreadType* getBagelBread(void)
+BreadType* getBagelBread(BreadType* slice)
 {
     //bit random but more moist
-    BreadType* slice = malloc(sizeof(BreadTypeStruct));
-    slice->desc = "baGel";
-    slice->letter_desc = "G";
+    strcpy(slice->desc, "baGel\0");
+    memcpy(slice->letter_desc, "G", 1);
     slice->moisture = 64 + rand()%192;
     slice->old_moisture = slice->moisture;
     slice->temperature = 0;
@@ -110,14 +111,14 @@ BreadType* getBagelBread(void)
     slice->toastedness = 0;
     slice->old_toastedness = 0;
     slice->thermalMass = 160 + rand()%48;
+    return slice;
 }
 
-BreadType* getCiabattaBread(void)
+BreadType* getCiabattaBread(BreadType* slice)
 {
     //dry but thicker
-    BreadType* slice = malloc(sizeof(BreadTypeStruct));
-    slice->desc = "Ciabatta";
-    slice->letter_desc = "C";
+    strcpy(slice->desc, "Ciabatta\0");
+    memcpy(slice->letter_desc, "C", 1);
     slice->moisture = 48 + rand()%48;
     slice->old_moisture = slice->moisture;
     slice->temperature = 0;
@@ -125,6 +126,7 @@ BreadType* getCiabattaBread(void)
     slice->toastedness = 0;
     slice->old_toastedness = 0;
     slice->thermalMass = 128 + rand()%128;
+    return slice;
 }
 
 //check if the specified bread type can be seen and thus is available
@@ -133,7 +135,7 @@ bool IsBreadTypeVisible(BreadBin* bin, char bT)
     int i;
     bool retVal = false;
     for (i = 0; i < VISIBLEBIN; i++) {
-        if (bin->breadTypes[i]->letter_desc == bt) {
+        if ((bin->breadTypes[i]->letter_desc)[0] == bT) {
             retVal = true;
             break;
         }
