@@ -11,16 +11,6 @@ struct BreadBinStruct;
 // Still no details on the members.
 typedef struct BreadBinStruct  BreadBin;
 
-struct BreadStateStruct {
-  int               temperature;  
-  int               moisture;
-  int               toastedness;
-  unsigned char     thermalMass;
-  unsigned int      thermalAggregation;
-};
-
-typedef struct BreadStateStruct BreadState;
-
 struct BreadTypeStruct {
     unsigned char     letter;
     int               thermalMass;      //This mass
@@ -33,26 +23,39 @@ struct BreadTypeStruct {
 };
 typedef struct BreadTypeStruct BreadType;
 
+struct BreadStateStruct {
+  int               temperature;  
+  int               moisture;
+  int               toastedness;
+  unsigned char     thermalMass;
+  unsigned int      thermalAggregation;
+  BreadType*        type; // keep reference to underlying BreadType, for letter, desc
+};
+
+typedef struct BreadStateStruct BreadState;
+
 
 struct BreadBinStruct {
     int probTotal;
     BreadType** breadTypes;                    //will be an array of 26 pointers 
                                                //       where (BreadTypeStruct.letter - 'A') is the index
-    BreadType*  rand_bread_type(BreadBin*);         //get a random BreadType
-    BreadType*  get_bread(BreadBin*, unsigned char);      //get a specific BreadState
-    void        add_bread(BreadBin*, BreadType*);         //add a bread type to the bread bin
 };
 typedef struct BreadBinStruct BreadBin;
+
+BreadType*  rand_bread_type(BreadBin*);         //get a random BreadType
+BreadState*  get_bread(BreadBin*, unsigned char);      //get a specific BreadState
+void        add_bread(BreadBin*, BreadType*);         //add a bread type to the bread bin
 
 BreadBin*   get_bread_bin(void);
 BreadType*  create_bread_type(
     unsigned char     letter, 
+    char*             desc,
     int               thermalMass,
     int               massVariability,  //Plus or minus this amount
     int               moisture,         //This moisture
     int               moistureVariability,  //Plus or minus...
     int               cost,
-    int               callProb,         //Actually an integer, higher number = more likely
-    char*             desc);
+    int               callProb         //Actually an integer, higher number = more likely
+);
 
 #endif
