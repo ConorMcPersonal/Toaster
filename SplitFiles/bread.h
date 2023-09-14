@@ -40,7 +40,6 @@ struct BreadBinStruct {
     BreadType** breadTypes;                    //will be an array of 26 pointers 
                                                //       where (BreadTypeStruct.letter - 'A') is the index
 };
-typedef struct BreadBinStruct BreadBin;
 
 BreadType*  rand_bread_type(BreadBin*);         //get a random BreadType
 BreadState*  get_bread(BreadBin*, unsigned char);      //get a specific BreadState

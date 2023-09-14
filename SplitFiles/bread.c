@@ -40,8 +40,11 @@ BreadType* rand_bread_type(BreadBin* bin) {
 BreadState* get_bread(BreadBin* bin, unsigned char typeLetter) {
     int index = typeLetter - (unsigned char)'A';
     BreadType* type = *(bin->breadTypes + index);
+
+;
+
     if (type == NULL) {
-        return NULL;
+        return (BreadState *)NULL;
     }
     BreadState* newBread = malloc(sizeof(BreadState));
     newBread->temperature = 0;
@@ -149,6 +152,7 @@ BreadType*  create_bread_type(
     }
 
 int main() {
+    start_frame_count();
     //Set up the bin
     BreadBin* bin = get_bread_bin();
     BreadType* type;
@@ -161,7 +165,9 @@ int main() {
         printf(PRINTAT"\x05\x05""%s      ", type->desc);
         bread = get_bread(bin, type->letter);
         printf(PRINTAT"\x05\x06""%s %d %d           ", bread->type->desc, bread->thermalMass, bread->moisture);
-        while (G_frames != endFrame) {}
+        while (G_frames != endFrame) {
+            printf(PRINTAT"\x05\x07"" %d %d           ", G_frames, endFrame);
+        }
     }
 
 }
