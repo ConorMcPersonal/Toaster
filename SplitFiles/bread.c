@@ -41,8 +41,6 @@ BreadState* get_bread(BreadBin* bin, unsigned char typeLetter) {
     int index = typeLetter - (unsigned char)'A';
     BreadType* type = *(bin->breadTypes + index);
 
-;
-
     if (type == NULL) {
         return (BreadState *)NULL;
     }
