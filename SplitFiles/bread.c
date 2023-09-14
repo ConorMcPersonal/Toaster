@@ -37,10 +37,16 @@ BreadType* rand_bread_type(BreadBin* bin) {
     return rand_bread_type(bin);
 }
 
-BreadState* get_bread(BreadBin* bin, unsigned char typeLetter) {
+BreadType* get_type(BreadBin* bin, unsigned char typeLetter) {
     int index = typeLetter - (unsigned char)'A';
-    BreadType* type = *(bin->breadTypes + index);
+    return bin->breadTypes[index];
+}
 
+BreadState* get_bread(BreadBin* bin, unsigned char typeLetter) {
+    //int index = typeLetter - (unsigned char)'A';
+    //BreadType* type = *(bin->breadTypes + index);
+    BreadType* type = get_type(bin, typeLetter);
+    
     if (type == NULL) {
         return (BreadState *)NULL;
     }
@@ -147,9 +153,10 @@ BreadType*  create_bread_type(
         newType->callProb = callProb;
         newType->desc = desc;
         return newType;
-    }
+}
 
-int main() {
+
+int main_bread() {
     start_frame_count();
     //Set up the bin
     BreadBin* bin = get_bread_bin();
@@ -165,10 +172,18 @@ int main() {
         bread = get_bread(bin, type->letter);
         ++sliceCount;
         printf(PRINTAT"\x05\x06""%c %-3d %-3d %-15s           ", bread->type->letter, bread->thermalMass, bread->moisture, bread->type->desc);
-        while (G_frames != endFrame) {
+        while (G_frames < endFrame && (endFrame - G_frames) < 20) {
             printf(PRINTAT"\x05\x07"" %d %d  %d         ", G_frames, endFrame, sliceCount);
         }
         free(bread);
     }
 
 }
+
+
+#ifdef _TEST_BREAD
+
+int main() {
+    return main_bread();
+}
+#endif

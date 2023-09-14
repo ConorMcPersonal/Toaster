@@ -41,9 +41,10 @@ struct BreadBinStruct {
                                                //       where (BreadTypeStruct.letter - 'A') is the index
 };
 
-BreadType*  rand_bread_type(BreadBin*);         //get a random BreadType
+BreadType*   rand_bread_type(BreadBin*);               //get a random BreadType
 BreadState*  get_bread(BreadBin*, unsigned char);      //get a specific BreadState
-void        add_bread(BreadBin*, BreadType*);         //add a bread type to the bread bin
+void         add_bread(BreadBin*, BreadType*);         //add a bread type to the bread bin
+BreadType*   get_type(BreadBin*, unsigned char);       //ensure the requested bread type exists
 
 BreadBin*   get_bread_bin(void);
 BreadType*  create_bread_type(
