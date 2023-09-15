@@ -1,4 +1,5 @@
 #include "game.h"
+#include "bread.h"
 
 #ifndef _DEFINE_CONTROL_H
 #define _DEFINE_CONTROL_H
@@ -30,6 +31,6 @@ void initialise_control_buffer(ControlBuffer *buff);
 
 void command_entry_func(GameComponent* input, GameParameters* params);
 
-void bread_restack();
+void bread_restack(BreadBin*);
 
 #endif

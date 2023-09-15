@@ -9,31 +9,17 @@
 #include "slot_monitor.h"
 #include "control.h"
 #include "music.h"
+#include "bread.h"
 
 // Compile with:
 // zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_GAME slot.c slot_monitor.c game.c control.c music.c util.c -o game -create-app
 
 char breadBin[MAX_ORDER_LIST];
 
-//handle bread creation
-char getBread(const int breadType)
-{
-  switch (breadType) {
-    case 1:
-      return 'W';
-    case 2:
-      return 'G';
-    case 3:
-      return 'B';
-    default:
-      return 'C';
-  }
-}
-
-void reorderBreadBin(const int slot)
+void reorderBreadBin(const int slot, BreadBin* bin)
 {
   int i;
-  char newBread = getBread(rand()%4);
+  char newBread = rand_bread_type(bin)->letter;
   for (i = slot; i < MAX_ORDER_LIST - 1; i++) {
     breadBin[i] = breadBin[i + 1];
   }
@@ -112,15 +98,16 @@ int main_game()
     printf(PRINTAT "\x01\x05" "but now stuff gets really tasty.");
     printf(PRINTAT "\x01\x07" "\x12\x31\x10\x32" "Can you stand the heat?\x12\x30\x10\x30");
     printf(PRINTAT "\x05\x0B" "Press any key to start");
+    BreadBin* newBreadBin = get_bread_bin();
+    print_all_bread_types(newBreadBin);
     int rando = wait_for_a_key(NULL, NULL);
     // get a random seed based on frame count
     srand(rando);
     zx_cls(PAPER_WHITE);
 
     for (i = 0; i < MAX_ORDER_LIST; i++) {
-      breadBin[i] = getBread(rand()%4);
+      breadBin[i] = rand_bread_type(newBreadBin)->letter;
     }
-    
   
   // *******************************************************
   // Music set-up
@@ -206,8 +193,11 @@ int main_game()
                                 0,//.slices = 
                                 0,//.game_over_flag = 
                                 0,//.max_toast = 
-                                0,//.message_address = 
-                                (void*)NULL//.message = 
+                                0, //message_address
+                                (void*)NULL,//.message 
+                                (void*)NULL,//.messageSourceAddress = 
+                                0, // effect
+                                newBreadBin //breadBin
                             };
 
     // draw starting time line
@@ -217,7 +207,7 @@ int main_game()
     
     printf(PRINTAT"%c%c""%-12s", 18, 12, "Commands");
     printf(PRINTAT"%c%c""%-12s", 18, 3,  "Order Queue");
-    bread_restack();
+    bread_restack(newBreadBin);
 
 
     for (i = 0; i < MAX_TICKS; i++) {

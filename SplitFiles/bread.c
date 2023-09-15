@@ -37,7 +37,10 @@ BreadType* rand_bread_type(BreadBin* bin) {
     return rand_bread_type(bin);
 }
 
-BreadType* get_type(BreadBin* bin, unsigned char typeLetter) {
+BreadType* get_bread_type(BreadBin* bin, unsigned char typeLetter) {
+    if (typeLetter < 'A' || typeLetter > 'Z') {
+        return NULL;
+    }
     int index = typeLetter - (unsigned char)'A';
     return bin->breadTypes[index];
 }
@@ -45,8 +48,8 @@ BreadType* get_type(BreadBin* bin, unsigned char typeLetter) {
 BreadState* get_bread(BreadBin* bin, unsigned char typeLetter) {
     //int index = typeLetter - (unsigned char)'A';
     //BreadType* type = *(bin->breadTypes + index);
-    BreadType* type = get_type(bin, typeLetter);
-    
+    BreadType* type = get_bread_type(bin, typeLetter);
+
     if (type == NULL) {
         return (BreadState *)NULL;
     }
@@ -69,6 +72,9 @@ void add_bread(BreadBin* bin, BreadType* newType) {
 
 BreadBin* get_bread_bin() {
     BreadType** types = malloc(sizeof(BreadType*) * BREADBINSIZE);
+    for (int i = 0; i < BREADBINSIZE; ++i) {
+        types[i] = NULL;
+    }
     BreadBin* bin = malloc(sizeof(BreadBin));
     bin->probTotal = 0;
     bin->breadTypes = types;
@@ -155,25 +161,37 @@ BreadType*  create_bread_type(
         return newType;
 }
 
+void print_all_bread_types(BreadBin* bin) {
+    for (int i = 0; i < BREADBINSIZE; ++i) {
+        if (bin->breadTypes[i] != NULL) {
+            printf("%d %c %s\n", i, bin->breadTypes[i]->letter, bin->breadTypes[i]->desc);
+        }
+    }
+}
 
 int main_bread() {
     start_frame_count();
     //Set up the bin
     BreadBin* bin = get_bread_bin();
+    print_all_bread_types(bin);
     BreadType* type;
+    BreadType* type2;
     BreadState* bread;
-    int sliceCount = 0;
-    int startFrame, endFrame;
+    unsigned int sliceCount = 0;
+    unsigned int startFrame, endFrame;
     while (1) {
         startFrame = G_frames;
-        endFrame = startFrame + 20;
+        endFrame = startFrame + 2;
         type = rand_bread_type(bin);
         printf(PRINTAT"\x05\x05""%s      ", type->desc);
+        type2 = get_bread_type(bin, type->letter);
+        printf(PRINTAT"\x0B\x05""%s      ", type2->desc);
         bread = get_bread(bin, type->letter);
         ++sliceCount;
         printf(PRINTAT"\x05\x06""%c %-3d %-3d %-15s           ", bread->type->letter, bread->thermalMass, bread->moisture, bread->type->desc);
-        while (G_frames < endFrame && (endFrame - G_frames) < 20) {
-            printf(PRINTAT"\x05\x07"" %d %d  %d         ", G_frames, endFrame, sliceCount);
+        printf(PRINTAT"\x05\x07"" %u %u  %u         ", G_frames, endFrame, sliceCount);
+        while (G_frames < endFrame && (endFrame - G_frames) < 2) {
+            printf(PRINTAT"\x05\x07"" %u %u  %u         ", G_frames, endFrame, sliceCount);
         }
         free(bread);
     }
