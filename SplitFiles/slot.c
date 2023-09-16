@@ -103,19 +103,6 @@ SlotState* get_slot(unsigned char x, unsigned char y, int slotIndex, int thermal
 int slot_main() {
 
   int i;
-  /*SlotMonitor *testMon = get_slot_monitor(3, 5, 1);
-
-  SlotState s1state = {
-    1, //int       slot_number; // Identifier of this slot
-    0, //int       temperature;
-    0, //int       power;   //Current power level
-    testMon->xBase, //int       x_coord; //screen x-coord
-    testMon->yBase, //int       y_coord; //screen y-coord
-    41, //thermal mass - quite low for the slot
-    0,    //thermalAggregation
-    (BreadState*) NULL, //bread;
-    (SlotMonitor *)testMon
-  };*/
 
   SlotState* s1state = get_slot(3, 5, 1, 41);
 

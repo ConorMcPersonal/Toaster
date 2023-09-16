@@ -31,6 +31,6 @@ void initialise_control_buffer(ControlBuffer *buff);
 
 void command_entry_func(GameComponent* input, GameParameters* params);
 
-void bread_restack(BreadBin*);
+//void bread_restack(BreadBin*);
 
 #endif

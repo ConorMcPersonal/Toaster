@@ -10,11 +10,12 @@
 #include "control.h"
 #include "music.h"
 #include "bread.h"
+#include "customer.h"
 
 // Compile with:
-// zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_GAME slot.c slot_monitor.c game.c control.c music.c util.c -o game -create-app
+// zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_GAME slot.c slot_monitor.c game.c control.c music.c util.c bread.c customer.c -o game -create-app
 
-char breadBin[MAX_ORDER_LIST];
+/*char breadBin[MAX_ORDER_LIST];
 
 void reorderBreadBin(const int slot, BreadBin* bin)
 {
@@ -24,7 +25,7 @@ void reorderBreadBin(const int slot, BreadBin* bin)
     breadBin[i] = breadBin[i + 1];
   }
   breadBin[MAX_ORDER_LIST - 1] = newBread;
-}
+}*/
 
 void draw_tick_line(const unsigned int tick)
 {
@@ -53,8 +54,12 @@ int wait_for_a_key(GameComponent* input, GameParameters* params) {
     //printf(PRINTAT"\x01\x12""Key pressed is %c (0x%02X)\n", c, c);
 }
 
-void tick_func(GameComponent* input, GameParameters* params) {
-  input;
+void tick_func(GameComponent* input, GameParameters* params) { //Now a scoreboard too
+  int last_score = (int)input->ptr;
+  if (params->score != last_score) {
+    printf(PRINTAT"\x19\x01""%6d", params->score);
+    input->ptr = (void *)last_score;
+  }
   params->ticks += 1;
   draw_tick_line(params->ticks);
 }
@@ -98,16 +103,16 @@ int main_game()
     printf(PRINTAT "\x01\x05" "but now stuff gets really tasty.");
     printf(PRINTAT "\x01\x07" "\x12\x31\x10\x32" "Can you stand the heat?\x12\x30\x10\x30");
     printf(PRINTAT "\x05\x0B" "Press any key to start");
-    BreadBin* newBreadBin = get_bread_bin();
-    print_all_bread_types(newBreadBin);
+
     int rando = wait_for_a_key(NULL, NULL);
     // get a random seed based on frame count
     srand(rando);
     zx_cls(PAPER_WHITE);
 
-    for (i = 0; i < MAX_ORDER_LIST; i++) {
+    BreadBin* newBreadBin = get_bread_bin();
+    /*for (i = 0; i < MAX_ORDER_LIST; i++) {
       breadBin[i] = rand_bread_type(newBreadBin)->letter;
-    }
+    }*/
   
   // *******************************************************
   // Music set-up
@@ -122,15 +127,22 @@ int main_game()
     //  Music set-up ends
     // *******************************************************
 
+    Customer root = {0, NULL, NULL};
+    CustomerBase base = {&root, 0};
 
-
-
+    GameComponent collector = {
+        &base,
+        &customer_func,
+        NULL
+    };
+    /*
     // Initialize the "game" - do the loop backwards
     GameComponent collector = {
       (void*)NULL, //ptr
       &toast_collector_func,  //func
       (GameComponent *)NULL //next - this is end of the line
     };
+    */
 
     GameComponent smokeAlarm = {
       (void*)NULL, //ptr
@@ -207,7 +219,7 @@ int main_game()
     
     printf(PRINTAT"%c%c""%-12s", 18, 12, "Commands");
     printf(PRINTAT"%c%c""%-12s", 18, 3,  "Order Queue");
-    bread_restack(newBreadBin);
+    //bread_restack(newBreadBin);
 
 
     for (i = 0; i < MAX_TICKS; i++) {

@@ -13,7 +13,7 @@
 // Compile with:
 // zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_CONTROL control.c -o control -create-app
 
-bool fetch_bread(const char c, BreadBin* bin)
+/*bool fetch_bread(const char c, BreadBin* bin)
 {
     int i;
     bool bread_found = false;
@@ -25,7 +25,7 @@ bool fetch_bread(const char c, BreadBin* bin)
         }
     }
     return bread_found;
-}
+}*/
 
 const char* buffer_getcommand(const unsigned char c, GameParameters* params, char* retVal) {
     BreadType* breadType = get_bread_type(params->breadBin, c);
@@ -48,14 +48,14 @@ const char* buffer_getcommand(const unsigned char c, GameParameters* params, cha
 }
 
 //show the bread on the screen
-void bread_restack(BreadBin* bin)
+/*void bread_restack(BreadBin* bin)
 {
     int i;
     for (i =0; i < MAX_ORDER_LIST; i++) {
         printf(PRINTAT"%c%c" "         ", ORDER_X_COORD, i + ORDER_Y_COORD);
         printf(PRINTAT"%c%c" "%s", ORDER_X_COORD, i + ORDER_Y_COORD, get_bread_type(bin, breadBin[i])->desc);
     }
-}
+}*/
 
 //show the stack on the screen
 void buffer_restack(ControlBuffer* buff, GameParameters* params) {

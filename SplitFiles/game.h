@@ -48,8 +48,8 @@ typedef struct dispatcher_struct DispatcherState;
 
 //what orders are waiting
 #define MAX_ORDER_LIST 5
-extern char breadBin[MAX_ORDER_LIST];
+//extern char breadBin[MAX_ORDER_LIST];
 
-void reorderBreadBin(const int , BreadBin*);
+//void reorderBreadBin(const int , BreadBin*);
 
 #endif
