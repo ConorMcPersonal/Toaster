@@ -5,26 +5,37 @@
 //////////////////////////////////////////////////////////
 
 // Can be compiled with:
-// zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_CUSTOMER bread.c util.c customer.c -o customer -create-app
+// zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_CUSTOMER bread.c util.c music.c customer.c -o customer -create-app
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
+#include <arch/zx.h>
 
 #include "customer.h"
 #include "bread.h"
 #include "util.h"
+#include "music.h"
 
 void redraw_customers(CustomerBase *base) {
-    unsigned char ypos = 4;
+    unsigned char ypos = CUSTOMER_LIST_YPOS;
     Customer* lastCustomer = base->rootCustomer;
     while (lastCustomer->nextCustomer != NULL) {
         lastCustomer = lastCustomer->nextCustomer;
-        printf(PRINTAT"\x12%c""%-12s", ypos, lastCustomer->breadOrder->desc);
+        const char* mood = (lastCustomer->customerMood != 0? ANGRY_CUSTOMER : HAPPY_CUSTOMER);
+        printf(PRINTAT"%c%c%s""%-12s", CUSTOMER_LIST_XPOS, ypos, mood, lastCustomer->breadOrder->desc);
         ++ypos;
     }
-    for (; ypos < 4 + MAX_CUSTOMER_COUNT; ++ypos) {
-        printf(PRINTAT"\x12%c""%-12s", ypos, "");
+    for (; ypos < CUSTOMER_LIST_YPOS + MAX_CUSTOMER_COUNT; ++ypos) {
+        //Now we are updating attributes each time, we can just make the blank parts
+        //of the list white ink on white paper and save a bunch of pixel updates
+        //printf(PRINTAT"\x12%c"HAPPY_CUSTOMER"%-12s", ypos, "");
+        memset((void *)(ATTRSTART + 32 * (ypos - 1) + CUSTOMER_LIST_XPOS - 1), 
+                PAPER_WHITE + INK_WHITE, 12); //'\x3F'
     }
+    //IO system remembers the ink and paper
+    printf(PRINTAT"\x01\x01%s", HAPPY_CUSTOMER);
 }
 
 void customer_func(GameComponent* customers, GameParameters* params) {
@@ -88,6 +99,10 @@ void customer_func(GameComponent* customers, GameParameters* params) {
             free(thisCustomer);
             thisCustomer = lastCustomer;
             redraw = 1;
+            params->effect = TUNE_EFFECT_BEEP;
+        } else if (thisCustomer->ticksLeft < GRUMPY_TICKS && thisCustomer->customerMood == 0) {
+            // Customer going grumpy
+            thisCustomer->customerMood = 1;
         }
         lastCustomer = thisCustomer;
         thisCustomer = thisCustomer->nextCustomer;
@@ -96,12 +111,14 @@ void customer_func(GameComponent* customers, GameParameters* params) {
     //Do we have a new customer? - this is independent of whether we have space
     if (rand() % 150 == 0) {
         //Yes we do!
+        params->effect = TUNE_EFFECT_SHORT_BEEP;
         if (base->customerCount < MAX_CUSTOMER_COUNT) {
             //Add in a new one then!
             newCustomer = malloc(sizeof(Customer));
             newCustomer->breadOrder = rand_bread_type(params->breadBin);
             newCustomer->nextCustomer = NULL;
             newCustomer->ticksLeft = newCustomer->breadOrder->cost * (8 + rand() % 4);
+            newCustomer->customerMood = 0;
             redraw = 1;
             base->customerCount += 1;
             lastCustomer->nextCustomer = newCustomer;

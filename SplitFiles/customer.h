@@ -5,6 +5,11 @@
 #include "bread.h"
 
 #define MAX_CUSTOMER_COUNT 6
+#define ANGRY_CUSTOMER "\x10\x37\x11\x32"
+#define HAPPY_CUSTOMER "\x10\x30\x11\x37"
+#define GRUMPY_TICKS 200
+#define CUSTOMER_LIST_XPOS 0x12
+#define CUSTOMER_LIST_YPOS 0x04
 
 struct CustomerStruct;
 
@@ -16,6 +21,7 @@ struct CustomerStruct {
     unsigned int        ticksLeft;    //How much longer they will wait to be served
     BreadType*          breadOrder;   //What toast do they want
     Customer*           nextCustomer; //Who is after them in the queue; singly linked list
+    unsigned  char      customerMood; //zero if the customer is happy
 };
 
 // This will be pointed to by a GameComponent

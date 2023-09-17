@@ -5,6 +5,8 @@
 #define MIN(a,b) (((a)<(b))?(a):(b))
 #define MAX(a,b) (((a)>(b))?(a):(b))
 #define PRINTAT "\x16"
+#define INK     "\x10"
+#define PAPER   "\x11"
 
 #define SCREENSTART 0x4000
 #define ATTRSTART   0x5800
