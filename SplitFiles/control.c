@@ -13,98 +13,61 @@
 // Compile with:
 // zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_CONTROL control.c -o control -create-app
 
-bool fetch_bread(const char c)
+/*bool fetch_bread(const char c, BreadBin* bin)
 {
     int i;
     bool bread_found = false;
     for (i = 0; i < MAX_ORDER_LIST; i++) {
         if (breadBin[i] == c) {
             bread_found = true;
-            reorderBreadBin(i);
+            reorderBreadBin(i, bin);
             break;
         }
     }
     return bread_found;
-}
+}*/
 
-char* get_bread(const char c) {
-    const char* retVal = "         ";
-    switch (c) {
-        case 'B':
-            retVal = "Brown";
-            break;
-        case 'W':
-            retVal = "White";
-            break;
-        case 'C':
-            retVal = "Ciabatta";
-            break;
-        case 'G':
-        default:
-            retVal = "baGel";
-            break;
+const char* buffer_getcommand(const unsigned char c, GameParameters* params, char* retVal) {
+    BreadType* breadType = get_bread_type(params->breadBin, c);
+    if (breadType != NULL) {
+        return breadType->desc;
+    } else 
+        if (c >='1' && c <= '9') {
+            sprintf((char *)retVal, "slot %c", c);
+    } else {
+        switch(c) {
+            case 'T':
+                return "Toast it!";
+            case 'P':
+                return "Pop it!";
+            default:
+                return "You wot??";
+        }
     }
     return retVal;
 }
 
-char* buffer_getcommand(const char c) {
-    const char* retVal = "         ";
-    switch(c) {
-        case 'B':
-            retVal = "Brown";
-            break;
-        case 'W':
-            retVal = "White";
-            break;
-        case 'T':
-            retVal = "Toast it!";
-            break;
-        case 'P':
-            retVal = "Pop it!";
-            break;
-        case 'G':
-            retVal = "baGel";
-            break;
-        case 'C':
-            retVal = "Ciabatta";
-            break;
-        case '1':
-        case '2':
-        case '3':
-        case '4':
-        case '5':
-        case '6':
-        case '7':
-        case '8':
-        case '9':
-            sprintf((char *)retVal, "slot %c", c);
-            break;
-        default:
-            retVal = "you wot??";
-    }
-    return (char *)retVal;
-}
-
 //show the bread on the screen
-void bread_restack()
+/*void bread_restack(BreadBin* bin)
 {
     int i;
     for (i =0; i < MAX_ORDER_LIST; i++) {
         printf(PRINTAT"%c%c" "         ", ORDER_X_COORD, i + ORDER_Y_COORD);
-        printf(PRINTAT"%c%c" "%s", ORDER_X_COORD, i + ORDER_Y_COORD, get_bread(breadBin[i]));
+        printf(PRINTAT"%c%c" "%s", ORDER_X_COORD, i + ORDER_Y_COORD, get_bread_type(bin, breadBin[i])->desc);
     }
-}
+}*/
 
 //show the stack on the screen
-void buffer_restack(ControlBuffer* buff) {
+void buffer_restack(ControlBuffer* buff, GameParameters* params) {
     int i;
     char* command;
+    char* retVal = "         ";
     const int bufferIndex = buff->bufferIndex;
     int prevBufferIndex = buff->prevBufferIndex;
     // Write out commands
     if (prevBufferIndex < bufferIndex) {
         for (i = prevBufferIndex; i < bufferIndex; ++i) {
-            command = buffer_getcommand((buff->buffer[i]));
+            command = buffer_getcommand((buff->buffer[i]), params, retVal);
             printf(PRINTAT"%c%c""%-12s", CONTROL_X_COORD, i + CONTROL_Y_COORD, command);
         }
     } else if (prevBufferIndex > bufferIndex) {
@@ -162,81 +125,17 @@ void execute_command(ControlBuffer *ctrlBuff, GameParameters* params) {
         //Push some bread to a slot
         d = buffer_pop(ctrlBuff);
         e = buffer_pop(ctrlBuff);
-        if (d >= '0' && d <= '9' && (e == 'W' || e == 'B' || e == 'G' || e == 'C'))  {
+        if (get_bread_type(params->breadBin, e) != NULL && d > '0' && d <= '9') {
             //Valid format
             params->messageAddress = 100 + d - '0';
-            BreadState* new_slice = malloc(sizeof(struct BreadStateStruct));
-            new_slice->temperature = 0;
-            new_slice->thermalAggregation = 0;
-            switch(e) {
-                case 'W':
-                if (fetch_bread(e)) {
-                    // white bread is driest and quickest to toast
-                    new_slice->moisture = 64 + rand()%48;
-                    new_slice->thermalMass = 62;
-                    bread_restack();
-                } else {
-                    // failure - do nothing until user fixes stack
-                    // restack with an error message, so it's worse
-                    free(new_slice);
-                    buffer_push(e, ctrlBuff);
-                    buffer_push(d, ctrlBuff);
-                    buffer_push('x', ctrlBuff);
-                    return;
-                }
-                break;
-                case 'B':
-                if (fetch_bread(e)) {
-                    // brown takes longer
-                    new_slice->moisture = 96 + rand()%64;
-                    new_slice->thermalMass = 82;
-                    bread_restack();
-                } else {
-                    free(new_slice);
-                    buffer_push(e, ctrlBuff);
-                    buffer_push(d, ctrlBuff);
-                    buffer_push('x', ctrlBuff);
-                    return;
-                }
-                break;
-                case 'G':
-                if (fetch_bread(e)) {
-                    // Bagel is a gamble and slow
-                    new_slice->moisture = 64 + rand()%192;
-                    new_slice->thermalMass = 164;
-                    bread_restack();
-                }else {
-                    free(new_slice);
-                    buffer_push(e, ctrlBuff);
-                    buffer_push(d, ctrlBuff);
-                    buffer_push('x', ctrlBuff);
-                    return;
-                }
-                break;
-                case 'C':
-                if (fetch_bread(e)) {
-                    // Ciabatta is dry and slow
-                    new_slice->moisture = 32 + rand()%12;
-                    new_slice->thermalMass = 200;
-                    bread_restack();
-                }else {
-                    free(new_slice);
-                    buffer_push(e, ctrlBuff);
-                    buffer_push(d, ctrlBuff);
-                    buffer_push('x', ctrlBuff);
-                    return;
-                }
-                break;
-            }
-            new_slice->toastedness = 0;
+            BreadState* new_slice = get_bread(params->breadBin, e);
             params->message = new_slice;
             params->messageSourceAddress = (void *)ctrlBuff;
         } else {
-        // restack with error message too
+           // restack with error message too
            buffer_push(e, ctrlBuff);
            buffer_push(d, ctrlBuff);
            buffer_push('x', ctrlBuff);
-            ;
         }
     } else {
         //It's a bust
@@ -272,25 +171,20 @@ void command_entry_func(GameComponent* input, GameParameters* params) {
         }
         else if (c == 'E') {
             // Execute any valid command at head of stack
-
-            // For now just empty buffer
-            //ctrlBuff->bufferIndex = 0;
-            //(ctrlBuff->buffer)[0] = 0;
             execute_command(ctrlBuff, params);
         } else {
             buffer_push(c, ctrlBuff); 
         }
-        buffer_restack(ctrlBuff);
+        buffer_restack(ctrlBuff, params);
     }
     ctrlBuff->lastCharSeen = c;
-    //printf(PRINTAT "\x01\x17" "%-32s", ctrlBuff->buffer);
- 
 }
 
 #ifdef _TEST_CONTROL
 
 int main() {
     unsigned char c = 0;
+    BreadBin* bin = get_bread_bin();
     GameParameters params = {
       0,
       0,
@@ -298,9 +192,11 @@ int main() {
       0,
       100,
       0,
-      NULL
+      NULL,
+      bin
     };
     ControlBuffer buff = {
+        0,
         0,
         0,
         NULL

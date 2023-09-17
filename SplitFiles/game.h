@@ -1,6 +1,8 @@
 #ifndef _DEFINE_GAME_H
 #define _DEFINE_GAME_H
 
+#include "bread.h"
+
 struct GameParameters_Struct;
 
 typedef struct GameParameters_Struct GameParameters;
@@ -28,6 +30,7 @@ struct GameParameters_Struct {
   void*     message; //Pointer to a message structure of some kind - e.g. a command issued to a component
   void*     messageSourceAddress; //Who emitted the message?  Set to GameComponent->ptr of the source
   unsigned int* effect; //Sound effect to be played
+  BreadBin*  breadBin;
 };
 
 
@@ -45,9 +48,8 @@ typedef struct dispatcher_struct DispatcherState;
 
 //what orders are waiting
 #define MAX_ORDER_LIST 5
-extern char breadBin[MAX_ORDER_LIST];
+//extern char breadBin[MAX_ORDER_LIST];
 
-void reorderBreadBin(const int slot);
-char getBread(const int breadType);
+//void reorderBreadBin(const int , BreadBin*);
 
 #endif

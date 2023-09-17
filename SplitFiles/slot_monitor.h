@@ -6,15 +6,6 @@
 
 #define MAX_RANGE 256
 
-struct BreadStateStruct {
-  int               temperature;  
-  int               moisture;
-  int               toastedness;
-  unsigned char     thermalMass;
-  unsigned int      thermalAggregation;
-};
-typedef struct BreadStateStruct BreadState;
-
 // 1.) Forward declaration: Here is the name of the structure
 // but member-details are omitted.
 struct SlotMonitorStruct;
