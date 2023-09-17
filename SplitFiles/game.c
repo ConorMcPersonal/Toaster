@@ -11,6 +11,7 @@
 #include "music.h"
 #include "bread.h"
 #include "customer.h"
+#include "numbers.h"
 
 // Compile with:
 // zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_GAME slot.c slot_monitor.c game.c control.c music.c util.c bread.c customer.c -o game -create-app
@@ -57,7 +58,8 @@ int wait_for_a_key(GameComponent* input, GameParameters* params) {
 void tick_func(GameComponent* input, GameParameters* params) { //Now a scoreboard too
   int last_score = (int)input->ptr;
   if (params->score != last_score) {
-    printf(PRINTAT"\x19\x01""%6d", params->score);
+    screenNumber(25, 1, params->score);
+  //  printf(PRINTAT"\x19\x01""%6d", params->score);
     input->ptr = (void *)last_score;
   }
   params->ticks += 1;
