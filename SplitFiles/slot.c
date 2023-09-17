@@ -40,7 +40,8 @@ void slot_func(GameComponent* input, GameParameters* params) {
       state->bread = (BreadState*)params->message;
       state->power = TMAX;
       params->message = NULL;
-      params->effect = TUNE_EFFECT_DOWN; 
+      params->effect = TUNE_EFFECT_DOWN;
+      printf(PRINTAT"%c%c%c", state->xCoord + 7, state->yCoord -1, state->bread->type->letter);
     }
   } else if (params->messageAddress == 200 + state->slotNumber) {
     params->messageAddress = 0;
@@ -51,7 +52,8 @@ void slot_func(GameComponent* input, GameParameters* params) {
       params->messageSourceAddress = (void *)state;
       state->bread = NULL;
       state->power = 0;
-      params->effect = TUNE_EFFECT_UP; 
+      params->effect = TUNE_EFFECT_UP;
+      printf(PRINTAT"%c%c%c", state->xCoord + 7, state->yCoord - 1, ' ');
     }
   }
 
