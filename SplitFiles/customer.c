@@ -19,7 +19,7 @@
 #include "music.h"
 
 unsigned int reputation_to_waittime(int reputation) {
-    return MAX(50, MIN(2000, 24000 / (reputation / 8 + 1)));
+    return MAX(50, MIN(2000, 16384 / (reputation / 8 + 1)));
 }
 
 void redraw_customers(CustomerBase *base) {
@@ -148,6 +148,10 @@ void customer_func(GameComponent* customers, GameParameters* params) {
         printf(PRINTAT"\x01\x01""%6d %4d", params->reputation, waittime);
         if (params->reputation < 0) {
             params->gameOverFlag = 1;
+            params->messageAddress = 999;
+            params->message = INK"\x32"PAPER"\x36"FLASHON
+            "You have ruined the reputation\nof the Hotel Excess!\n"
+                                "YOU ARE FIRED!!";
         }
     }
 }

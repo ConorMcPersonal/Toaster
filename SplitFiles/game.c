@@ -240,12 +240,18 @@ int main_game()
       }
       //Min one frame per loop
       while (G_frames == last_frame_count) {}
+      if (params.gameOverFlag) {
+        i = MAX_TICKS + 1;
+      }
     }
-    printf(PRINTAT "\x01\x0B" "Final score %d ", (params.slices * params.score));
+    printf(PRINTAT "\x01\x0B" "Final score %d ", (params.score));
+    if (params.messageAddress == 999) {
+      printf(PRINTAT "\x01\x0C" "%s", (char *)params.message);
+    }
     bit_beepfx(BEEPFX_AWW);
     //we malloc this so free it
     free(buff.buffer);
-
+    while (1) {}
     return params.score;
 } 
 
