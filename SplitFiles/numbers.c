@@ -33,7 +33,7 @@ void screenNumber(const unsigned int x, const unsigned int y, int numberIn)
 {
     char buffer[10];
     int i;
-    pair here = {x, y};
+    pair here = {x - 1, y - 1};
     if (numberIn < 0) {
         screenMinus(&here);
         numberIn = abs(numberIn);
