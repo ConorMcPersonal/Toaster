@@ -82,7 +82,7 @@ void toast_collector_func(GameComponent* input, GameParameters* params) {
 
 void smoke_alarm_func(GameComponent* input, GameParameters* params) {
   input;
-  if (params->maxToast > 200) {
+  if (params->maxToast > BURNT_TOAST) {
     params->effect = TUNE_EFFECT;
     zx_border(params->ticks % 8);
   }
@@ -209,7 +209,8 @@ int main_game()
                                 (void*)NULL,//.message 
                                 (void*)NULL,//.messageSourceAddress = 
                                 0, // effect
-                                newBreadBin //breadBin
+                                newBreadBin, //breadBin
+                                1000
                             };
 
     // draw starting time line

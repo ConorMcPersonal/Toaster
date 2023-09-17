@@ -57,7 +57,22 @@ unsigned int test_effect_up[] = {
     , 2, 4, 10, 6500
     , 0
 };
-unsigned int* TUNE_EFFECT_UP = (unsigned int*)test_effect_up;
+
+unsigned int test_effect_up2[] = {
+      2, 5, 6, 1500
+    , 2, 5, 6, 2000
+    , 2, 5, 6, 2500
+    , 2, 5, 6, 3000
+    , 2, 5, 6, 3500
+    , 2, 5, 6, 4000
+    , 2, 5, 6, 4500
+    , 2, 5, 6, 5000
+    , 2, 5, 6, 5500
+    , 2, 5, 6, 6000
+    , 2, 5, 6, 6500
+    , 0
+};
+unsigned int* TUNE_EFFECT_UP = (unsigned int*)test_effect_up2;
 
 unsigned int test_effect_down[] = {
       2, 4, 10, 6500

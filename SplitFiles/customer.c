@@ -18,6 +18,10 @@
 #include "util.h"
 #include "music.h"
 
+unsigned int reputation_to_waittime(int reputation) {
+    return MAX(75, MIN(3000, 32767 / (reputation / 8)));
+}
+
 void redraw_customers(CustomerBase *base) {
     unsigned char ypos = CUSTOMER_LIST_YPOS;
     Customer* lastCustomer = base->rootCustomer;
@@ -57,6 +61,9 @@ void customer_func(GameComponent* customers, GameParameters* params) {
                 params->score += bread->type->cost * 2 //SHOCKING markup
                          + 100 - abs(bread->toastedness - 100) //100 toastedness gets 100 bonus points
                          + thisCustomer->ticksLeft;  //Speedy toast = points!
+                params->reputation += 20 // They got served - that is worth something
+                        + MAX(0, (50 - abs(bread->toastedness - 100))/ 10) //Decent toast will give a bump
+                        + thisCustomer->ticksLeft / 50; // As will speed
                 (params->slices) += 1;
                 params->messageAddress = 0;
                 params->message = NULL;
@@ -84,13 +91,15 @@ void customer_func(GameComponent* customers, GameParameters* params) {
             params->messageSourceAddress = NULL;
             free(bread);
         }
-
     }
+
+    // Smoke alarm winds the customers up
+    int ticksLeftSubtract = (params->maxToast > BURNT_TOAST? 2 : 1);
 
     thisCustomer = base->rootCustomer->nextCustomer;
     lastCustomer = base->rootCustomer;
     while (thisCustomer != NULL) {
-        thisCustomer->ticksLeft -= 1;
+        thisCustomer->ticksLeft -= ticksLeftSubtract;
         if (thisCustomer->ticksLeft <= 0) {
             //Customer leaves in disgust - reset links
             params->score -= thisCustomer->breadOrder->cost;
@@ -100,16 +109,22 @@ void customer_func(GameComponent* customers, GameParameters* params) {
             thisCustomer = lastCustomer;
             redraw = 1;
             params->effect = TUNE_EFFECT_BEEP;
+            //Big rep hit
+            params->reputation -= 100;
         } else if (thisCustomer->ticksLeft < GRUMPY_TICKS && thisCustomer->customerMood == 0) {
             // Customer going grumpy
             thisCustomer->customerMood = 1;
+            // Once they are grumpy, even great toast won't cure everything
+            params->reputation -= 5;
+            redraw = 1;
         }
         lastCustomer = thisCustomer;
         thisCustomer = thisCustomer->nextCustomer;
     }
 
     //Do we have a new customer? - this is independent of whether we have space
-    if (rand() % 150 == 0) {
+    int waittime = reputation_to_waittime(MAX(1, params->reputation));
+    if (rand() % waittime == 0) {
         //Yes we do!
         params->effect = TUNE_EFFECT_SHORT_BEEP;
         if (base->customerCount < MAX_CUSTOMER_COUNT) {
@@ -124,12 +139,16 @@ void customer_func(GameComponent* customers, GameParameters* params) {
             lastCustomer->nextCustomer = newCustomer;
         } else {
             //Something about reputation here - enhanced by lots of people waiting?
-            ;
+            params->reputation += 10;
         }
     }
 
     if (redraw) {
         redraw_customers(base);
+        printf(PRINTAT"\x01\x01""%6d", params->reputation);
+        if (params->reputation < 0) {
+            params->gameOverFlag = 1;
+        }
     }
 }
 
@@ -156,7 +175,8 @@ int customer_main() {
                                 (void*)NULL,//.message 
                                 (void*)NULL,//.messageSourceAddress = 
                                 0, // effect
-                                bin //breadBin
+                                bin, //breadBin
+                                1000
                             };
 
     while (1) {
