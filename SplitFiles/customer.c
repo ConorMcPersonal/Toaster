@@ -19,7 +19,7 @@
 #include "music.h"
 
 unsigned int reputation_to_waittime(int reputation) {
-    return MAX(75, MIN(3000, 32767 / (reputation / 8)));
+    return MAX(50, MIN(2000, 24000 / (reputation / 8 + 1)));
 }
 
 void redraw_customers(CustomerBase *base) {
@@ -145,7 +145,7 @@ void customer_func(GameComponent* customers, GameParameters* params) {
 
     if (redraw) {
         redraw_customers(base);
-        printf(PRINTAT"\x01\x01""%6d", params->reputation);
+        printf(PRINTAT"\x01\x01""%6d %4d", params->reputation, waittime);
         if (params->reputation < 0) {
             params->gameOverFlag = 1;
         }
