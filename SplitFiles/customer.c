@@ -150,8 +150,9 @@ void customer_func(GameComponent* customers, GameParameters* params) {
             params->gameOverFlag = 1;
             params->messageAddress = 999;
             params->message = INK"\x32"PAPER"\x36"FLASHON
-            "You have ruined the reputation\nof the Hotel Excess!\n"
-                                "YOU ARE FIRED!!";
+            " You have ruined the reputation \n"
+            "      of the Hotel Excess!      \n"
+            "        YOU ARE FIRED!!         ";
         }
     }
 }
