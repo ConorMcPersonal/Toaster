@@ -57,7 +57,7 @@ int wait_for_a_key(GameComponent* input, GameParameters* params) {
 void tick_func(GameComponent* input, GameParameters* params) { //Now a scoreboard too
   int last_score = (int)input->ptr;
   if (params->score != last_score) {
-    printf(PRINTAT"\x1B\x01""%6d", params->score);
+    screenNumber(25, 1, params->score);
     input->ptr = (void *)params->score;
   }
   params->ticks += 1;
