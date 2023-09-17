@@ -11,6 +11,7 @@
 #include "music.h"
 #include "bread.h"
 #include "customer.h"
+#include "numbers.h"
 
 // Compile with:
 // zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_GAME slot.c slot_monitor.c game.c control.c music.c util.c bread.c customer.c -o game -create-app
