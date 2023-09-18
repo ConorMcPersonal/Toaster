@@ -46,7 +46,7 @@ void tick_func(GameComponent* input, GameParameters* params) { //Now a scoreboar
   if (params->score != last_score) {
     screenNumber(23, 1, params->score);
   //  printf(PRINTAT"\x19\x01""%6d", params->score);
-    input->ptr = (void *)last_score;
+    input->ptr = (void *)params->score;
   }
   params->ticks += 1;
   draw_tick_line(params->ticks);
