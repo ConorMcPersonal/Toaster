@@ -16,18 +16,6 @@
 // Compile with:
 // zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_GAME slot.c slot_monitor.c game.c control.c music.c util.c bread.c customer.c -o game -create-app
 
-/*char breadBin[MAX_ORDER_LIST];
-
-void reorderBreadBin(const int slot, BreadBin* bin)
-{
-  int i;
-  char newBread = rand_bread_type(bin)->letter;
-  for (i = slot; i < MAX_ORDER_LIST - 1; i++) {
-    breadBin[i] = breadBin[i + 1];
-  }
-  breadBin[MAX_ORDER_LIST - 1] = newBread;
-}*/
-
 void draw_tick_line(const unsigned int tick)
 {
   const int increment = MAX_TICKS / 256;
@@ -51,16 +39,13 @@ int wait_for_a_key(GameComponent* input, GameParameters* params) {
     c = in_inkey();
     in_wait_nokey();
     return rando;
-
-    //printf(PRINTAT"\x01\x12""Key pressed is %c (0x%02X)\n", c, c);
 }
 
 void tick_func(GameComponent* input, GameParameters* params) { //Now a scoreboard too
   int last_score = (int)input->ptr;
   if (params->score != last_score) {
     screenNumber(25, 1, params->score);
-  //  printf(PRINTAT"\x19\x01""%6d", params->score);
-    input->ptr = (void *)last_score;
+    input->ptr = (void *)params->score;
   }
   params->ticks += 1;
   draw_tick_line(params->ticks);
@@ -79,12 +64,11 @@ void toast_collector_func(GameComponent* input, GameParameters* params) {
     //Give back memory
     free(bread);
   }
-//  printf(PRINTAT"\x01\x14" "Score %d Slices %d       ", params->score, params->slices);
 }
 
 void smoke_alarm_func(GameComponent* input, GameParameters* params) {
   input;
-  if (params->maxToast > 200) {
+  if (params->maxToast > BURNT_TOAST) {
     params->effect = TUNE_EFFECT;
     zx_border(params->ticks % 8);
   }
@@ -112,9 +96,6 @@ int main_game()
     zx_cls(PAPER_WHITE);
 
     BreadBin* newBreadBin = get_bread_bin();
-    /*for (i = 0; i < MAX_ORDER_LIST; i++) {
-      breadBin[i] = rand_bread_type(newBreadBin)->letter;
-    }*/
   
   // *******************************************************
   // Music set-up
@@ -137,14 +118,6 @@ int main_game()
         &customer_func,
         NULL
     };
-    /*
-    // Initialize the "game" - do the loop backwards
-    GameComponent collector = {
-      (void*)NULL, //ptr
-      &toast_collector_func,  //func
-      (GameComponent *)NULL //next - this is end of the line
-    };
-    */
 
     GameComponent smokeAlarm = {
       (void*)NULL, //ptr
@@ -195,7 +168,7 @@ int main_game()
 
 
     GameComponent ticker = {
-                            (void*)NULL, //ptr
+                            (void *)SCREENSTART, //ptr = last_score - needs to be different to opening score
                             &tick_func, //func
                             &ctrl //next
                             };
@@ -211,7 +184,8 @@ int main_game()
                                 (void*)NULL,//.message 
                                 (void*)NULL,//.messageSourceAddress = 
                                 0, // effect
-                                newBreadBin //breadBin
+                                newBreadBin, //breadBin
+                                1000
                             };
 
     // draw starting time line
@@ -241,12 +215,18 @@ int main_game()
       }
       //Min one frame per loop
       while (G_frames == last_frame_count) {}
+      if (params.gameOverFlag) {
+        i = MAX_TICKS + 1;
+      }
     }
-    printf(PRINTAT "\x01\x0B" "Final score %d ", (params.slices * params.score));
+    printf(PRINTAT "\x01\x0B" "Final score %d ", (params.score));
+    if (params.messageAddress == 999) {
+      printf(PRINTAT "\x01\x0C" "%s", (char *)params.message);
+    }
     bit_beepfx(BEEPFX_AWW);
     //we malloc this so free it
     free(buff.buffer);
-
+    while (1) {}
     return params.score;
 } 
 

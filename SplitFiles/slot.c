@@ -40,8 +40,8 @@ void slot_func(GameComponent* input, GameParameters* params) {
       state->bread = (BreadState*)params->message;
       state->power = TMAX;
       params->message = NULL;
-      //bit_beepfx(BEEPFX_CLANG);
-      params->effect = TUNE_EFFECT_DOWN; 
+      params->effect = TUNE_EFFECT_DOWN;
+      printf(PRINTAT"%c%c%c", state->xCoord + 7, state->yCoord -1, state->bread->type->letter);
     }
   } else if (params->messageAddress == 200 + state->slotNumber) {
     params->messageAddress = 0;
@@ -52,8 +52,8 @@ void slot_func(GameComponent* input, GameParameters* params) {
       params->messageSourceAddress = (void *)state;
       state->bread = NULL;
       state->power = 0;
-      params->effect = TUNE_EFFECT_UP; 
-      //bit_fx(BFX_EXPLOSION);
+      params->effect = TUNE_EFFECT_UP;
+      printf(PRINTAT"%c%c%c", state->xCoord + 7, state->yCoord - 1, ' ');
     }
   }
 
@@ -113,13 +113,17 @@ int slot_main() {
   };
 
   GameParameters params = {
-    0,
-    0,
-    0,
-    0,
-    100,
-    0,
-    NULL
+    0,//ticks
+    0,//score
+    0,//slices
+    0,//gameover
+    100,//maxToast
+    0,//messageAddress
+    NULL,//message
+    NULL,//message source
+    NULL,//effect
+    NULL,//BreadBin
+    1000
   };
 
   BreadState brd = {

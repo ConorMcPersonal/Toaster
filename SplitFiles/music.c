@@ -147,14 +147,8 @@ int music_main()
             if (effects[effectIndex] == NULL) {
                 effectIndex = 0;
             }
-            //if ((j % 1000) == 0) {
-            //    mPlayer->add_music(mPlayer, TUNE_EFFECT_DOWN, 0);
-            //} else {
-            //    mPlayer->add_music(mPlayer, TUNE_EFFECT_UP, 0);
-            //}
         }
     }
-    return 0;
 }
 
 

@@ -31,6 +31,7 @@ struct GameParameters_Struct {
   void*     messageSourceAddress; //Who emitted the message?  Set to GameComponent->ptr of the source
   unsigned int* effect; //Sound effect to be played
   BreadBin*  breadBin;
+  int        reputation; //Starts at 1000 - can't drop below zero or you're in trouble
 };
 
 
@@ -48,8 +49,8 @@ typedef struct dispatcher_struct DispatcherState;
 
 //what orders are waiting
 #define MAX_ORDER_LIST 5
-//extern char breadBin[MAX_ORDER_LIST];
 
-//void reorderBreadBin(const int , BreadBin*);
+//When does the smake alarm go off?
+#define BURNT_TOAST 200
 
 #endif
