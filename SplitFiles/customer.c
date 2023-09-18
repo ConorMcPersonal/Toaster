@@ -17,6 +17,7 @@
 #include "bread.h"
 #include "util.h"
 #include "music.h"
+#include "face.h"
 
 unsigned int reputation_to_waittime(int reputation) {
     return MAX(50, MIN(2000, 16384 / (reputation / 8 + 1)));
@@ -90,7 +91,7 @@ void customer_func(GameComponent* customers, GameParameters* params) {
             params->message = NULL;
             params->messageSourceAddress = NULL;
             free(bread);
-        }
+        } 
     }
 
     // Smoke alarm winds the customers up
@@ -137,15 +138,12 @@ void customer_func(GameComponent* customers, GameParameters* params) {
             redraw = 1;
             base->customerCount += 1;
             lastCustomer->nextCustomer = newCustomer;
-        } else {
-            //Something about reputation here - enhanced by lots of people waiting?
-            params->reputation += 10;
         }
     }
 
     if (redraw) {
+        screenFace(21, 1, params->reputation);
         redraw_customers(base);
-        printf(PRINTAT"\x01\x01""%6d %4d", params->reputation, waittime);
         if (params->reputation < 0) {
             params->gameOverFlag = 1;
             params->messageAddress = 999;
@@ -181,7 +179,7 @@ int customer_main() {
                                 (void*)NULL,//.messageSourceAddress = 
                                 0, // effect
                                 bin, //breadBin
-                                1000
+                                100
                             };
 
     while (1) {

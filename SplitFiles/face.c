@@ -1,4 +1,6 @@
 #include <arch/zx.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include "face.h"
 
 void happyFace(const int x, const int y)
@@ -59,7 +61,7 @@ void neutralFace(const int x, const int y)
     *zx_pxy2saddr(px, py++) = 0x40;
     *zx_pxy2saddr(px + 8, py) = 0x2;
     *zx_pxy2saddr(px, py++) = 0x80;
-    *zx_pxy2saddr(px + 8, py) = 0x8;
+    *zx_pxy2saddr(px + 8, py) = 0x4;
     *zx_pxy2saddr(px, py++) = 0x40;
     *zx_pxy2saddr(px + 8, py) = 0x84;
     *zx_pxy2saddr(px, py++) = 0x43;
@@ -97,7 +99,7 @@ void sadFace(const int x, const int y)
     *zx_pxy2saddr(px, py++) = 0x40;
     *zx_pxy2saddr(px + 8, py) = 0x2;
     *zx_pxy2saddr(px, py++) = 0x80;
-    *zx_pxy2saddr(px + 8, py) = 0x8;
+    *zx_pxy2saddr(px + 8, py) = 0x4;
     *zx_pxy2saddr(px, py++) = 0x40;
     *zx_pxy2saddr(px + 8, py) = 0x84;
     *zx_pxy2saddr(px, py++) = 0x43;
@@ -154,20 +156,18 @@ void angryFace(const int x, const int y)
     *zx_pxy2saddr(px, py++) = 0x0;
 }
 
-void screenFace(const unsigned int x, const unsigned int y, mood face)
+void screenFace(const unsigned int x, const unsigned int y, const int reputation)
 {
-    switch(mood) {
-        case (ANGRY):
-            angryFace(x, y);
-            break;
-        case (SAD):
-            sadFace(x, y);
-            break;
-        case (NEUTRAL):
-            neutralFace(x, y);
-            break;
-        case (HAPPY):
-        default:
-            happyFace(x, y);
+    if (reputation < 0) {
+        return angryFace(x, y);
+    }
+    else if (reputation < 1000) {
+        return sadFace(x, y);
+    }
+    else if (reputation < 2500) {
+       return  neutralFace(x, y);
+    }
+    else {
+        happyFace(x, y);
     }
 }
