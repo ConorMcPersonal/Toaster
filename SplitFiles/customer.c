@@ -142,7 +142,7 @@ void customer_func(GameComponent* customers, GameParameters* params) {
     }
 
     if (redraw) {
-        screenFace(21, 1, params->reputation);
+        screenFace(18, 1, params->reputation);
         redraw_customers(base);
         if (params->reputation < 0) {
             params->gameOverFlag = 1;

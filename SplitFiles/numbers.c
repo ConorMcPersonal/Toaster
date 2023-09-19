@@ -28,11 +28,11 @@ pair* screenNine(pair* st);
 pair* screenZero(pair* st);
 pair* screenMinus(pair* st);
 
-#define BUFFERLEN 6
+#define BUFFERLEN 7
 
 void screenNumber(const unsigned int x, const unsigned int y, int numberIn)
 {
-    char buffer[6];
+    char buffer[BUFFERLEN];
     int i;
     int correction;
     int numLength;
@@ -43,9 +43,9 @@ void screenNumber(const unsigned int x, const unsigned int y, int numberIn)
             break;
         }
     }
-    correction = 5 - numLength;
+    correction = (BUFFERLEN - 1) - numLength;
     for (i = 0; i < correction; i++) {
-        //balnk out leading spaces
+        //blank out leading spaces
         screenBlank(&here);
     }
     for (i = 0; i < numLength; i++) {

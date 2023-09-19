@@ -1,6 +1,6 @@
 #include <arch/zx.h>
 #include <stdio.h>
-#include <stdlib.h>
+#include "util.h"
 #include "face.h"
 
 void happyFace(const int x, const int y)
@@ -156,18 +156,27 @@ void angryFace(const int x, const int y)
     *zx_pxy2saddr(px, py++) = 0x0;
 }
 
+enum emotion {
+    ANGRY, SAD, NEUTRAL, HAPPY, START
+};
+
 void screenFace(const unsigned int x, const unsigned int y, const int reputation)
 {
-    if (reputation < 0) {
-        return angryFace(x, y);
+    static enum emotion lastEmo = START;
+    if (reputation < 0 && lastEmo != ANGRY) {
+        angryFace(x, y);
+        lastEmo = ANGRY;
     }
-    else if (reputation < 1000) {
-        return sadFace(x, y);
+    else if (lastEmo != SAD && reputation < 1000 && reputation >= 0) {
+        sadFace(x, y);
+        lastEmo = SAD;
     }
-    else if (reputation < 2500) {
-       return  neutralFace(x, y);
+    else if (lastEmo != NEUTRAL && reputation >= 1000 && reputation < 1200) {
+        neutralFace(x, y);
+        lastEmo = NEUTRAL;
     }
-    else {
+    else if (lastEmo != HAPPY && reputation >= 1200) {
         happyFace(x, y);
+        lastEmo = HAPPY;
     }
 }
