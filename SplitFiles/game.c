@@ -220,6 +220,7 @@ int main_game()
         i = MAX_TICKS + 1;
       }
     }
+    screenNumber(21, 1, params.score);
     printf(PRINTAT "\x01\x0B" "Final score %d ", (params.score));
     if (params.messageAddress == 999) {
       printf(PRINTAT "\x01\x0C" "%s", (char *)params.message);
