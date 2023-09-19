@@ -13,7 +13,7 @@ void happyFace(const int x, const int y)
     *zx_pxy2saddr(px, py++) = 0xe;
     *zx_pxy2saddr(px + 8, py) = 0x10;
     *zx_pxy2saddr(px, py++) = 0x10;
-    *zx_pxy2saddr(px + 8, py) = 0x80;
+    *zx_pxy2saddr(px + 8, py) = 0x08;
     *zx_pxy2saddr(px, py++) = 0x20;
     *zx_pxy2saddr(px + 8, py) = 0x44;
     *zx_pxy2saddr(px, py++) = 0x44;
@@ -29,7 +29,7 @@ void happyFace(const int x, const int y)
     *zx_pxy2saddr(px, py++) = 0x43;
     *zx_pxy2saddr(px + 8, py) = 0x4;
     *zx_pxy2saddr(px, py++) = 0x40;
-    *zx_pxy2saddr(px + 8, py) = 0x80;
+    *zx_pxy2saddr(px + 8, py) = 0x8;
     *zx_pxy2saddr(px, py++) = 0x20;
     *zx_pxy2saddr(px + 8, py) = 0x10;
     *zx_pxy2saddr(px, py++) = 0x10;
@@ -51,7 +51,7 @@ void neutralFace(const int x, const int y)
     *zx_pxy2saddr(px, py++) = 0xe;
     *zx_pxy2saddr(px + 8, py) = 0x10;
     *zx_pxy2saddr(px, py++) = 0x10;
-    *zx_pxy2saddr(px + 8, py) = 0x80;
+    *zx_pxy2saddr(px + 8, py) = 0x08;
     *zx_pxy2saddr(px, py++) = 0x20;
     *zx_pxy2saddr(px + 8, py) = 0x44;
     *zx_pxy2saddr(px, py++) = 0x44;
@@ -67,7 +67,7 @@ void neutralFace(const int x, const int y)
     *zx_pxy2saddr(px, py++) = 0x43;
     *zx_pxy2saddr(px + 8, py) = 0x4;
     *zx_pxy2saddr(px, py++) = 0x40;
-    *zx_pxy2saddr(px + 8, py) = 0x80;
+    *zx_pxy2saddr(px + 8, py) = 0x8;
     *zx_pxy2saddr(px, py++) = 0x20;
     *zx_pxy2saddr(px + 8, py) = 0x10;
     *zx_pxy2saddr(px, py++) = 0x10;
@@ -89,7 +89,7 @@ void sadFace(const int x, const int y)
     *zx_pxy2saddr(px, py++) = 0xe;
     *zx_pxy2saddr(px + 8, py) = 0x10;
     *zx_pxy2saddr(px, py++) = 0x10;
-    *zx_pxy2saddr(px + 8, py) = 0x80;
+    *zx_pxy2saddr(px + 8, py) = 0x8;
     *zx_pxy2saddr(px, py++) = 0x20;
     *zx_pxy2saddr(px + 8, py) = 0x44;
     *zx_pxy2saddr(px, py++) = 0x44;
@@ -105,7 +105,7 @@ void sadFace(const int x, const int y)
     *zx_pxy2saddr(px, py++) = 0x43;
     *zx_pxy2saddr(px + 8, py) = 0x44;
     *zx_pxy2saddr(px, py++) = 0x44;
-    *zx_pxy2saddr(px + 8, py) = 0x80;
+    *zx_pxy2saddr(px + 8, py) = 0x8;
     *zx_pxy2saddr(px, py++) = 0x20;
     *zx_pxy2saddr(px + 8, py) = 0x10;
     *zx_pxy2saddr(px, py++) = 0x10;
@@ -128,7 +128,7 @@ void angryFace(const int x, const int y)
     *zx_pxy2saddr(px, py++) = 0xe;
     *zx_pxy2saddr(px + 8, py) = 0x10;
     *zx_pxy2saddr(px, py++) = 0x10;
-    *zx_pxy2saddr(px + 8, py) = 0x80;
+    *zx_pxy2saddr(px + 8, py) = 0x8;
     *zx_pxy2saddr(px, py++) = 0x20;
     *zx_pxy2saddr(px + 8, py) = 0x44;
     *zx_pxy2saddr(px, py++) = 0x44;
