@@ -30,6 +30,52 @@ pair* screenMinus(pair* st);
 
 #define BUFFERLEN 7
 
+void screenTime(const unsigned int x, const unsigned int y, const int hour, const int min)
+{
+    pair here = {x - 1, y - 1};
+    if (hour < 10) {
+        screenZero(&here);
+    }
+    switch (hour) {
+        case 7:
+            screenSeven(&here);
+            break;
+        case 8:
+            screenEight(&here);
+            break;
+        case 9:
+            screenNine(&here);
+            break;
+        case 10:
+            screenOne(&here);
+            screenZero(&here);
+            break;
+        default:
+            screenOne(&here);
+            screenOne(&here);
+    }
+
+    screenMinus(&here);
+
+    switch (min) {
+        case 0:
+            screenZero(&here);
+            screenZero(&here);
+            break;
+        case 15:
+            screenOne(&here);
+            screenFive(&here);
+            break;
+        case 30:
+            screenThree(&here);
+            screenZero(&here);
+            break;
+        default:
+            screenFour(&here);
+            screenFive(&here);
+    }
+}
+
 void screenNumber(const unsigned int x, const unsigned int y, int numberIn)
 {
     char buffer[BUFFERLEN];
