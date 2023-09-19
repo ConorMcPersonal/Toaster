@@ -240,6 +240,7 @@ int main_game()
       }
     }
     screenNumber(21, 1, params.score);
+    screenTime(1, 1, 11, 0);
     printf(PRINTAT "\x01\x0B" "Final score %d ", (params.score));
     if (params.messageAddress == 999) {
       printf(PRINTAT "\x01\x0C" "%s", (char *)params.message);
