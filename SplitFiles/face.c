@@ -3,7 +3,33 @@
 #include "util.h"
 #include "face.h"
 
+void cheeky_face(const int x, const int y, char* pix) 
+{
+    int px = (x - 1) * 8;
+    int py = (y - 1) * 8;
+    char* leftPtr = zx_pxy2saddr(px, py);
+    for (int j = 0; j < 2; ++j) {
+        for (int i = 0; i < 8; ++i) {
+            //Why right before left?
+            *(leftPtr + 1) = *pix++;
+            *leftPtr = *pix++;
+            leftPtr += 256;
+        }
+        if (j == 0) {
+            leftPtr = zx_pxy2saddr(px, py + 8);
+        }
+    }
+}
+
 void happyFace(const int x, const int y)
+{
+    char faceData[] = { 0, 1, 0xe0, 0xe, 0x10, 0x08, 0x20, 0x44, 0x44, 0x4,
+        0x40, 0x4, 0x40, 0x2, 0x80, 0x44, 0x44, 0x84, 0x43, 0x4, 0x40, 0x8, 
+        0x20, 0x10, 0x10, 0xe0, 0xe, 0x0, 0x1, 0x0, 0x0};
+    cheeky_face(x, y, (char *)&faceData);
+}
+
+void OLDhappyFace(const int x, const int y)
 {
     int px = (x - 1) * 8;
     int py = (y - 1) * 8;
@@ -81,6 +107,14 @@ void OLD_neutralFace(const int x, const int y)
 
 void sadFace(const int x, const int y)
 {
+    char faceData[] = { 0x0, 0x1, 0xe0, 0xe, 0x10, 0x10, 0x8, 0x20, 0x44,
+        0x44, 0x4, 0x40, 0x4, 0x40, 0x2, 0x80, 0x4, 0x40, 0x84, 0x43, 0x44, 
+        0x44, 0x8, 0x20, 0x10, 0x10, 0xe0, 0xe, 0x0, 0x1, 0x0, 0x0 };
+    cheeky_face(x, y, (char *)&faceData);
+}
+
+void OLDsadFace(const int x, const int y)
+{
     int px = (x - 1) * 8;
     int py = (y - 1) * 8;
     *zx_pxy2saddr(px + 8, py) = 0x0;
@@ -117,8 +151,15 @@ void sadFace(const int x, const int y)
     *zx_pxy2saddr(px, py++) = 0x0;
 }
 
-
 void angryFace(const int x, const int y)
+{
+    char faceData[] = {  0x0, 0x1, 0xe0, 0xe, 0x10, 0x10, 0x8, 0x20, 0x44, 0x44, 0x40, 
+        0x4, 0x84, 0x42, 0x04, 0x40, 0x84, 0x43, 0x44, 0x44, 0x44, 0x44, 0x88, 0x23, 
+        0x10, 0x10, 0xe0, 0xe, 0x0, 0x1, 0x0, 0x0 };
+    cheeky_face(x, y, (char *)&faceData);
+}
+
+void OLDangryFace(const int x, const int y)
 {
     int px = (x - 1) * 8;
     int py = (y - 1) * 8;
@@ -156,23 +197,7 @@ void angryFace(const int x, const int y)
     *zx_pxy2saddr(px, py++) = 0x0;
 }
 
-void cheeky_face(const int x, const int y, char* pix) 
-{
-    int px = (x - 1) * 8;
-    int py = (y - 1) * 8;
-    char* leftPtr = zx_pxy2saddr(px, py);
-    for (int j = 0; j < 2; ++j) {
-        for (int i = 0; i < 8; ++i) {
-            //Why right before left?
-            *(leftPtr + 1) = *pix++;
-            *leftPtr = *pix++;
-            leftPtr += 256;
-        }
-        if (j == 0) {
-            leftPtr = zx_pxy2saddr(px, py + 8);
-        }
-    }
-}
+
 
 void neutralFace(const int x, const int y)
 {
