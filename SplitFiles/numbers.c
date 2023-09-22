@@ -15,6 +15,7 @@ struct pairStruct {
 
 typedef struct pairStruct pair;
 
+pair* screenBlank(pair* st);
 pair* screenOne(pair* st);
 pair* screenTwo(pair* st);
 pair* screenThree(pair* st);
@@ -27,19 +28,73 @@ pair* screenNine(pair* st);
 pair* screenZero(pair* st);
 pair* screenMinus(pair* st);
 
-#define BUFFERLEN 10
+#define BUFFERLEN 7
+
+void screenTime(const unsigned int x, const unsigned int y, const int hour, const int min)
+{
+    pair here = {x - 1, y - 1};
+    if (hour < 10) {
+        screenZero(&here);
+    }
+    switch (hour) {
+        case 7:
+            screenSeven(&here);
+            break;
+        case 8:
+            screenEight(&here);
+            break;
+        case 9:
+            screenNine(&here);
+            break;
+        case 10:
+            screenOne(&here);
+            screenZero(&here);
+            break;
+        default:
+            screenOne(&here);
+            screenOne(&here);
+    }
+
+    screenMinus(&here);
+
+    switch (min) {
+        case 0:
+            screenZero(&here);
+            screenZero(&here);
+            break;
+        case 15:
+            screenOne(&here);
+            screenFive(&here);
+            break;
+        case 30:
+            screenThree(&here);
+            screenZero(&here);
+            break;
+        default:
+            screenFour(&here);
+            screenFive(&here);
+    }
+}
 
 void screenNumber(const unsigned int x, const unsigned int y, int numberIn)
 {
-    char buffer[10];
+    char buffer[BUFFERLEN];
     int i;
+    int correction;
+    int numLength;
     pair here = {x - 1, y - 1};
-    if (numberIn < 0) {
-        screenMinus(&here);
-        numberIn = abs(numberIn);
-    }
     itoa(numberIn, buffer, 10);
-    for (i = 0; i < BUFFERLEN; i++) {
+    for (numLength = 0; numLength < BUFFERLEN; numLength++) {
+        if (buffer[numLength] == '\0') {
+            break;
+        }
+    }
+    correction = (BUFFERLEN - 1) - numLength;
+    for (i = 0; i < correction; i++) {
+        //blank out leading spaces
+        screenBlank(&here);
+    }
+    for (i = 0; i < numLength; i++) {
         switch(buffer[i]) {
             case '0':
                 screenZero(&here);
@@ -71,6 +126,9 @@ void screenNumber(const unsigned int x, const unsigned int y, int numberIn)
             case '9':
                 screenNine(&here);
                 break;
+            case '-':
+                screenMinus(&here);
+                break;
             default:
                 // we are done
                 i = BUFFERLEN;
@@ -79,9 +137,24 @@ void screenNumber(const unsigned int x, const unsigned int y, int numberIn)
     }
 }
 
+pair* screenBlank(pair* pairIn)
+{
+    int i;
+    int x = pairIn->x;
+    int px = x * 8;
+    int y = pairIn->y;
+    int py = y * 8;
+    for (i = 0; i < 16; i++) {
+        *zx_pxy2saddr(px + 8, py) = 0x0;
+        *zx_pxy2saddr(px, py++) = 0x0;
+    }
+    pairIn->x = x + 2;
+    return pairIn;
+}
+
 pair* screenOne(pair* pairIn)
 {
-   int x = pairIn->x;
+    int x = pairIn->x;
     int px = x * 8;
     int y = pairIn->y;
     int py = y * 8;
