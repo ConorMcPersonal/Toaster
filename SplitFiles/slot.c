@@ -28,7 +28,8 @@ void slot_func(GameComponent* input, GameParameters* params) {
 
   //Check for a message
   int myAddress = 100 + state->slotNumber;
-  if (params->messageAddress == 100 + state->slotNumber) {
+  if (params->messageAddress == 100 + state->slotNumber || 
+        (params->messageAddress == 100 && state->bread == NULL )) {
     //Someone sent bread!
     //Take it off the GameParameters object
     params->messageAddress = 0;

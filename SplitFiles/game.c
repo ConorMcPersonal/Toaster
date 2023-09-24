@@ -190,7 +190,7 @@ int main_game()
     initialise_control_buffer(&buff);
     GameComponent ctrl = {
         &buff,
-        &command_entry_func,
+        &command_entry_func_instant,
         &slot4
     };
 
