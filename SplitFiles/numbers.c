@@ -15,18 +15,235 @@ struct pairStruct {
 
 typedef struct pairStruct pair;
 
+const char oneData[] = {
+ 0x0, 0x0,
+ 0xf, 0xc0,
+ 0x1f, 0xc0,
+ 0x13, 0xc0,
+ 0x3, 0xc0,
+ 0x3, 0xc0,
+ 0x3, 0xc0,
+ 0x3, 0xc0,
+ 0x3, 0xc0,
+ 0x3, 0xc0,
+ 0x3, 0xc0,
+ 0x3, 0xc0,
+ 0x3, 0xc0,
+ 0x3, 0xc0,
+ 0xf, 0xf0,
+ 0x0, 0x0
+};
+
+const char twoData[] = {
+ 0x0, 0x0,
+ 0x1f, 0xc0,
+ 0x1f, 0xc0,
+ 0x30, 0xc0,
+ 0x30, 0xc0,
+ 0x30, 0xc0,
+ 0x0, 0xc0,
+ 0x1, 0xc0,
+ 0x3, 0x80,
+ 0x7, 0x0,
+ 0xe, 0x0,
+ 0x1c, 0x0,
+ 0x30, 0x0,
+ 0x3f, 0xc0,
+ 0x3f, 0xc0,
+ 0x0, 0x0
+};
+
+const char threeData[] = {
+ 0x0, 0x0,
+ 0x7, 0x80,
+ 0x1f, 0xf0,
+ 0x1c, 0x38,
+ 0x0, 0x38,
+ 0x0, 0x70,
+ 0x1, 0xc0,
+ 0x3, 0x80,
+ 0x0, 0xf0,
+ 0x0, 0x70,
+ 0x0, 0x70,
+ 0x0, 0x70,
+ 0x10, 0x70,
+ 0x1f, 0xc0,
+ 0x1f, 0xc0,
+ 0x0, 0x0,
+};
+
+const char fourData[] = {
+ 0x0, 0x0,
+ 0x7f, 0xf0,
+ 0x7f, 0xf0,
+ 0x7f, 0xf0,
+ 0x70, 0x70,
+ 0x70, 0x70,
+ 0x70, 0x70,
+ 0x70, 0x70,
+ 0x70, 0x70,
+ 0x70, 0x70,
+ 0x7f, 0xfe,
+ 0x7f, 0xfe,
+ 0x7f, 0xfe,
+ 0x0, 0x70,
+ 0x0, 0x70,
+ 0x0, 0x0
+};
+
+const char fiveData[] = {
+ 0x0, 0x0,
+ 0x1f, 0xf8,
+ 0x1f, 0xf8,
+ 0x18, 0x0,
+ 0x18, 0x0,
+ 0x1f, 0xe0,
+ 0xf, 0xf0,
+ 0x0, 0x18,
+ 0x0, 0x18,
+ 0x0, 0x18,
+ 0x0, 0x18,
+ 0x0, 0x18,
+ 0x18, 0x18,
+ 0x1f, 0xf8,
+ 0x1f, 0xf0,
+ 0x0, 0x0
+};
+
+const char sixData[] = {
+ 0x0, 0x0,
+ 0x1f, 0xf0,
+ 0x1f, 0xf8,
+ 0x18, 0x0,
+ 0x18, 0x0,
+ 0x18, 0x0,
+ 0x1f, 0xf8,
+ 0x1f, 0xf8,
+ 0x18, 0x18,
+ 0x18, 0x18,
+ 0x18, 0x18,
+ 0x18, 0x18,
+ 0x18, 0x18,
+ 0x1f, 0xf8,
+ 0x1f, 0xf8,
+ 0x0, 0x0
+};
+
+const char sevenData[] = {
+ 0x0, 0x0,
+ 0x1f, 0xf0,
+ 0x1f, 0xf0,
+ 0x0, 0x30,
+ 0x0, 0x30,
+ 0x0, 0x60,
+ 0x0, 0xc0,
+ 0x1f, 0xf0,
+ 0x1f, 0xf0,
+ 0x3, 0x0,
+ 0x7, 0x0,
+ 0xe, 0x0,
+ 0x18, 0x0,
+ 0x18, 0x0,
+ 0x18, 0x0,
+ 0x0, 0x0
+};
+
+const char eightData[] = {
+ 0x0, 0x0,
+ 0xf, 0xf8,
+ 0xf, 0xf8,
+ 0xc, 0x18,
+ 0xc, 0x18,
+ 0xc, 0x18,
+ 0x6, 0x30,
+ 0x3, 0xe0,
+ 0x3, 0xe0,
+ 0x6, 0x30,
+ 0xc, 0x18,
+ 0xc, 0x18,
+ 0xc, 0x18,
+ 0xf, 0xf8,
+ 0xf, 0xf8,
+ 0x0, 0x0
+};
+
+const char nineData[] = {
+ 0x0, 0x0,
+ 0x1f, 0xe0,
+ 0x3f, 0xf0,
+ 0x30, 0x30,
+ 0x30, 0x70,
+ 0x38, 0x70,
+ 0x1f, 0xf0,
+ 0x7, 0xb0,
+ 0x0, 0x30,
+ 0x0, 0x30,
+ 0x30, 0x30,
+ 0x30, 0x30,
+ 0x33, 0xe0,
+ 0x3f, 0xe0,
+ 0xe, 0x0,
+ 0x0, 0x0
+};
+
+const char minusData[] = {
+ 0x0, 0x0,
+ 0x0, 0x0,
+ 0x0, 0x0,
+ 0x0, 0x0,
+ 0x0, 0x0,
+ 0x0, 0x0,
+ 0x0, 0x0,
+ 0x1f, 0xf8,
+ 0x1f, 0xf8,
+ 0x0, 0x0,
+ 0x0, 0x0,
+ 0x0, 0x0,
+ 0x0, 0x0,
+ 0x0, 0x0,
+ 0x0, 0x0,
+ 0x0, 0x0
+};
+
+const char zeroData[] = {
+ 0x0, 0x0,
+ 0x1f, 0x78,
+ 0x38, 0x1c,
+ 0x60, 0xe,
+ 0x60, 0x16,
+ 0x40, 0x22,
+ 0x40, 0x42,
+ 0x0, 0x82,
+ 0x41, 0x0,
+ 0x42, 0x2,
+ 0x44, 0x2,
+ 0x68, 0x6,
+ 0x70, 0x6,
+ 0x38, 0x1c,
+ 0x1e, 0xf8,
+ 0x0, 0x0
+};
+
 pair* screenBlank(pair* st);
-pair* screenOne(pair* st);
-pair* screenTwo(pair* st);
-pair* screenThree(pair* st);
-pair* screenFour(pair* st);
-pair* screenFive(pair* st);
-pair* screenSix(pair* st);
-pair* screenSeven(pair* st);
-pair* screenEight(pair* st);
-pair* screenNine(pair* st);
-pair* screenZero(pair* st);
-pair* screenMinus(pair* st);
+
+pair* draw_number(pair* pairIn, const char* pix) 
+{
+    int px = (pairIn->x) * 8;
+    int py = (pairIn->y) * 8;
+    char* leftPtr = zx_pxy2saddr(px, py);
+    for (int j = 0; j < 2; ++j) {
+        for (int i = 0; i < 8; ++i) {
+            *(leftPtr) = *pix++;
+            *(leftPtr + 1) = *pix++;
+            leftPtr += 256;
+        }
+        if (j == 0) {
+            leftPtr = zx_pxy2saddr(px, py + 8);
+        }
+    }
+    pairIn->x += 2;
+    return pairIn;
+}
 
 #define BUFFERLEN 7
 
@@ -34,45 +251,45 @@ void screenTime(const unsigned int x, const unsigned int y, const int hour, cons
 {
     pair here = {x - 1, y - 1};
     if (hour < 10) {
-        screenZero(&here);
+        draw_number(&here, zeroData);
     }
     switch (hour) {
         case 7:
-            screenSeven(&here);
+            draw_number(&here, sevenData);
             break;
         case 8:
-            screenEight(&here);
+            draw_number(&here, eightData);
             break;
         case 9:
-            screenNine(&here);
+            draw_number(&here, nineData);
             break;
         case 10:
-            screenOne(&here);
-            screenZero(&here);
+            draw_number(&here, oneData);
+            draw_number(&here, zeroData);
             break;
         default:
-            screenOne(&here);
-            screenOne(&here);
+            draw_number(&here, oneData);
+            draw_number(&here, oneData);
     }
 
-    screenMinus(&here);
+    draw_number(&here, minusData);
 
     switch (min) {
         case 0:
-            screenZero(&here);
-            screenZero(&here);
+            draw_number(&here, zeroData);
+            draw_number(&here, zeroData);
             break;
         case 15:
-            screenOne(&here);
-            screenFive(&here);
+            draw_number(&here, oneData);
+            draw_number(&here, fiveData);
             break;
         case 30:
-            screenThree(&here);
-            screenZero(&here);
+            draw_number(&here, threeData);
+            draw_number(&here, zeroData);
             break;
         default:
-            screenFour(&here);
-            screenFive(&here);
+            draw_number(&here, fourData);
+            draw_number(&here, fiveData);
     }
 }
 
@@ -97,37 +314,37 @@ void screenNumber(const unsigned int x, const unsigned int y, int numberIn)
     for (i = 0; i < numLength; i++) {
         switch(buffer[i]) {
             case '0':
-                screenZero(&here);
+                draw_number(&here, zeroData);
                 break;
             case '1':
-                screenOne(&here);
+                draw_number(&here, oneData);
                 break;
             case '2':
-                screenTwo(&here);
+                draw_number(&here, twoData);
                 break;
             case '3':
-                screenThree(&here);
+                draw_number(&here, threeData);
                 break;
             case '4':
-                screenFour(&here);
+                draw_number(&here, fourData);
                 break;
             case '5':
-                screenFive(&here);
+               draw_number(&here, fiveData);
                 break;
             case '6':
-                screenSix(&here);
+                draw_number(&here, sixData);
                 break;
             case '7':
-                screenSeven(&here);
+                draw_number(&here, sevenData);
                 break;
             case '8':
-                screenEight(&here);
+                draw_number(&here, eightData);
                 break;
             case '9':
-                screenNine(&here);
+                draw_number(&here, nineData);
                 break;
             case '-':
-                screenMinus(&here);
+                draw_number(&here, minusData);
                 break;
             default:
                 // we are done
@@ -150,468 +367,4 @@ pair* screenBlank(pair* pairIn)
     }
     pairIn->x = x + 2;
     return pairIn;
-}
-
-pair* screenOne(pair* pairIn)
-{
-    int x = pairIn->x;
-    int px = x * 8;
-    int y = pairIn->y;
-    int py = y * 8;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0xE0;
-    *zx_pxy2saddr(px, py++) = 0x0F;
-    *zx_pxy2saddr(px + 8, py) = 0xE0;
-    *zx_pxy2saddr(px, py++) = 0x13;
-    *zx_pxy2saddr(px + 8, py) = 0xA0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0xE0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0xE0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0xE0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0xA0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0xA0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0xA0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0xE0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0xE0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0xE0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0xF8;
-    *zx_pxy2saddr(px, py++) = 0x01;
-    *zx_pxy2saddr(px + 8, py) = 0xFC;
-    *zx_pxy2saddr(px, py++) = 0x1F;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    pairIn->x = x + 2;
-    return pairIn;
-}
-
-pair* screenTwo(pair* pairIn)
-{
-   int x = pairIn->x;
-    int px = x * 8;
-    int y = pairIn->y;
-    int py = y * 8;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0xf8;
-    *zx_pxy2saddr(px, py++) = 0x3f;
-    *zx_pxy2saddr(px + 8, py) = 0xe8;
-    *zx_pxy2saddr(px, py++) = 0x35;
-    *zx_pxy2saddr(px + 8, py) = 0xf8;
-    *zx_pxy2saddr(px, py++) = 0x9f;
-    *zx_pxy2saddr(px + 8, py) = 0x38;
-    *zx_pxy2saddr(px, py++) = 0x60;
-    *zx_pxy2saddr(px + 8, py) = 0x70;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0xf0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0xc0;
-    *zx_pxy2saddr(px, py++) = 0x3;
-    *zx_pxy2saddr(px + 8, py) = 0x80;
-    *zx_pxy2saddr(px, py++) = 0x3;
-    *zx_pxy2saddr(px + 8, py) = 0x80;
-    *zx_pxy2saddr(px, py++) = 0x2;
-    *zx_pxy2saddr(px + 8, py) = 0x80;
-    *zx_pxy2saddr(px, py++) = 0x3;
-    *zx_pxy2saddr(px + 8, py) = 0xc;
-    *zx_pxy2saddr(px, py++) = 0x7;
-    *zx_pxy2saddr(px + 8, py) = 0xc;
-    *zx_pxy2saddr(px, py++) = 0x1f;
-    *zx_pxy2saddr(px + 8, py) = 0xfc;
-    *zx_pxy2saddr(px, py++) = 0x2b;
-    *zx_pxy2saddr(px + 8, py) = 0xfc;
-    *zx_pxy2saddr(px, py++) = 0x3f;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    pairIn->x = x + 2;
-    return pairIn;
-}
-
-pair* screenThree(pair* pairIn)
-{
-   int x = pairIn->x;
-    int px = x * 8;
-    int y = pairIn->y;
-    int py = y * 8;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0xc0;
-    *zx_pxy2saddr(px, py++) = 0x1f;
-    *zx_pxy2saddr(px + 8, py) = 0xe0;
-    *zx_pxy2saddr(px, py++) = 0x3f;
-    *zx_pxy2saddr(px + 8, py) = 0x38;
-    *zx_pxy2saddr(px, py++) = 0x30;
-    *zx_pxy2saddr(px + 8, py) = 0x38;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0x38;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0xc0;
-    *zx_pxy2saddr(px, py++) = 0x7;
-    *zx_pxy2saddr(px + 8, py) = 0xc0;
-    *zx_pxy2saddr(px, py++) = 0x7;
-    *zx_pxy2saddr(px + 8, py) = 0x38;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0x38;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0x38;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0x30;
-    *zx_pxy2saddr(px, py++) = 0x30;
-    *zx_pxy2saddr(px + 8, py) = 0x20;
-    *zx_pxy2saddr(px, py++) = 0x30;
-    *zx_pxy2saddr(px + 8, py) = 0xc0;
-    *zx_pxy2saddr(px, py++) = 0x3f;
-    *zx_pxy2saddr(px + 8, py) = 0xc0;
-    *zx_pxy2saddr(px, py++) = 0xf;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    pairIn->x = x + 2;
-    return pairIn;
-}
-
-pair* screenFour(pair* pairIn)
-{
-    int x = pairIn->x;
-    int px = x * 8;
-    int y = pairIn->y;
-    int py = y * 8;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0xe0;
-    *zx_pxy2saddr(px, py++) = 0x3f;
-    *zx_pxy2saddr(px + 8, py) = 0xe0;
-    *zx_pxy2saddr(px, py++) = 0x3f;
-    *zx_pxy2saddr(px + 8, py) = 0xe0;
-    *zx_pxy2saddr(px, py++) = 0x3f;
-    *zx_pxy2saddr(px + 8, py) = 0xe0;
-    *zx_pxy2saddr(px, py++) = 0x38;
-    *zx_pxy2saddr(px + 8, py) = 0xe0;
-    *zx_pxy2saddr(px, py++) = 0x38;
-    *zx_pxy2saddr(px + 8, py) = 0xe0;
-    *zx_pxy2saddr(px, py++) = 0x38;
-    *zx_pxy2saddr(px + 8, py) = 0xe0;
-    *zx_pxy2saddr(px, py++) = 0x38;
-    *zx_pxy2saddr(px + 8, py) = 0xe0;
-    *zx_pxy2saddr(px, py++) = 0x38;
-    *zx_pxy2saddr(px + 8, py) = 0xe0;
-    *zx_pxy2saddr(px, py++) = 0x38;
-    *zx_pxy2saddr(px + 8, py) = 0xfc;
-    *zx_pxy2saddr(px, py++) = 0x3f;
-    *zx_pxy2saddr(px + 8, py) = 0xfc;
-    *zx_pxy2saddr(px, py++) = 0x3f;
-    *zx_pxy2saddr(px + 8, py) = 0xfc;
-    *zx_pxy2saddr(px, py++) = 0x3f;
-    *zx_pxy2saddr(px + 8, py) = 0xe0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0xe0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    pairIn->x = x + 2;
-    return pairIn;
-}
-
-pair* screenFive(pair* pairIn)
-{
-    int x = pairIn->x;
-    int px = x * 8;
-    int y = pairIn->y;
-    int py = y * 8;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0xf8;
-    *zx_pxy2saddr(px, py++) = 0x1f;
-    *zx_pxy2saddr(px + 8, py) = 0xfc;
-    *zx_pxy2saddr(px, py++) = 0x1f;
-    *zx_pxy2saddr(px + 8, py) = 0x4;
-    *zx_pxy2saddr(px, py++) = 0x18;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x18;
-    *zx_pxy2saddr(px + 8, py) = 0xf0;
-    *zx_pxy2saddr(px, py++) = 0xf;
-    *zx_pxy2saddr(px + 8, py) = 0xf8;
-    *zx_pxy2saddr(px, py++) = 0xf;
-    *zx_pxy2saddr(px + 8, py) = 0x38;
-    *zx_pxy2saddr(px, py++) = 0x80;
-    *zx_pxy2saddr(px + 8, py) = 0x28;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0x28;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0x38;
-    *zx_pxy2saddr(px, py++) = 0x10;
-    *zx_pxy2saddr(px + 8, py) = 0x38;
-    *zx_pxy2saddr(px, py++) = 0x18;
-    *zx_pxy2saddr(px + 8, py) = 0xf0;
-    *zx_pxy2saddr(px, py++) = 0x1f;
-    *zx_pxy2saddr(px + 8, py) = 0xb0;
-    *zx_pxy2saddr(px, py++) = 0x14;
-    *zx_pxy2saddr(px + 8, py) = 0xe0;
-    *zx_pxy2saddr(px, py++) = 0x1f;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    pairIn->x = x + 2;
-    return pairIn;
-}
-
-pair* screenSix(pair* pairIn)
-{
-    int x = pairIn->x;
-    int px = x * 8;
-    int y = pairIn->y;
-    int py = y * 8;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0xf8;
-    *zx_pxy2saddr(px, py++) = 0x1f;
-    *zx_pxy2saddr(px + 8, py) = 0xfc;
-    *zx_pxy2saddr(px, py++) = 0x1f;
-    *zx_pxy2saddr(px + 8, py) = 0xc;
-    *zx_pxy2saddr(px, py++) = 0x1c;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x14;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x1c;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x1c;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x16;
-    *zx_pxy2saddr(px + 8, py) = 0xf8;
-    *zx_pxy2saddr(px, py++) = 0x1f;
-    *zx_pxy2saddr(px + 8, py) = 0xf8;
-    *zx_pxy2saddr(px, py++) = 0x10;
-    *zx_pxy2saddr(px + 8, py) = 0x38;
-    *zx_pxy2saddr(px, py++) = 0x10;
-    *zx_pxy2saddr(px + 8, py) = 0x38;
-    *zx_pxy2saddr(px, py++) = 0x10;
-    *zx_pxy2saddr(px + 8, py) = 0x18;
-    *zx_pxy2saddr(px, py++) = 0x10;
-    *zx_pxy2saddr(px + 8, py) = 0x98;
-    *zx_pxy2saddr(px, py++) = 0x1f;
-    *zx_pxy2saddr(px + 8, py) = 0xf8;
-    *zx_pxy2saddr(px, py++) = 0x1f;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    pairIn->x = x + 2;
-    return pairIn;
-}
-
-pair* screenSeven(pair* pairIn)
-{
-    int x = pairIn->x;
-    int px = x * 8;
-    int y = pairIn->y;
-    int py = y * 8;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0xfc;
-    *zx_pxy2saddr(px, py++) = 0xc;
-    *zx_pxy2saddr(px + 8, py) = 0xfc;
-    *zx_pxy2saddr(px, py++) = 0x7;
-    *zx_pxy2saddr(px + 8, py) = 0x18;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0x30;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0x60;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0xc0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0x80;
-    *zx_pxy2saddr(px, py++) = 0x1;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x3;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x6;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x6;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x6;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x6;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x6;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x6;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    pairIn->x = x + 2;
-    return pairIn;
-}
-
-pair* screenEight(pair* pairIn)
-{
-    int x = pairIn->x;
-    int px = x * 8;
-    int y = pairIn->y;
-    int py = y * 8;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0xf0;
-    *zx_pxy2saddr(px, py++) = 0xf;
-    *zx_pxy2saddr(px + 8, py) = 0x8;
-    *zx_pxy2saddr(px, py++) = 0x10;
-    *zx_pxy2saddr(px + 8, py) = 0x8;
-    *zx_pxy2saddr(px, py++) = 0x10;
-    *zx_pxy2saddr(px + 8, py) = 0x8;
-    *zx_pxy2saddr(px, py++) = 0x10;
-    *zx_pxy2saddr(px + 8, py) = 0x8;
-    *zx_pxy2saddr(px, py++) = 0x10;
-    *zx_pxy2saddr(px + 8, py) = 0x10;
-    *zx_pxy2saddr(px, py++) = 0x8;
-    *zx_pxy2saddr(px + 8, py) = 0xc0;
-    *zx_pxy2saddr(px, py++) = 0x3;
-    *zx_pxy2saddr(px + 8, py) = 0xc0;
-    *zx_pxy2saddr(px, py++) = 0x3;
-    *zx_pxy2saddr(px + 8, py) = 0x10;
-    *zx_pxy2saddr(px, py++) = 0x8;
-    *zx_pxy2saddr(px + 8, py) = 0x8;
-    *zx_pxy2saddr(px, py++) = 0x10;
-    *zx_pxy2saddr(px + 8, py) = 0x8;
-    *zx_pxy2saddr(px, py++) = 0x10;
-    *zx_pxy2saddr(px + 8, py) = 0x8;
-    *zx_pxy2saddr(px, py++) = 0x10;
-    *zx_pxy2saddr(px + 8, py) = 0x8;
-    *zx_pxy2saddr(px, py++) = 0x10;
-    *zx_pxy2saddr(px + 8, py) = 0xf0;
-    *zx_pxy2saddr(px, py++) = 0xf;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    pairIn->x = x + 2;
-    return pairIn;
-}
-
-pair* screenNine(pair* pairIn)
-{
-    int x = pairIn->x;
-    int px = x * 8;
-    int y = pairIn->y;
-    int py = y * 8;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0xf0;
-    *zx_pxy2saddr(px, py++) = 0x1f;
-    *zx_pxy2saddr(px + 8, py) = 0x70;
-    *zx_pxy2saddr(px, py++) = 0x1d;
-    *zx_pxy2saddr(px + 8, py) = 0x30;
-    *zx_pxy2saddr(px, py++) = 0x10;
-    *zx_pxy2saddr(px + 8, py) = 0x30;
-    *zx_pxy2saddr(px, py++) = 0x10;
-    *zx_pxy2saddr(px + 8, py) = 0x70;
-    *zx_pxy2saddr(px, py++) = 0x1d;
-    *zx_pxy2saddr(px + 8, py) = 0xf0;
-    *zx_pxy2saddr(px, py++) = 0x1f;
-    *zx_pxy2saddr(px + 8, py) = 0x10;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0x30;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0x70;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0x70;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0x50;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0x50;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0x70;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0x70;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    pairIn->x = x + 2;
-    return pairIn;
-}
-
-pair* screenMinus(pair* pairIn)
-{
-    int x = pairIn->x;
-    int px = x * 8;
-    int y = pairIn->y;
-    int py = y * 8;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0xf0;
-    *zx_pxy2saddr(px, py++) = 0xf;
-    *zx_pxy2saddr(px + 8, py) = 0xf0;
-    *zx_pxy2saddr(px, py++) = 0xf;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    pairIn->x = x + 2;
-    return pairIn;
-}
-
-
-pair* screenZero(pair* pairIn)
-{
-    int x = pairIn->x;
-    int px = x * 8;
-    int y = pairIn->y;
-    int py = y * 8;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    *zx_pxy2saddr(px + 8, py) = 0x78;
-    *zx_pxy2saddr(px, py++) = 0x3F;
-    *zx_pxy2saddr(px + 8, py) = 0x0C;
-    *zx_pxy2saddr(px, py++) = 0x40;
-    *zx_pxy2saddr(px + 8, py) = 0x14;
-    *zx_pxy2saddr(px, py++) = 0x40;
-    *zx_pxy2saddr(px + 8, py) = 0x24;
-    *zx_pxy2saddr(px, py++) = 0x40;
-    *zx_pxy2saddr(px + 8, py) = 0x44;
-    *zx_pxy2saddr(px, py++) = 0x40;
-    *zx_pxy2saddr(px + 8, py) = 0x84;
-    *zx_pxy2saddr(px, py++) = 0x40;
-    *zx_pxy2saddr(px + 8, py) = 0x04;
-    *zx_pxy2saddr(px, py++) = 0x01;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x42;
-    *zx_pxy2saddr(px + 8, py) = 0x04;
-    *zx_pxy2saddr(px, py++) = 0x44;
-    *zx_pxy2saddr(px + 8, py) = 0x04;
-    *zx_pxy2saddr(px, py++) = 0x48;
-    *zx_pxy2saddr(px + 8, py) = 0x04;
-    *zx_pxy2saddr(px, py++) = 0x50;
-    *zx_pxy2saddr(px + 8, py) = 0x04;
-    *zx_pxy2saddr(px, py++) = 0x60;
-    *zx_pxy2saddr(px + 8, py) = 0x06;
-    *zx_pxy2saddr(px, py++) = 0x60;
-    *zx_pxy2saddr(px + 8, py) = 0xF8;
-    *zx_pxy2saddr(px, py++) = 0x3E;
-    *zx_pxy2saddr(px + 8, py) = 0x0;
-    *zx_pxy2saddr(px, py++) = 0x0;
-    pairIn->x = x + 2;
-    return pairIn;
-
 }
