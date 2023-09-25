@@ -98,7 +98,7 @@ void smoke_alarm_func(GameComponent* input, GameParameters* params) {
 int main_game()
 {
     start_frame_count();
-    int i;
+    int i, j;
     //Clear screen
     zx_cls(PAPER_WHITE);
     printf(PRINTAT "\x01\x01" \
@@ -114,6 +114,14 @@ int main_game()
     // get a random seed based on frame count
     srand(rando);
     zx_cls(PAPER_WHITE);
+    for (i = 0; i < 2; i++) {
+      for (j = 0; j < 32; j++) {
+        *zx_cxy2aaddr(j, i) = INK_YELLOW | PAPER_BLACK;
+      }
+    }
+    for (j = 0; j < 32; j++) {
+      *zx_cxy2aaddr(j, 23) = INK_RED | PAPER_BLACK;
+    }
 
     BreadBin* newBreadBin = get_bread_bin();
   
@@ -239,8 +247,10 @@ int main_game()
         i = MAX_TICKS + 1;
       }
     }
+    if (i == MAX_TICKS) {
+      screenTime(1, 1, 11, 0);
+    }
     screenNumber(21, 1, params.score);
-    screenTime(1, 1, 11, 0);
     printf(PRINTAT "\x01\x0B" "Final score %d ", (params.score));
     if (params.messageAddress == 999) {
       printf(PRINTAT "\x01\x0C" "%s", (char *)params.message);
