@@ -12,6 +12,7 @@
 #include "bread.h"
 #include "customer.h"
 #include "numbers.h"
+#include "face.h"
 
 // Compile with:
 // zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_GAME slot.c slot_monitor.c game.c control.c music.c util.c bread.c customer.c -o game -create-app
@@ -95,6 +96,26 @@ void smoke_alarm_func(GameComponent* input, GameParameters* params) {
   params->maxToast = 0; //Reset for next loop
 }
 
+void game_do_day(const unsigned int day)
+{
+  int i, j, emo;
+  emo = 0;
+  /* Fill screen with faces */
+  for (i = 1; i < 24; i+=2) {
+    for (j = 1; j < 32; j+=2) {
+     screenEmotion(j, i, emo);
+     emo = (emo + 1) % 4; 
+    }
+  }
+  /* clear centre of screen */
+  screenClear(16, 12);
+  screenClear(17, 12);
+  screenClear(16, 13);
+  screenClear(17, 13);
+  draw_number(16, 12, day);
+  wait_for_a_key(NULL, NULL);
+}
+
 int main_game()
 {
     start_frame_count();
@@ -113,6 +134,8 @@ int main_game()
     int rando = wait_for_a_key(NULL, NULL);
     // get a random seed based on frame count
     srand(rando);
+    zx_cls(PAPER_WHITE);
+    game_do_day(1);
     zx_cls(PAPER_WHITE);
     for (i = 0; i < 2; i++) {
       for (j = 0; j < 32; j++) {
@@ -251,7 +274,7 @@ int main_game()
       screenTime(1, 1, 11, 0);
     }
     screenNumber(21, 1, params.score);
-    printf(PRINTAT "\x01\x0B" "Final score %d ", (params.score));
+    printf(PRINTAT "\x01\x18" "Final score %d ", (params.score));
     if (params.messageAddress == 999) {
       printf(PRINTAT "\x01\x0C" "%s", (char *)params.message);
     }

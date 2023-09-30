@@ -54,7 +54,7 @@ void neutralFace(const int x, const int y)
 }
 
 enum emotion {
-    ANGRY, SAD, NEUTRAL, HAPPY, START
+    ANGRY = 0, SAD = 1, NEUTRAL = 2, HAPPY = 3, START = 4
 };
 
 void screenFace(const unsigned int x, const unsigned int y, const int reputation)
@@ -75,5 +75,23 @@ void screenFace(const unsigned int x, const unsigned int y, const int reputation
     else if (lastEmo != HAPPY && reputation >= 1200) {
         happyFace(x, y);
         lastEmo = HAPPY;
+    }
+}
+
+void screenEmotion(const unsigned int x, const unsigned int y, const unsigned int emotion)
+{
+    switch (emotion) {
+        case 0:
+            angryFace(x, y);
+            break;
+        case 1:
+            sadFace(x, y);
+            break;
+        case 2:
+            neutralFace(x, y);
+            break;
+        case 3:
+        default:
+            happyFace(x, y);
     }
 }

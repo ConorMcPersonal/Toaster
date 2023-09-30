@@ -224,12 +224,17 @@ const char zeroData[] = {
  0x0, 0x0
 };
 
+/* minus is indexed at 10*/
+const char* numGraphics[] = {zeroData, oneData, twoData, threeData, fourData, fiveData, sixData,
+    sevenData, eightData, nineData, minusData};
+
 pair* screenBlank(pair* st);
 
-pair* draw_number(pair* pairIn, const char* pix) 
+pair* draw_numeral(pair* pairIn, const char c) 
 {
     int px = (pairIn->x) * 8;
     int py = (pairIn->y) * 8;
+    const char* pix = numGraphics[c];
     char* leftPtr = zx_pxy2saddr(px, py);
     for (int j = 0; j < 2; ++j) {
         for (int i = 0; i < 8; ++i) {
@@ -245,51 +250,53 @@ pair* draw_number(pair* pairIn, const char* pix)
     return pairIn;
 }
 
+void draw_number(const unsigned int x, const unsigned int y, const char c)
+{
+    pair drawAt = {x, y};
+    draw_numeral(&drawAt, c);
+}
+
 #define BUFFERLEN 7
 
 void screenTime(const unsigned int x, const unsigned int y, const int hour, const int min)
 {
     pair here = {x - 1, y - 1};
     if (hour < 10) {
-        draw_number(&here, zeroData);
+        draw_numeral(&here, 0);
     }
     switch (hour) {
         case 7:
-            draw_number(&here, sevenData);
-            break;
         case 8:
-            draw_number(&here, eightData);
-            break;
         case 9:
-            draw_number(&here, nineData);
+            draw_numeral(&here, hour);
             break;
         case 10:
-            draw_number(&here, oneData);
-            draw_number(&here, zeroData);
+            draw_numeral(&here, 1);
+            draw_numeral(&here, 0);
             break;
         default:
-            draw_number(&here, oneData);
-            draw_number(&here, oneData);
+            draw_numeral(&here, 1);
+            draw_numeral(&here, 1);
     }
 
-    draw_number(&here, minusData);
+    draw_numeral(&here, 10);
 
     switch (min) {
         case 0:
-            draw_number(&here, zeroData);
-            draw_number(&here, zeroData);
+            draw_numeral(&here, 0);
+            draw_numeral(&here, 0);
             break;
         case 15:
-            draw_number(&here, oneData);
-            draw_number(&here, fiveData);
+            draw_numeral(&here, 1);
+            draw_numeral(&here, 5);
             break;
         case 30:
-            draw_number(&here, threeData);
-            draw_number(&here, zeroData);
+            draw_numeral(&here, 3);
+            draw_numeral(&here, 0);
             break;
         default:
-            draw_number(&here, fourData);
-            draw_number(&here, fiveData);
+            draw_numeral(&here, 4);
+            draw_numeral(&here, 5);
     }
 }
 
@@ -314,37 +321,19 @@ void screenNumber(const unsigned int x, const unsigned int y, int numberIn)
     for (i = 0; i < numLength; i++) {
         switch(buffer[i]) {
             case '0':
-                draw_number(&here, zeroData);
-                break;
             case '1':
-                draw_number(&here, oneData);
-                break;
             case '2':
-                draw_number(&here, twoData);
-                break;
             case '3':
-                draw_number(&here, threeData);
-                break;
             case '4':
-                draw_number(&here, fourData);
-                break;
             case '5':
-               draw_number(&here, fiveData);
-                break;
             case '6':
-                draw_number(&here, sixData);
-                break;
             case '7':
-                draw_number(&here, sevenData);
-                break;
             case '8':
-                draw_number(&here, eightData);
-                break;
             case '9':
-                draw_number(&here, nineData);
+                draw_numeral(&here, buffer[i]);
                 break;
             case '-':
-                draw_number(&here, minusData);
+                draw_numeral(&here, 10);
                 break;
             default:
                 // we are done
@@ -367,4 +356,10 @@ pair* screenBlank(pair* pairIn)
     }
     pairIn->x = x + 2;
     return pairIn;
+}
+
+void screenClear(const unsigned int x, const unsigned int y)
+{
+    pair clearAt = {x, y};
+    screenBlank(&clearAt);
 }
