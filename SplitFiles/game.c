@@ -99,12 +99,11 @@ void smoke_alarm_func(GameComponent* input, GameParameters* params) {
 void game_do_day(const unsigned int day)
 {
   int i, j, emo;
-  emo = 0;
   /* Fill screen with faces */
   for (i = 1; i < 24; i+=2) {
     for (j = 1; j < 32; j+=2) {
+     emo = rand() % 4; 
      screenEmotion(j, i, emo);
-     emo = (emo + 1) % 4; 
     }
   }
   /* clear centre of screen */
