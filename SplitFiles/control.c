@@ -143,6 +143,22 @@ void execute_command(ControlBuffer *ctrlBuff, GameParameters* params) {
     }
 }
 
+void execute_command_instant(ControlBuffer *ctrlBuff, GameParameters* params) {
+    unsigned char c; 
+    c = buffer_pop(ctrlBuff);
+    if (c >= '0' && c <= '9') {
+        //Pop that slot
+        params->messageAddress = 200 + c - '0';
+        params->messageSourceAddress = (void *)ctrlBuff;
+    } else if (get_bread_type(params->breadBin, c) != NULL) {
+        //Toast it - somewhere
+        params->messageAddress = 100;
+        BreadState* new_slice = get_bread(params->breadBin, c);
+        params->message = new_slice;
+        params->messageSourceAddress = (void *)ctrlBuff;
+    }
+}
+
 void command_entry_func(GameComponent* input, GameParameters* params) {
     unsigned char c;
     ControlBuffer *ctrlBuff = (ControlBuffer*)input->ptr;
@@ -152,6 +168,7 @@ void command_entry_func(GameComponent* input, GameParameters* params) {
             // This message has come back to here uncaught - remove it
             if (params->messageAddress >= 100 && params->messageAddress < 200) {
                 BreadState* brd = (BreadState*)params->message;
+                params->score -= brd->type->cost;
                 free(brd);
             }
             params->message = NULL;
@@ -176,6 +193,37 @@ void command_entry_func(GameComponent* input, GameParameters* params) {
             buffer_push(c, ctrlBuff); 
         }
         buffer_restack(ctrlBuff, params);
+    }
+    ctrlBuff->lastCharSeen = c;
+}
+
+void command_entry_func_instant(GameComponent* input, GameParameters* params) {
+    unsigned char c;
+    ControlBuffer *ctrlBuff = (ControlBuffer*)input->ptr;
+    //Check on uncaught message
+    if (params->messageAddress) {
+        if (params->messageSourceAddress == ctrlBuff) {
+            // This message has come back to here uncaught - remove it
+            if (params->messageAddress >= 100 && params->messageAddress < 200) {
+                BreadState* brd = (BreadState*)params->message;
+                params->score -= brd->type->cost;
+                free(brd);
+            }
+            params->message = NULL;
+            params->messageAddress = 0;
+            params->messageSourceAddress = NULL;
+        }
+    }
+
+    c = in_inkey();
+    if (c >= 'a' && c <= 'z') {
+        c -= 32;
+    }
+    if (c && c != ctrlBuff->lastCharSeen) {
+        params->effect = TUNE_EFFECT_TICK;
+        // Execute immediately
+        buffer_push(c, ctrlBuff); 
+        execute_command_instant(ctrlBuff, params);
     }
     ctrlBuff->lastCharSeen = c;
 }
