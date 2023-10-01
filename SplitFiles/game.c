@@ -130,9 +130,9 @@ int main_game()
   // *******************************************************
 
     //Three-voice music player
-    MusicPlayer* music_player = get_music_player(3);
-    music_player->add_music(music_player, TUNE_DRUM, 2);
-    music_player->add_music(music_player, TUNE_TOAST, 1);
+    MusicPlayer* music_player = get_music_player(2);
+    //music_player->add_music(music_player, TUNE_DRUM, 2);
+    music_player->add_music(music_player, TUNE_RICKROLL, 1);
     music_player->add_music(music_player, TUNE_EFFECT_BEEP, 0);
     // ****************************************************
     //  Music set-up ends
@@ -153,28 +153,28 @@ int main_game()
       &collector //next
     };
 
-    SlotState* s1state = get_slot(3, 5, 1, 41);
+    SlotState* s1state = get_slot(3, 20, 4, 41);
     GameComponent slot1 = {
       (void*)s1state, //ptr
       &slot_func, //func
       &smokeAlarm //next
     };
 
-    SlotState* s2state = get_slot(3, 10, 2, 41);
+    SlotState* s2state = get_slot(3, 15, 3, 41);
     GameComponent slot2 = {
       (void*)s2state, //ptr
       &slot_func, //func
       &slot1 //next
     };
 
-    SlotState* s3state = get_slot(3, 15, 3, 41);
+    SlotState* s3state = get_slot(3, 10, 2, 41);
     GameComponent slot3 = {
       (void*)s3state, //ptr
       &slot_func, //func
       &slot2 //next
     };
 
-    SlotState* s4state = get_slot(3, 20, 4, 41);
+    SlotState* s4state = get_slot(3, 5, 1, 41);
     GameComponent slot4 = {
       (void*)s4state, //ptr
       &slot_func, //func

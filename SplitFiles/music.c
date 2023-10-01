@@ -130,7 +130,7 @@ int music_main()
 
     MusicPlayer *mPlayer = get_music_player(3);
     mPlayer->add_music(mPlayer, TUNE_DRUM, 2);
-    mPlayer->add_music(mPlayer, TUNE_TOAST, 1);
+    mPlayer->add_music(mPlayer, TUNE_RICKROLL, 1);
     i = 0;
     j = 0;
     //Clear screen

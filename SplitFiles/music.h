@@ -53,4 +53,5 @@ extern unsigned int* TUNE_EFFECT_DOWN;
 extern unsigned int* TUNE_EFFECT_BEEP;
 extern unsigned int* TUNE_EFFECT_SHORT_BEEP;
 extern unsigned int* TUNE_EFFECT_TICK;
+extern unsigned int* TUNE_RICKROLL;
 #endif
