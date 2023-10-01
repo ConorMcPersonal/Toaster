@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <arch/zx.h>
 #include <stdbool.h>
+#include <string.h>
 
 #include "numbers.h"
 #include "util.h"
@@ -261,13 +262,11 @@ void draw_number(const unsigned int x, const unsigned int y, const char c)
 void screenTime(const unsigned int x, const unsigned int y, const int hour, const int min)
 {
     pair here = {x - 1, y - 1};
-    if (hour < 10) {
-        draw_numeral(&here, 0);
-    }
     switch (hour) {
         case 7:
         case 8:
         case 9:
+            draw_numeral(&here, 0);
             draw_numeral(&here, hour);
             break;
         case 10:
@@ -300,47 +299,55 @@ void screenTime(const unsigned int x, const unsigned int y, const int hour, cons
     }
 }
 
+/* how many base 10 digits in the number? */
+int number_len(int num_in)
+{
+    int ret_num = 0;
+    do {
+        num_in = num_in / 10;
+        ret_num++;
+    } while (num_in);
+    return ret_num;
+}
+
+/* put the base 10 digits of the number into a buffer */
+void populate_num_buffer(const int numIn, char* buffer, const int length)
+{
+    int i;
+    int shrtNum, longNum;
+    longNum = numIn;
+    for (i = 0; i < length; i++) {
+        shrtNum = longNum / 10;
+        buffer[i] = longNum - (shrtNum * 10);
+        longNum = shrtNum;
+    }
+}
+
 void screenNumber(const unsigned int x, const unsigned int y, int numberIn)
 {
-    char buffer[BUFFERLEN];
     int i;
     int correction;
     int numLength;
     pair here = {x - 1, y - 1};
-    itoa(numberIn, buffer, 10);
-    for (numLength = 0; numLength < BUFFERLEN; numLength++) {
-        if (buffer[numLength] == '\0') {
-            break;
-        }
-    }
+    numLength = number_len(numberIn);
+    char* num_buff = (char *)malloc(numLength * sizeof(char));
     correction = (BUFFERLEN - 1) - numLength;
+    if (numberIn < 0) {
+        correction--;
+    }
     for (i = 0; i < correction; i++) {
         //blank out leading spaces
         screenBlank(&here);
     }
-    for (i = 0; i < numLength; i++) {
-        switch(buffer[i]) {
-            case '0':
-            case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-            case '8':
-            case '9':
-                draw_numeral(&here, buffer[i]);
-                break;
-            case '-':
-                draw_numeral(&here, 10);
-                break;
-            default:
-                // we are done
-                i = BUFFERLEN;
-                break;
-        }
+    if (numberIn < 0) {
+        draw_numeral(&here, 10);
+        numberIn = abs(numberIn);
     }
+    populate_num_buffer(numberIn, num_buff, numLength);
+    for (i = numLength - 1; i >= 0; i--) {
+        draw_numeral(&here, num_buff[i]);
+    }
+    free(num_buff);
 }
 
 pair* screenBlank(pair* pairIn)

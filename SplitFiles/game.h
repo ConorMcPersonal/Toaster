@@ -53,4 +53,6 @@ typedef struct dispatcher_struct DispatcherState;
 //When does the smake alarm go off?
 #define BURNT_TOAST 200
 
+int play_game(void);
+
 #endif

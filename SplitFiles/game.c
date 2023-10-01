@@ -19,6 +19,8 @@
 
 static int hour = 6;
 static int min = 45;
+static int game_day = 1;
+static int current_score = 0;
 
 void update_clock() {
   int start_x = 1;
@@ -107,18 +109,18 @@ void game_do_day(const unsigned int day)
     }
   }
   /* clear centre of screen */
-  screenClear(16, 12);
-  screenClear(17, 12);
-  screenClear(16, 13);
-  screenClear(17, 13);
+  for (i = 15; i < 18; i++) {
+    for (j = 11; j < 14; j++) {
+      screenClear(i,j);
+    }
+  }
   draw_number(16, 12, day);
-  wait_for_a_key(NULL, NULL);
+  for (i = 0; i < 20000; i++) {;}
 }
 
-int main_game()
+int main_game( void )
 {
     start_frame_count();
-    int i, j;
     //Clear screen
     zx_cls(PAPER_WHITE);
     printf(PRINTAT "\x01\x01" \
@@ -133,8 +135,15 @@ int main_game()
     int rando = wait_for_a_key(NULL, NULL);
     // get a random seed based on frame count
     srand(rando);
+    return play_game();
+}
+
+int play_game( void )
+{
+    int i, j;
     zx_cls(PAPER_WHITE);
-    game_do_day(1);
+    game_do_day(game_day);
+    game_day++;
     zx_cls(PAPER_WHITE);
     for (i = 0; i < 2; i++) {
       for (j = 0; j < 32; j++) {
@@ -226,7 +235,7 @@ int main_game()
 
     //Now the parameters
     GameParameters params =  { 0, //.ticks = 
-                                0,//.score =
+                                current_score,//.score =
                                 0,//.slices = 
                                 0,//.game_over_flag = 
                                 0,//.max_toast = 
@@ -274,14 +283,20 @@ int main_game()
     }
     screenNumber(21, 1, params.score);
     printf(PRINTAT "\x01\x18" "Final score %d ", (params.score));
+    current_score = params.score;
     if (params.messageAddress == 999) {
       printf(PRINTAT "\x01\x0C" "%s", (char *)params.message);
     }
     bit_beepfx(BEEPFX_AWW);
     //we malloc this so free it
     free(buff.buffer);
-    while (1) {}
-    return params.score;
+    if (0 == params.gameOverFlag) {
+      hour = 6;
+      min = 45;
+      return play_game();
+    } else {
+      return params.score;
+    }
 } 
 
 
