@@ -1,3 +1,4 @@
+#include "tune_library.h"
 //Tunes and sound effects are defined here - this file should be included
 //in the file that contains "main" - will need to use #ifdef to ensure that is the case
 //All TUNE_ variables should be declared as extern in music.h
@@ -109,3 +110,180 @@ unsigned int test_effect_tick[] = {
     0
 };
 unsigned int* TUNE_EFFECT_TICK = (unsigned int*)test_effect_tick;
+
+unsigned int timing_test[] = {
+        2, __BR, __C0, //A breve at 16Hz - very little sound will come out!
+        0
+};
+unsigned int* TUNE_TIMING = (unsigned int*)timing_test;
+
+unsigned int* never_gonna[] = {
+    //We're no strnagers to love
+    2, __CR, __B4,
+    2, __CR, __CS5,
+    2, __CR, __D5,
+    1, 1,
+    2, __CR, __D5,
+    2, __CR, __E5,
+    2, __CR, __CS5,
+    2, __QU, __B4,
+    2, __CR, __A4,
+    1, 20,
+
+    // You know the rules and so do I
+    2, __CR, __B4,
+    1, 1,
+    2, __CR, __B4,
+    2, __CR, __CS5,
+    2, __CR, __D5,
+    2, __CR, __B4,
+    2, __CR, __A4,
+    2, __CR, __A5,
+    1, 3,
+    2, __CR, __A5,
+    1, 3,
+    2, __MI, __E5,
+    1, 20,
+
+    //A full commitment's what I'm thinking of
+    2, __CR, __B4,
+    1, 1,
+    2, __CR, __B4,
+    2, __CR, __CS5,
+    2, __CR, __D5,
+    2, __CR, __B4,
+    2, __CR, __D5,
+    2, __CR, __E5,
+    2, __CR, __CS5,
+    2, __CR, __B4,
+    2, __QU, __CS5,
+    2, __QU, __B4,
+    2, __QU, __A4,
+    1, 20,
+
+    // You wouldn't get this from any other guy (oh really? cheeky c&nt)
+    2, __CR, __B4,
+    1, 1,
+    2, __CR, __B4,
+    2, __CR, __CS5,
+    2, __CR, __D5,
+    2, __CR, __B4,
+    2, __CR, __A4,
+    2, __CR, __E5,
+    1, 1,
+    2, __CR, __E5,
+    1, 1,
+    2, __CR, __E5,
+    2, __CR, __FS5,
+    2, __MI, __E5,
+    1, 20,
+
+    //I just wanna tell you how I'm feeling
+    2, __SB, __D5,
+    2, __CR, __E5,
+    2, __CR, __FS5,
+    2, __CR, __D5,
+    2, __CR, __E5,
+    1, 1,
+    2, __CR, __E5,
+    1, 1,
+    2, __CR, __E5,
+    2, __CR, __FS5,
+    2, __CR, __E5,
+    2, __CR, __A4,
+    1, 20,
+
+    //Gotta make you understand
+    2, __CR, __B4,
+    2, __CR, __CS5,
+    2, __CR, __D5,
+    2, __CR, __B4,
+    1, 5,
+    2, __CR, __E5,
+    2, __CR, __FS5,
+    2, __CR, __E5,
+    1, 20,
+
+    //Never gonna give you up
+    2, __QU, __A4,
+    2, __QU, __B4,
+    2, __QU, __D5,
+    2, __QU, __B4,
+    2, __CR, __FS5,
+    1, 1,
+    2, __CR, __FS5,
+    2, __CR, __E5,
+    1, 20,
+
+    //Never goona let you down
+    2, __QU, __A4,
+    2, __QU, __B4,
+    2, __QU, __D5,
+    2, __QU, __B4,
+    2, __CR, __E5,
+    1, 1,
+    2, __CR, __E5,
+    2, __QU, __D5,
+    2, __QU, __CS5,
+    2, __QU, __B4,
+    1, 20,
+
+    //Never gonna run around and desert you
+    2, __QU, __A4,
+    2, __QU, __B4,
+    2, __QU, __D5,
+    2, __QU, __B4,
+    2, __CR, __D5,
+    2, __CR, __E5,
+    2, __CR, __CS5,
+    2, __CR, __A4,
+    1, 1,
+    2, __CR, __A4,
+    2, __CR, __E5,
+    2, __CR, __D5,
+    1, 20,
+
+    //Never gonna make you cry
+    2, __QU, __A4,
+    2, __QU, __B4,
+    2, __QU, __D5,
+    2, __QU, __B4,
+    2, __CR, __FS5,
+    1, 1,
+    2, __CR, __FS5,
+    2, __CR, __E5,
+    1, 20,
+
+    //Never gonna say goodbye
+    2, __QU, __A4,
+    2, __QU, __B4,
+    2, __QU, __D5,
+    2, __QU, __B4,
+    2, __CR, __A5,
+    1, 1,
+    2, __CR, __CS5,
+    2, __QU, __D5,
+    2, __QU, __CS5,
+    2, __QU, __B4,
+    1, 20,
+
+    //Nver gonna tell a lie, and hurt you
+    2, __QU, __A4,
+    2, __QU, __B4,
+    2, __QU, __D5,
+    2, __QU, __B4,
+    2, __CR, __D5,
+    2, __CR, __E5,
+    2, __CR, __CS5,
+    2, __CR, __A4,
+    1, 1,
+    2, __CR, __A4,
+    2, __CR, __E5,
+    2, __CR, __D5,
+    1, 200,
+    
+    0
+};
+
+
+unsigned int* TUNE_RICKROLL = (unsigned int*)never_gonna;
