@@ -2,12 +2,12 @@
 #define _DEFINE_TUNE_LIBRARY_H
 
 //Note length (repeats,blip time)
-#define __SQ 5,8   //semiquaver
-#define __QU 10,8  //quaver
-#define __CR 20,8  //crotchet
-#define __MI 40,8  //minim
-#define __SB 80,8  //semibreve
-#define __BR 160,8 //breve
+#define __SQ 7,5   //semiquaver
+#define __QU 14,5  //quaver
+#define __CR 28,5  //crotchet
+#define __MI 56,5  //minim
+#define __SB 112,5 //semibreve
+#define __BR 224,5 //breve
 
 // Full piano keyboard in Hz (-ish)
 #define __C0 16

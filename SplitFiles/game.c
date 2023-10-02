@@ -130,8 +130,8 @@ int main_game()
   // *******************************************************
 
     //Three-voice music player
-    MusicPlayer* music_player = get_music_player(2);
-    //music_player->add_music(music_player, TUNE_DRUM, 2);
+    MusicPlayer* music_player = get_music_player(3);
+    music_player->add_music(music_player, TUNE_TIMING, 2);//Keep speed constant-ish
     music_player->add_music(music_player, TUNE_RICKROLL, 1);
     music_player->add_music(music_player, TUNE_EFFECT_BEEP, 0);
     // ****************************************************
