@@ -3,25 +3,7 @@
 
 #define BREADBINSIZE 26
 
-// 1.) Forward declaration: Here is the name of the structure
-// but member-details are omitted.
-struct BreadBinStruct;
-
-// 2.) typedef of the structure
-// Still no details on the members.
-typedef struct BreadBinStruct  BreadBin;
-
-struct BreadTypeStruct {
-    unsigned char     letter;
-    int               thermalMass;      //This mass
-    int               massVariability;  //Plus or minus this amount
-    int               moisture;         //This moisture
-    int               moistureVariability;  //Plus or minus...
-    int               cost;
-    int               callProb;         //Actually an integer, higher number = more likely
-    char*             desc;
-};
-typedef struct BreadTypeStruct BreadType;
+#include "base.h" //BreadBin and BreadType defined here
 
 struct BreadStateStruct {
   int               temperature;  
@@ -33,13 +15,6 @@ struct BreadStateStruct {
 };
 
 typedef struct BreadStateStruct BreadState;
-
-
-struct BreadBinStruct {
-    int probTotal;
-    BreadType** breadTypes;                    //will be an array of 26 pointers 
-                                               //       where (BreadTypeStruct.letter - 'A') is the index
-};
 
 BreadType*   rand_bread_type(BreadBin*);               //get a random BreadType
 BreadState*  get_bread(BreadBin*, unsigned char);      //get a specific BreadState

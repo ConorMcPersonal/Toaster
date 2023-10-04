@@ -99,6 +99,19 @@ BreadBin* get_bread_bin() {
 
     add_bread(bin, 
         create_bread_type(
+            'M', //letter
+            "Melba", //desc
+            31, //thermal Mass
+            3, //variability
+            32, //moisture
+            24, // moisture variability
+            50, // cost
+            32  //callProb
+        )
+    );
+
+    add_bread(bin, 
+        create_bread_type(
             'B', //letter
             "Brown", //desc
             82, //thermal Mass

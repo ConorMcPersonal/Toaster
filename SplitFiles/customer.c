@@ -5,7 +5,7 @@
 //////////////////////////////////////////////////////////
 
 // Can be compiled with:
-// zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_CUSTOMER bread.c util.c music.c customer.c -o customer -create-app
+// zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_CUSTOMER bread.c util.c music.c customer.c base.c -o customer -create-app
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -127,9 +127,9 @@ void customer_func(GameComponent* customers, GameParameters* params) {
         thisCustomer = thisCustomer->nextCustomer;
     }
 
-    //Do we have a new customer? - this is independent of whether we have space
+    //Do we have a new customer? - this is independent of whether we have space (and if we're open)
     int waittime = reputation_to_waittime(MAX(1, params->reputation));
-    if (rand() % waittime == 0) {
+    if (rand() % waittime == 0 && params->hotelOpen != 0) {
         //Yes we do!
         params->effect = TUNE_EFFECT_SHORT_BEEP;
         if (base->customerCount < MAX_CUSTOMER_COUNT) {
@@ -173,31 +173,22 @@ int customer_main() {
     };
 
     //Now the parameters
-    GameParameters params =  { 0, //.ticks = 
-                                0,//.score =
-                                0,//.slices = 
-                                0,//.game_over_flag = 
-                                0,//.max_toast = 
-                                0, //message_address
-                                (void*)NULL,//.message 
-                                (void*)NULL,//.messageSourceAddress = 
-                                0, // effect
-                                bin, //breadBin
-                                100
-                            };
+    GameParameters* params = get_game_parameters();
+    params->breadBin = bin;
+    params->reputation = 100;
 
     while (1) {
-        customer_func(&comp, &params);
-        params.ticks += 1;
+        customer_func(&comp, params);
+        params->ticks += 1;
         if (rand() % 250 == 0) {
             //Send some random toast
-            BreadState* randoBread = get_bread(params.breadBin,
-                            rand_bread_type(params.breadBin)->letter);
+            BreadState* randoBread = get_bread(params->breadBin,
+                            rand_bread_type(params->breadBin)->letter);
             randoBread->toastedness = rand() % 250;
-            params.messageAddress = 20;
-            params.message = (void*)randoBread;
+            params->messageAddress = 20;
+            params->message = (void*)randoBread;
             printf(PRINTAT"\x01\x12""Sending %s, %-4d, %-6d", randoBread->type->desc
-                                            , randoBread->toastedness, params.ticks);
+                                            , randoBread->toastedness, params->ticks);
         }
     }
 

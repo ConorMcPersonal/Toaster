@@ -15,12 +15,11 @@
 #include "face.h"
 
 // Compile with:
-// zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_GAME slot.c slot_monitor.c game.c control.c music.c util.c bread.c customer.c -o game -create-app
+// zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_GAME slot.c slot_monitor.c game.c control.c music.c util.c bread.c customer.c base.c -o game -create-app
 
 static int hour = 6;
 static int min = 45;
 static int game_day = 1;
-static int current_score = 0;
 
 void update_clock() {
   int start_x = 1;
@@ -64,14 +63,19 @@ int wait_for_a_key(GameComponent* input, GameParameters* params) {
 }
 
 void tick_func(GameComponent* input, GameParameters* params) { //Now a scoreboard too
-  int last_score = (int)input->ptr;
+  long last_score = (long)input->ptr;
   if (params->score != last_score) {
-    screenNumber(21, 1, params->score);
+    int show_score = (int)(params->score >> 3);
+    screenNumber(21, 1, show_score);
   //  printf(PRINTAT"\x19\x01""%6d", params->score);
     input->ptr = (void *)params->score;
   }
   params->ticks += 1;
-  draw_tick_line(params->ticks);
+  if (params->ticks < MAX_TICKS) {
+    draw_tick_line(params->ticks);
+  } else {
+    params->hotelOpen = 0;
+  }
 }
 
 void toast_collector_func(GameComponent* input, GameParameters* params) {
@@ -135,10 +139,23 @@ int main_game( void )
     int rando = wait_for_a_key(NULL, NULL);
     // get a random seed based on frame count
     srand(rando);
-    return play_game();
+
+    //Now the parameters - we do this only once per game
+    BreadBin* newBreadBin = get_bread_bin();
+    GameParameters* params =  get_game_parameters();
+    params->breadBin = newBreadBin;
+    params->reputation = 1000;
+
+    while (params->gameOverFlag == 0) {
+        params->ticks = 0;
+        // We're still open!
+        params->hotelOpen = 1;
+        play_game(params);
+    }
+    return params->score; 
 }
 
-int play_game( void )
+int play_game( GameParameters* params )
 {
     int i, j;
     zx_cls(PAPER_WHITE);
@@ -154,7 +171,6 @@ int play_game( void )
       *zx_cxy2aaddr(j, 23) = INK_RED | PAPER_BLACK;
     }
 
-    BreadBin* newBreadBin = get_bread_bin();
   
   // *******************************************************
   // Music set-up
@@ -233,20 +249,6 @@ int play_game( void )
                             };
   //}
 
-    //Now the parameters
-    GameParameters params =  { 0, //.ticks = 
-                                current_score,//.score =
-                                0,//.slices = 
-                                0,//.game_over_flag = 
-                                0,//.max_toast = 
-                                0, //message_address
-                                (void*)NULL,//.message 
-                                (void*)NULL,//.messageSourceAddress = 
-                                0, // effect
-                                newBreadBin, //breadBin
-                                1000
-                            };
-
     // draw starting time line
     for (i = 0; i < 256; i++) {
       *zx_pxy2saddr(i, 191) |= zx_px2bitmask(i);
@@ -257,45 +259,51 @@ int play_game( void )
     //bread_restack(newBreadBin);
 
 
-    for (i = 0; i < MAX_TICKS; i++) {
+    for (i = 0; i < MAX_TICKS || base.customerCount > 0; //Existing customers should be served
+                                                        i++) { 
       int last_frame_count = G_frames;
 
       GameComponent* comp = &ticker;
-      //ticker.func(comp, &params);
       while (comp) {
-        comp->func(comp, &params);
+        comp->func(comp, params);
         comp = comp->next;
         music_player->play(music_player);
       }
       //Check for a new sound effect
-      if (params.effect != NULL) {
-        music_player->add_music_if_different(music_player, params.effect, 0);
-        params.effect = NULL;
+      if (params->effect != NULL) {
+        music_player->add_music_if_different(music_player, params->effect, 0);
+        params->effect = NULL;
       }
       //Min one frame per loop
       while (G_frames == last_frame_count) {}
-      if (params.gameOverFlag) {
+      if (params->gameOverFlag) {
         i = MAX_TICKS + 1;
       }
     }
-    if (i == MAX_TICKS) {
+    if (params->gameOverFlag == 0) {
       screenTime(1, 1, 11, 0);
     }
-    screenNumber(21, 1, params.score);
-    printf(PRINTAT "\x01\x18" "Final score %d ", (params.score));
-    current_score = params.score;
-    if (params.messageAddress == 999) {
-      printf(PRINTAT "\x01\x0C" "%s", (char *)params.message);
+    screenNumber(21, 1, params->score);
+    printf(PRINTAT "\x01\x18" "Final score %d ", (params->score));
+
+    if (params->messageAddress == 999) {
+      printf(PRINTAT "\x01\x0C" "%s", (char *)params->message);
     }
     bit_beepfx(BEEPFX_AWW);
     //we malloc this so free it
     free(buff.buffer);
-    if (0 == params.gameOverFlag) {
+    free(music_player);
+    free(s1state);
+    free(s2state);
+    free(s3state);
+    free(s4state);
+
+    if (0 == params->gameOverFlag) {
       hour = 6;
       min = 45;
-      return play_game();
+      return 0;
     } else {
-      return params.score;
+      return 1;
     }
 } 
 
