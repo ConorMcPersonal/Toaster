@@ -259,7 +259,7 @@ int play_game( GameParameters* params )
     //bread_restack(newBreadBin);
 
 
-    for (i = 0; i < MAX_TICKS || base.customerCount > 0; //Existing customers should be served
+    for (i = 0; i < MAX_TICKS || base.customerCount > 0; //Existing customers should be served (or leave)
                                                         i++) { 
       int last_frame_count = G_frames;
 
