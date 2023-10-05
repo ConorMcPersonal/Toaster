@@ -148,6 +148,20 @@ BreadBin* get_bread_bin() {
             12  //callProb
         )
    );
+
+
+    add_bread(bin, 
+        create_bread_type(
+            'F', //letter
+            "gluten Free", //desc
+            260, //thermal Mass
+            60, //variability
+            64, //moisture
+            24, // moisture variability
+            150, // cost
+            8  //callProb
+        )
+   );
    return bin;
 }
 

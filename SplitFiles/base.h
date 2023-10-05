@@ -10,7 +10,6 @@ struct BreadBinStruct;
 typedef struct BreadBinStruct  BreadBin;
 
 struct BreadTypeStruct {
-    unsigned char     letter;
     int               thermalMass;      //This mass
     int               massVariability;  //Plus or minus this amount
     int               moisture;         //This moisture
@@ -18,6 +17,7 @@ struct BreadTypeStruct {
     int               cost;
     int               callProb;         //Actually an integer, higher number = more likely
     char*             desc;
+    unsigned char     letter;
 };
 typedef struct BreadTypeStruct BreadType;
 
@@ -43,8 +43,8 @@ typedef struct GameComponent_struct  GameComponent;
 typedef void (*GameComponentFunc)(GameComponent*, GameParameters*);
 
 struct GameParameters_Struct {
+  long      score; // What's the score
   int       ticks; // How many times has main loop run
-  long       score; // What's the score
   int       slices; //How many slices toasted?
   int       gameOverFlag; // Zero if game not over
   int       maxToast; // Who has most toastedness - is anything on fire?
