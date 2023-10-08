@@ -53,8 +53,10 @@ struct GameParameters_Struct {
   void*     messageSourceAddress; //Who emitted the message?  Set to GameComponent->ptr of the source
   unsigned int* effect; //Sound effect to be played
   BreadBin*  breadBin;
-  int        reputation; //Starts at 1000 - can't drop below zero or you're in trouble
+  int        reputation; //Starts at 1000 - can't drop below minReputation or you're in trouble
   int        hotelOpen;  // Are we open for business?
+  int        maxCustomers; //How many customers are we allowing now?
+  int        minReputation; //How bad do you have to be to get the sack?
 };
 
 
@@ -66,5 +68,6 @@ struct GameComponent_struct {
 };
 
 GameParameters* get_game_parameters(void);
+int score_to_display(long score);
 
 #endif

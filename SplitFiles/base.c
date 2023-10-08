@@ -17,5 +17,11 @@ GameParameters* get_game_parameters() {
     params->breadBin = NULL;
     params->reputation = 1000; //Start with 1000 rep
     params->hotelOpen = 1;     //Open by default
+    params->maxCustomers = 6;  //Start with a reasonable cuustomeer queue, goes up each day
+    params->minReputation = 0; //Rep needs to go negative initially
     return params;
+}
+
+int score_to_display(long score) {
+    return (int)(score >> 3);
 }

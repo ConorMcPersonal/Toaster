@@ -20,10 +20,10 @@
 #include "face.h"
 
 unsigned int reputation_to_waittime(int reputation) {
-    return MAX(50, MIN(2000, 16384 / (reputation / 8 + 1)));
+    return MAX(25, MIN(2000, 16384 / (reputation / 8 + 1)));
 }
 
-void redraw_customers(CustomerBase *base) {
+void redraw_customers(CustomerBase *base, int maxCustomers) {
     unsigned char ypos = CUSTOMER_LIST_YPOS;
     Customer* lastCustomer = base->rootCustomer;
     while (lastCustomer->nextCustomer != NULL) {
@@ -32,7 +32,7 @@ void redraw_customers(CustomerBase *base) {
         printf(PRINTAT"%c%c%s""%-12s", CUSTOMER_LIST_XPOS, ypos, mood, lastCustomer->breadOrder->desc);
         ++ypos;
     }
-    for (; ypos < CUSTOMER_LIST_YPOS + MAX_CUSTOMER_COUNT; ++ypos) {
+    for (; ypos < CUSTOMER_LIST_YPOS + maxCustomers; ++ypos) {
         //Now we are updating attributes each time, we can just make the blank parts
         //of the list white ink on white paper and save a bunch of pixel updates
         //printf(PRINTAT"\x12%c"HAPPY_CUSTOMER"%-12s", ypos, "");
@@ -50,6 +50,7 @@ void customer_func(GameComponent* customers, GameParameters* params) {
     static int rep_based_markup = 0;
     Customer* thisCustomer;
     Customer* lastCustomer;
+    int initialRep = params->reputation;
 
     if (params->messageAddress == 20) {
         //Someone sent toast!
@@ -65,7 +66,7 @@ void customer_func(GameComponent* customers, GameParameters* params) {
                          + thisCustomer->ticksLeft;  //Speedy toast = points!
 
                 params->reputation += 20 // They got served - that is worth something
-                        + MAX(-20, (50 - abs(bread->toastedness - 100))/ 10) //Decent toast will give a bump
+                        + MAX(-50, (50 - abs(bread->toastedness - 100))/ 10) //Decent toast will give a bump
                         + thisCustomer->ticksLeft / 50; // As will speed
                 (params->slices) += 1;
                 params->messageAddress = 0;
@@ -89,6 +90,7 @@ void customer_func(GameComponent* customers, GameParameters* params) {
         if (!redraw) {
             // No customer for this toast - bad
             params->score -= (bread->type->cost + bread->toastedness);  //+ wasted energy cost
+            params->reputation -= 10; //For being a knob
             params->messageAddress = 0;
             params->message = NULL;
             params->messageSourceAddress = NULL;
@@ -132,7 +134,7 @@ void customer_func(GameComponent* customers, GameParameters* params) {
     if (rand() % waittime == 0 && params->hotelOpen != 0) {
         //Yes we do!
         params->effect = TUNE_EFFECT_SHORT_BEEP;
-        if (base->customerCount < MAX_CUSTOMER_COUNT) {
+        if (base->customerCount < params->maxCustomers) {
             //Add in a new one then!
             newCustomer = malloc(sizeof(Customer));
             newCustomer->breadOrder = rand_bread_type(params->breadBin);
@@ -142,19 +144,25 @@ void customer_func(GameComponent* customers, GameParameters* params) {
             redraw = 1;
             base->customerCount += 1;
             lastCustomer->nextCustomer = newCustomer;
+        } else {
+            //Miffed potential customer
+            params->reputation -= 1;
         }
     }
 
     if (redraw) {
+        redraw_customers(base, params->maxCustomers);
+    }
+
+    if (params->reputation != initialRep) {
         screenFace(18, 1, params->reputation);
-        redraw_customers(base);
-        if (params->reputation < 0) {
+        if (params->reputation < params->minReputation) {
             params->gameOverFlag = 1;
             params->messageAddress = 999;
             params->message = INK"\x32"PAPER"\x36"FLASHON
             " You have ruined the reputation \n"
             "      of the Hotel Excess!      \n"
-            "        YOU ARE FIRED!!         ";
+            "        YOU ARE FIRED!!         "HAPPY_CUSTOMER FLASHOFF;
         }
     }
 }

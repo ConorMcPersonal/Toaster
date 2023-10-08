@@ -12,7 +12,7 @@
 // max stack depth
 static const unsigned int CONTROL_BUFFER_SIZE = 10;
 // length game runs for
-#define MAX_TICKS 4096
+#define MAX_TICKS (4096)
 static const unsigned int TICK_DIV = 4096 / 16;
 
 
