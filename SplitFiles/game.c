@@ -15,12 +15,11 @@
 #include "face.h"
 
 // Compile with:
-// zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_GAME slot.c slot_monitor.c game.c control.c music.c util.c bread.c customer.c -o game -create-app
+// zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_GAME slot.c slot_monitor.c game.c control.c music.c util.c bread.c customer.c base.c -o game -create-app
 
 static int hour = 6;
 static int min = 45;
 static int game_day = 1;
-static int current_score = 0;
 
 void update_clock() {
   int start_x = 1;
@@ -52,6 +51,16 @@ void draw_tick_line(const unsigned int tick)
   }
 }
 
+int wait_for_a_new_key() {
+    unsigned char entry = in_inkey();
+    unsigned char keyp = entry;
+    while (keyp == 0 || keyp == entry) {
+      keyp = in_inkey();
+    }
+    in_wait_nokey();
+    return (int)keyp;
+}
+
 int wait_for_a_key(GameComponent* input, GameParameters* params) {
     unsigned char c;
     int rando = 0;
@@ -64,14 +73,18 @@ int wait_for_a_key(GameComponent* input, GameParameters* params) {
 }
 
 void tick_func(GameComponent* input, GameParameters* params) { //Now a scoreboard too
-  int last_score = (int)input->ptr;
+  long last_score = (long)input->ptr;
   if (params->score != last_score) {
-    screenNumber(21, 1, params->score);
-  //  printf(PRINTAT"\x19\x01""%6d", params->score);
+    int show_score = score_to_display(params->score);
+    screenNumber(21, 1, show_score);
     input->ptr = (void *)params->score;
   }
   params->ticks += 1;
-  draw_tick_line(params->ticks);
+  if (params->ticks < MAX_TICKS) {
+    draw_tick_line(params->ticks);
+  } else {
+    params->hotelOpen = 0;
+  }
 }
 
 void toast_collector_func(GameComponent* input, GameParameters* params) {
@@ -118,11 +131,19 @@ void game_do_day(const unsigned int day)
   for (i = 0; i < 20000; i++) {;}
 }
 
-int main_game( void )
+int main_game( int hiScore )
 {
+    int retScore;
+
+    //reset clock
+    hour = 6;
+    min = 45;
+    game_day = 1;
+
     start_frame_count();
     //Clear screen
     zx_cls(PAPER_WHITE);
+    printf(PRINTAT"\x01\x01%s", HAPPY_CUSTOMER);
     printf(PRINTAT "\x01\x01" \
       "Welcome to the " "\x10\x32H\x10\x34o\x10\x36t\x10\x35" "e\x10\x31l " "\x10\x32" "E" \
       "\x10\x34" "x" "\x10\x36" "c" "\x10\x35" "e" "\x10\x31" "s\x10\x33s\x10\x30.");
@@ -132,13 +153,87 @@ int main_game( void )
     printf(PRINTAT "\x01\x07" "\x12\x31\x10\x32" "Can you stand the heat?\x12\x30\x10\x30");
     printf(PRINTAT "\x05\x0B" "Press any key to start");
 
+    printf(PRINTAT "\x01\x13" "High score: %d", hiScore);
+    
+
     int rando = wait_for_a_key(NULL, NULL);
     // get a random seed based on frame count
     srand(rando);
-    return play_game();
+    int gameDay = 0;
+
+    //Now the parameters - we do this only once per game
+    BreadBin* newBreadBin = get_bread_bin();
+    GameParameters* params =  get_game_parameters();
+    params->breadBin = newBreadBin;
+    //params->reputation = 100;
+    params->minReputation = params->reputation - 10;
+
+    while (params->gameOverFlag == 0) {
+        params->ticks = 0;
+        // We're still open!
+        params->hotelOpen = 1;
+
+        play_game(params);
+        // Put a message up on screen#
+        gameDay += 1;
+        if (params->gameOverFlag == 0) {
+          zx_cls(PAPER_WHITE);
+          printf(PRINTAT "\x01\x03"
+                 //12345678901234567890123456789012
+                  "Well done - you made it though\n"
+                  "          Day %d!!", gameDay);
+          printf(PRINTAT "\x01\x06"
+                  "Your current score is: %d\n", score_to_display(params->score));
+          //Increase min rep required to survive
+          if (params->reputation < params->minReputation + 1000) {
+            // Game over!
+            if (params->reputation < (gameDay - 2) * 1000) {
+              printf(PRINTAT "\x01\x08"
+                  "Unfortunately you're rubbish\n"
+                  "at your job so we're letting\n"
+                  "you go. You're fired!       \n");
+              params->gameOverFlag = 1;
+            } else {
+              params->minReputation = params->reputation;
+              printf(PRINTAT "\x01\x08"
+                  "You're not much cop at this,\n"
+                  "but ");
+            }
+          } else {
+            params->minReputation += 1000;
+            printf(PRINTAT "\x01\x08"
+                  "You have done so well that \n");
+          }
+        }
+
+        if (params->gameOverFlag == 0) {
+          printf("we're opening\n"
+                  "up to more customers.\n");
+          in_wait_nokey();
+          printf("\nPress any key to start Day %d\n", gameDay + 1);
+          printf("%d %d %d         ", params->gameOverFlag, params->reputation, params->minReputation);
+          wait_for_a_new_key();
+        }
+    }
+
+    if (params->messageAddress == 999) {
+      printf(PRINTAT "\x01\x0C" "%s", (char *)params->message);
+    }
+    printf(PRINTAT"\x01\x01%s", HAPPY_CUSTOMER);
+    printf(PRINTAT "\x01\x15" "Final score %d ", score_to_display(params->score));
+    retScore = score_to_display(params->score);
+    bit_beepfx(BEEPFX_AWW);
+
+    printf(PRINTAT "\x04\x13" "Press SPACE to restart");
+    while (wait_for_a_new_key() != 32) {
+      ;
+    }
+    free (newBreadBin);
+    free (params);
+    return retScore; 
 }
 
-int play_game( void )
+int play_game( GameParameters* params )
 {
     int i, j;
     zx_cls(PAPER_WHITE);
@@ -154,7 +249,6 @@ int play_game( void )
       *zx_cxy2aaddr(j, 23) = INK_RED | PAPER_BLACK;
     }
 
-    BreadBin* newBreadBin = get_bread_bin();
   
   // *******************************************************
   // Music set-up
@@ -233,20 +327,6 @@ int play_game( void )
                             };
   //}
 
-    //Now the parameters
-    GameParameters params =  { 0, //.ticks = 
-                                current_score,//.score =
-                                0,//.slices = 
-                                0,//.game_over_flag = 
-                                0,//.max_toast = 
-                                0, //message_address
-                                (void*)NULL,//.message 
-                                (void*)NULL,//.messageSourceAddress = 
-                                0, // effect
-                                newBreadBin, //breadBin
-                                1000
-                            };
-
     // draw starting time line
     for (i = 0; i < 256; i++) {
       *zx_pxy2saddr(i, 191) |= zx_px2bitmask(i);
@@ -257,45 +337,63 @@ int play_game( void )
     //bread_restack(newBreadBin);
 
 
-    for (i = 0; i < MAX_TICKS; i++) {
+    for (i = 0;
+         params->gameOverFlag == 0 && 
+                  (i < MAX_TICKS ||  base.customerCount > 0); //Existing customers should be served (or leave)
+         i++) { 
       int last_frame_count = G_frames;
 
       GameComponent* comp = &ticker;
-      //ticker.func(comp, &params);
       while (comp) {
-        comp->func(comp, &params);
+        comp->func(comp, params);
         comp = comp->next;
         music_player->play(music_player);
       }
       //Check for a new sound effect
-      if (params.effect != NULL) {
-        music_player->add_music_if_different(music_player, params.effect, 0);
-        params.effect = NULL;
+      if (params->effect != NULL) {
+        music_player->add_music_if_different(music_player, params->effect, 0);
+        params->effect = NULL;
       }
       //Min one frame per loop
       while (G_frames == last_frame_count) {}
-      if (params.gameOverFlag) {
-        i = MAX_TICKS + 1;
-      }
+      //printf(PRINTAT"\x12\x14""%d %d %d  ",params->reputation, params->minReputation, params->gameOverFlag);
     }
-    if (i == MAX_TICKS) {
+    if (params->gameOverFlag == 0) {
       screenTime(1, 1, 11, 0);
     }
-    screenNumber(21, 1, params.score);
-    printf(PRINTAT "\x01\x18" "Final score %d ", (params.score));
-    current_score = params.score;
-    if (params.messageAddress == 999) {
-      printf(PRINTAT "\x01\x0C" "%s", (char *)params.message);
-    }
-    bit_beepfx(BEEPFX_AWW);
+    screenNumber(21, 1, score_to_display(params->score));
+    //printf(PRINTAT "\x01\x18" "Final score %d ", score_to_display(params->score));
+
+    //if (params->messageAddress == 999) {
+    //  printf(PRINTAT "\x01\x0C" "%s", (char *)params->message);
+    //}
+    //bit_beepfx(BEEPFX_AWW);
     //we malloc this so free it
     free(buff.buffer);
-    if (0 == params.gameOverFlag) {
+    free(music_player);
+    if (s1state->bread) {
+      free(s1state->bread);
+    }
+    free(s1state);
+    if (s2state->bread) {
+      free(s2state->bread);
+    }
+    free(s2state);
+    if (s3state->bread) {
+      free(s3state->bread);
+    }
+    free(s3state);
+    if (s4state->bread) {
+      free(s4state->bread);
+    }
+    free(s4state);
+
+    if (0 == params->gameOverFlag) {
       hour = 6;
       min = 45;
-      return play_game();
+      return 0;
     } else {
-      return params.score;
+      return 1;
     }
 } 
 
@@ -303,6 +401,12 @@ int play_game( void )
 #ifdef _TEST_GAME
 int main()
 {
-    return main_game();
+    int hi = 0;
+    while (1) {
+      int thisScore = main_game(hi);
+      if (thisScore > hi || hi == 0) {
+        hi = thisScore;
+      }
+    }
 } 
 #endif

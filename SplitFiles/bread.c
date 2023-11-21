@@ -99,6 +99,19 @@ BreadBin* get_bread_bin() {
 
     add_bread(bin, 
         create_bread_type(
+            'M', //letter
+            "Melba", //desc
+            31, //thermal Mass
+            3, //variability
+            32, //moisture
+            24, // moisture variability
+            50, // cost
+            32  //callProb
+        )
+    );
+
+    add_bread(bin, 
+        create_bread_type(
             'B', //letter
             "Brown", //desc
             82, //thermal Mass
@@ -133,6 +146,20 @@ BreadBin* get_bread_bin() {
             12, // moisture variability
             100, // cost
             12  //callProb
+        )
+   );
+
+
+    add_bread(bin, 
+        create_bread_type(
+            'F', //letter
+            "gluten Free", //desc
+            255, //thermal Mass
+            0, //variability
+            128, //moisture
+            24, // moisture variability
+            150, // cost
+            8  //callProb
         )
    );
    return bin;

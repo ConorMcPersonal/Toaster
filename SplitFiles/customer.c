@@ -5,7 +5,7 @@
 //////////////////////////////////////////////////////////
 
 // Can be compiled with:
-// zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_CUSTOMER bread.c util.c music.c customer.c -o customer -create-app
+// zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_CUSTOMER bread.c util.c music.c customer.c base.c -o customer -create-app
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -20,10 +20,10 @@
 #include "face.h"
 
 unsigned int reputation_to_waittime(int reputation) {
-    return MAX(50, MIN(2000, 16384 / (reputation / 8 + 1)));
+    return MAX(25, MIN(2000, 16384 / (reputation / 8 + 1)));
 }
 
-void redraw_customers(CustomerBase *base) {
+void redraw_customers(CustomerBase *base, int maxCustomers) {
     unsigned char ypos = CUSTOMER_LIST_YPOS;
     Customer* lastCustomer = base->rootCustomer;
     while (lastCustomer->nextCustomer != NULL) {
@@ -32,7 +32,7 @@ void redraw_customers(CustomerBase *base) {
         printf(PRINTAT"%c%c%s""%-12s", CUSTOMER_LIST_XPOS, ypos, mood, lastCustomer->breadOrder->desc);
         ++ypos;
     }
-    for (; ypos < CUSTOMER_LIST_YPOS + MAX_CUSTOMER_COUNT; ++ypos) {
+    for (; ypos < CUSTOMER_LIST_YPOS + maxCustomers; ++ypos) {
         //Now we are updating attributes each time, we can just make the blank parts
         //of the list white ink on white paper and save a bunch of pixel updates
         //printf(PRINTAT"\x12%c"HAPPY_CUSTOMER"%-12s", ypos, "");
@@ -50,6 +50,7 @@ void customer_func(GameComponent* customers, GameParameters* params) {
     static int rep_based_markup = 0;
     Customer* thisCustomer;
     Customer* lastCustomer;
+    int initialRep = params->reputation;
 
     if (params->messageAddress == 20) {
         //Someone sent toast!
@@ -65,7 +66,7 @@ void customer_func(GameComponent* customers, GameParameters* params) {
                          + thisCustomer->ticksLeft;  //Speedy toast = points!
 
                 params->reputation += 20 // They got served - that is worth something
-                        + MAX(-20, (50 - abs(bread->toastedness - 100))/ 10) //Decent toast will give a bump
+                        + MAX(-50, (50 - abs(bread->toastedness - 100))/ 10) //Decent toast will give a bump
                         + thisCustomer->ticksLeft / 50; // As will speed
                 (params->slices) += 1;
                 params->messageAddress = 0;
@@ -89,6 +90,7 @@ void customer_func(GameComponent* customers, GameParameters* params) {
         if (!redraw) {
             // No customer for this toast - bad
             params->score -= (bread->type->cost + bread->toastedness);  //+ wasted energy cost
+            params->reputation -= 10; //For being a knob
             params->messageAddress = 0;
             params->message = NULL;
             params->messageSourceAddress = NULL;
@@ -127,12 +129,12 @@ void customer_func(GameComponent* customers, GameParameters* params) {
         thisCustomer = thisCustomer->nextCustomer;
     }
 
-    //Do we have a new customer? - this is independent of whether we have space
+    //Do we have a new customer? - this is independent of whether we have space (and if we're open)
     int waittime = reputation_to_waittime(MAX(1, params->reputation));
-    if (rand() % waittime == 0) {
+    if (rand() % waittime == 0 && params->hotelOpen != 0) {
         //Yes we do!
         params->effect = TUNE_EFFECT_SHORT_BEEP;
-        if (base->customerCount < MAX_CUSTOMER_COUNT) {
+        if (base->customerCount < params->maxCustomers) {
             //Add in a new one then!
             newCustomer = malloc(sizeof(Customer));
             newCustomer->breadOrder = rand_bread_type(params->breadBin);
@@ -142,19 +144,25 @@ void customer_func(GameComponent* customers, GameParameters* params) {
             redraw = 1;
             base->customerCount += 1;
             lastCustomer->nextCustomer = newCustomer;
+        } else {
+            //Miffed potential customer
+            params->reputation -= 1;
         }
     }
 
     if (redraw) {
+        redraw_customers(base, params->maxCustomers);
+    }
+
+    if (params->reputation != initialRep) {
         screenFace(18, 1, params->reputation);
-        redraw_customers(base);
-        if (params->reputation < 0) {
+        if (params->reputation < params->minReputation) {
             params->gameOverFlag = 1;
             params->messageAddress = 999;
             params->message = INK"\x32"PAPER"\x36"FLASHON
             " You have ruined the reputation \n"
             "      of the Hotel Excess!      \n"
-            "        YOU ARE FIRED!!         ";
+            "        YOU ARE FIRED!!         "HAPPY_CUSTOMER FLASHOFF;
         }
     }
 }
@@ -173,31 +181,22 @@ int customer_main() {
     };
 
     //Now the parameters
-    GameParameters params =  { 0, //.ticks = 
-                                0,//.score =
-                                0,//.slices = 
-                                0,//.game_over_flag = 
-                                0,//.max_toast = 
-                                0, //message_address
-                                (void*)NULL,//.message 
-                                (void*)NULL,//.messageSourceAddress = 
-                                0, // effect
-                                bin, //breadBin
-                                100
-                            };
+    GameParameters* params = get_game_parameters();
+    params->breadBin = bin;
+    params->reputation = 100;
 
     while (1) {
-        customer_func(&comp, &params);
-        params.ticks += 1;
+        customer_func(&comp, params);
+        params->ticks += 1;
         if (rand() % 250 == 0) {
             //Send some random toast
-            BreadState* randoBread = get_bread(params.breadBin,
-                            rand_bread_type(params.breadBin)->letter);
+            BreadState* randoBread = get_bread(params->breadBin,
+                            rand_bread_type(params->breadBin)->letter);
             randoBread->toastedness = rand() % 250;
-            params.messageAddress = 20;
-            params.message = (void*)randoBread;
+            params->messageAddress = 20;
+            params->message = (void*)randoBread;
             printf(PRINTAT"\x01\x12""Sending %s, %-4d, %-6d", randoBread->type->desc
-                                            , randoBread->toastedness, params.ticks);
+                                            , randoBread->toastedness, params->ticks);
         }
     }
 

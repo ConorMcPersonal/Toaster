@@ -4,7 +4,6 @@
 #include "game.h"
 #include "bread.h"
 
-#define MAX_CUSTOMER_COUNT 6
 #define ANGRY_CUSTOMER "\x10\x37\x11\x32"
 #define HAPPY_CUSTOMER "\x10\x30\x11\x37"
 #define GRUMPY_TICKS 200
@@ -31,6 +30,6 @@ struct CustomerBaseStruct {
 };
 typedef struct CustomerBaseStruct CustomerBase;
 
-void redraw_customers(CustomerBase *);
+void redraw_customers(CustomerBase *, int);
 void customer_func(GameComponent* , GameParameters* );
 #endif

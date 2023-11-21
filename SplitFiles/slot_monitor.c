@@ -69,7 +69,7 @@ int plot_value(SlotMonitor* slotMon, const int value, const unsigned int task,
 
 
 void draw_slot(SlotMonitor* slotMon, SlotState* slot) {
-    // Removed - only works for a one slot setup static bool wipe_out = false; 
+    // Removed - only works for a one slot setup
     slotMon->slot_old_temperature = plot_value(slotMon, slot->temperature, 0, 64,
         256, slotMon->slot_old_temperature);
     slotMon->slot_old_power = plot_value(slotMon, slot->power, 1, 64,
