@@ -255,9 +255,9 @@ int play_game( GameParameters* params )
   // *******************************************************
 
     //Three-voice music player
-    MusicPlayer* music_player = get_music_player(3);
-    music_player->add_music(music_player, TUNE_TIMING, 2);//Keep speed constant-ish
-    music_player->add_music(music_player, TUNE_RICKROLL, 1);
+    MusicPlayer* music_player = get_music_player(2);
+    //music_player->add_music(music_player, TUNE_TIMING, 2);//Keep speed constant-ish
+    music_player->add_music(music_player, TUNE_DRUM, 1);
     music_player->add_music(music_player, TUNE_EFFECT_BEEP, 0);
     // ****************************************************
     //  Music set-up ends
@@ -341,7 +341,9 @@ int play_game( GameParameters* params )
          params->gameOverFlag == 0 && 
                   (i < MAX_TICKS ||  base.customerCount > 0); //Existing customers should be served (or leave)
          i++) { 
-      int last_frame_count = G_frames;
+      //Ensure we can't get an overrun on frames
+      G_frames_local = 0;
+      int last_frame_count = G_frames_local;
 
       GameComponent* comp = &ticker;
       while (comp) {
@@ -355,7 +357,7 @@ int play_game( GameParameters* params )
         params->effect = NULL;
       }
       //Min one frame per loop
-      while (G_frames == last_frame_count) {}
+      while (G_frames_local < last_frame_count + params->wait_frames) {}
       //printf(PRINTAT"\x12\x14""%d %d %d  ",params->reputation, params->minReputation, params->gameOverFlag);
     }
     if (params->gameOverFlag == 0) {

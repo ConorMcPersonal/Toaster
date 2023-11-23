@@ -67,7 +67,7 @@ void slot_func(GameComponent* input, GameParameters* params) {
     printf(PRINTAT"\x02\x0B""%d %d %d", state->thermalAggregation, state->temperature, state->power);
 #endif
 
-  if (state->bread) {
+  if (state->bread && (params->ticks % params->toast_ticks) == 0) {
     state->bread->thermalAggregation += (state->temperature - state->bread->temperature); //bread temperature also likely to be rising
     state->bread->temperature = state->bread->thermalAggregation / state->bread->thermalMass;
     if (state->bread->moisture > 0) {

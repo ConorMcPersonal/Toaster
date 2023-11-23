@@ -16,5 +16,6 @@
 // frame counter
 void start_frame_count();
 extern unsigned int G_frames;
+extern unsigned int G_frames_local;
 
 #endif
