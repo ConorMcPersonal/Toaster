@@ -61,12 +61,12 @@ void customer_func(GameComponent* customers, GameParameters* params) {
             if (bread->type->letter == thisCustomer->breadOrder->letter) {
                 //We have a match
                 params->score += bread->type->cost * 2 //SHOCKING markup
-                         + rep_based_markup++
-                         + 50 - abs(bread->toastedness - 100) //100 toastedness gets 50 bonus points
+                         + MIN(10, MAX(-10, rep_based_markup++))
+                         + MIN(50, MAX(-300, 50 - abs(bread->toastedness - 100))) //100 toastedness gets 50 bonus points
                          + thisCustomer->ticksLeft;  //Speedy toast = points!
 
                 params->reputation += 20 // They got served - that is worth something
-                        + MAX(-50, (50 - abs(bread->toastedness - 100))/ 10) //Decent toast will give a bump
+                        + MIN(50, MAX(-50, (50 - abs(bread->toastedness - 100))/ 10)) //Decent toast will give a bump
                         + thisCustomer->ticksLeft / 50; // As will speed
                 (params->slices) += 1;
                 params->messageAddress = 0;
@@ -156,14 +156,6 @@ void customer_func(GameComponent* customers, GameParameters* params) {
 
     if (params->reputation != initialRep) {
         screenFace(18, 1, params->reputation);
-        if (params->reputation < params->minReputation) {
-            params->gameOverFlag = 1;
-            params->messageAddress = 999;
-            params->message = INK"\x32"PAPER"\x36"FLASHON
-            " You have ruined the reputation \n"
-            "      of the Hotel Excess!      \n"
-            "        YOU ARE FIRED!!         "HAPPY_CUSTOMER FLASHOFF;
-        }
     }
 }
 

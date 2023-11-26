@@ -151,7 +151,7 @@ int main_game( int hiScore )
     printf(PRINTAT "\x01\x04" "be our new breakfast Toast Host,");
     printf(PRINTAT "\x01\x05" "but now stuff gets really tasty.");
     printf(PRINTAT "\x01\x07" "\x12\x31\x10\x32" "Can you stand the heat?\x12\x30\x10\x30");
-    printf(PRINTAT "\x05\x0B" "Press any key to start");
+    printf(PRINTAT "\x05\x0B" "Press any key to start ");
 
     printf(PRINTAT "\x01\x13" "High score: %d", hiScore);
     
@@ -211,20 +211,22 @@ int main_game( int hiScore )
                   "up to more customers.\n");
           in_wait_nokey();
           printf("\nPress any key to start Day %d\n", gameDay + 1);
-          printf("%d %d %d         ", params->gameOverFlag, params->reputation, params->minReputation);
+          //printf("%d %d %d         ", params->gameOverFlag, params->reputation, params->minReputation);
           wait_for_a_new_key();
         }
     }
 
     if (params->messageAddress == 999) {
-      printf(PRINTAT "\x01\x0C" "%s", (char *)params->message);
+      printf(PRINTAT"\x01\x0C" "%s", (char *)params->message);
     }
+ 
     printf(PRINTAT"\x01\x01%s", HAPPY_CUSTOMER);
-    printf(PRINTAT "\x01\x15" "Final score %d ", score_to_display(params->score));
     retScore = score_to_display(params->score);
+    printf(PRINTAT"\x01\x12" "   Final score %d ", retScore);
     bit_beepfx(BEEPFX_AWW);
 
-    printf(PRINTAT "\x04\x13" "Press SPACE to restart");
+    printf(PRINTAT"\x01\x13" "   Press SPACE to restart");
+    in_wait_nokey();
     while (wait_for_a_new_key() != 32) {
       ;
     }
@@ -358,7 +360,15 @@ int play_game( GameParameters* params )
       }
       //Min one frame per loop
       while (G_frames_local < last_frame_count + params->wait_frames) {}
-      //printf(PRINTAT"\x12\x14""%d %d %d  ",params->reputation, params->minReputation, params->gameOverFlag);
+      if (params->score < 0 || params->reputation < params->minReputation) {
+          params->gameOverFlag = 1;
+          params->messageAddress = 999;
+          params->message = INK"\x32"PAPER"\x36"FLASHON
+          " You have ruined the reputation \n"
+          "      of the Hotel Excess!      \n"
+          "        YOU ARE FIRED!!         \n"
+          HAPPY_CUSTOMER FLASHOFF " ";
+      }
     }
     if (params->gameOverFlag == 0) {
       screenTime(1, 1, 11, 0);
@@ -406,7 +416,7 @@ int main()
     int hi = 0;
     while (1) {
       int thisScore = main_game(hi);
-      if (thisScore > hi || hi == 0) {
+      if (thisScore > hi) {
         hi = thisScore;
       }
     }

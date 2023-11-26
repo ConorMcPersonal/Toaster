@@ -7,8 +7,8 @@
 #define PRINTAT "\x16"
 #define INK     "\x10"
 #define PAPER   "\x11"
-#define FLASHON "\x12\x01"
-#define FLASHOFF "\x12\x00"
+#define FLASHON  "\x12\x31"
+#define FLASHOFF "\x12\x30"
 
 #define SCREENSTART 0x4000
 #define ATTRSTART   0x5800
