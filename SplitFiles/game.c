@@ -333,8 +333,7 @@ int play_game( GameParameters* params )
     for (i = 0; i < 256; i++) {
       *zx_pxy2saddr(i, 191) |= zx_px2bitmask(i);
     }
-    
-    printf(PRINTAT"%c%c""%-12s", 18, 12, "Commands");
+
     printf(PRINTAT"%c%c""%-12s", 18, 3,  "Order Queue");
     //bread_restack(newBreadBin);
 
@@ -360,12 +359,20 @@ int play_game( GameParameters* params )
       }
       //Min one frame per loop
       while (G_frames_local < last_frame_count + params->wait_frames) {}
-      if (params->score < 0 || params->reputation < params->minReputation) {
+      if (params->reputation < params->minReputation) {
           params->gameOverFlag = 1;
           params->messageAddress = 999;
           params->message = INK"\x32"PAPER"\x36"FLASHON
           " You have ruined the reputation \n"
           "      of the Hotel Excess!      \n"
+          "        YOU ARE FIRED!!         \n"
+          HAPPY_CUSTOMER FLASHOFF " ";
+      } else if (params->score < 0) {
+          params->gameOverFlag = 1;
+          params->messageAddress = 999;
+          params->message = INK"\x32"PAPER"\x36"FLASHON
+          " Your performance do not meet   \n"
+          "      our lofty standards.      \n"
           "        YOU ARE FIRED!!         \n"
           HAPPY_CUSTOMER FLASHOFF " ";
       }

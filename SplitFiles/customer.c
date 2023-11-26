@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <input.h> // TODO Remove this when finished debugging
 
 #include <arch/zx.h>
 
@@ -60,14 +61,45 @@ void customer_func(GameComponent* customers, GameParameters* params) {
         while (thisCustomer != NULL) {
             if (bread->type->letter == thisCustomer->breadOrder->letter) {
                 //We have a match
-                params->score += bread->type->cost * 2 //SHOCKING markup
-                         + MIN(10, MAX(-10, rep_based_markup++))
-                         + MIN(50, MAX(-300, 50 - abs(bread->toastedness - 100))) //100 toastedness gets 50 bonus points
-                         + thisCustomer->ticksLeft;  //Speedy toast = points!
 
-                params->reputation += 20 // They got served - that is worth something
-                        + MIN(50, MAX(-50, (50 - abs(bread->toastedness - 100))/ 10)) //Decent toast will give a bump
-                        + thisCustomer->ticksLeft / 50; // As will speed
+                printf(PRINTAT"%c%c""%d %d %d *", 14, 12, bread->type->cost, MIN(10, MAX(-10, rep_based_markup++)), 4 * MIN(50, MAX(-300, 50 - abs(bread->toastedness - 100))));
+                printf(PRINTAT"%c%c""%d %ld *", 14, 13,  MIN(15, thisCustomer->ticksLeft / 50 - 15), params->score);
+                printf(PRINTAT"%c%c""%ld %ld", 14, 14, (long)bread->type->cost 
+                                                + MIN(10, MAX(-10, rep_based_markup++))
+                                                + 4 * MIN(50, MAX(-300, 50 - abs(bread->toastedness - 100)))
+                                                + MIN(15, thisCustomer->ticksLeft / 50 - 15)
+                                                , params->score + bread->type->cost 
+                                                + MIN(10, MAX(-10, rep_based_markup++))
+                                                + 4 * MIN(50, MAX(-300, 50 - abs(bread->toastedness - 100)))
+                                                + MIN(15, thisCustomer->ticksLeft / 50 - 15));
+                //printf(PRINTAT"%c%c""%d %d %d *", 14, 12, MIN(10, MAX(-10, rep_based_markup++)));
+                //printf(PRINTAT"%c%c""%-8d", 14, 13, 4 * MIN(50, MAX(-300, 50 - abs(bread->toastedness - 100))));
+                //printf(PRINTAT"%c%c""%-8d", 14, 14, MIN(15, thisCustomer->ticksLeft / 50 - 15));
+                //printf(PRINTAT"%c%c""%-7ld", 19, 15, params->score);
+
+                printf(PRINTAT"%c%c""%-8d", 14, 16, 4 * MIN(50, MAX(-50, (50 - abs(bread->toastedness - 100)) / 5)));
+                printf(PRINTAT"%c%c""%-8d", 14, 17, MIN(15, thisCustomer->ticksLeft / 50 - 15));
+                printf(PRINTAT"%c%c""%-7d", 19, 18, params->reputation);
+                
+                unsigned char entry = in_inkey();
+                unsigned char keyp = entry;
+                while (keyp == 0 || keyp == entry) {
+                keyp = in_inkey();
+                }
+                in_wait_nokey();
+
+                params->score += (long)bread->type->cost //SHOCKING markup
+                         + MIN(10, MAX(-10, rep_based_markup++))
+                         + 4 * MIN(50, MAX(-300, 50 - abs(bread->toastedness - 100))) //100 toastedness gets 50 bonus points
+                         + MIN(15, thisCustomer->ticksLeft / 50 - 15);  //Speedy toast = points!
+
+                params->reputation += 10 // They got served - that is worth something
+                        + 4 * MIN(50, MAX(-50, (50 - abs(bread->toastedness - 100)) / 5)) //Decent toast will give a bump, bad toast will not
+                        + MIN(5, thisCustomer->ticksLeft / 50 - 5); // Same with speed
+
+                //printf(PRINTAT"%c%c""%-7ld", 19, 15, params->score);
+                //printf(PRINTAT"%c%c""%-7d", 19, 18, params->reputation);
+
                 (params->slices) += 1;
                 params->messageAddress = 0;
                 params->message = NULL;
