@@ -156,14 +156,6 @@ void customer_func(GameComponent* customers, GameParameters* params) {
 
     if (params->reputation != initialRep) {
         screenFace(18, 1, params->reputation);
-        if (params->reputation < params->minReputation) {
-            params->gameOverFlag = 1;
-            params->messageAddress = 999;
-            params->message = INK"\x32"PAPER"\x36"FLASHON
-            " You have ruined the reputation \n"
-            "      of the Hotel Excess!      \n"
-            "        YOU ARE FIRED!!         "HAPPY_CUSTOMER FLASHOFF;
-        }
     }
 }
 
