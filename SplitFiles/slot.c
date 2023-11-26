@@ -76,6 +76,7 @@ void slot_func(GameComponent* input, GameParameters* params) {
     } else {
       //Can't toast at low temperatures!
       state->bread->toastedness += MAX(0, ((state->bread->temperature - 90) / 10));
+      state->bread->toastedness = MIN(500, state->bread->toastedness); //Once you're at 500, it's not getting any more burnt
     }
 #ifdef _TEST_SLOT
     printf(PRINTAT"\x02\x0C""%d %d %d %d", state->bread->moisture, state->bread->temperature, state->bread->toastedness, state->bread->thermalAggregation);
