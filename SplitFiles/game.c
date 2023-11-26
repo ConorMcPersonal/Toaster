@@ -137,11 +137,6 @@ int main_game( int hiScore )
 {
     int retScore;
 
-    //reset clock
-    hour = 6;
-    min = 45;
-    game_day = 1;
-
     start_frame_count();
     //Clear screen
     zx_cls(PAPER_WHITE);
@@ -394,7 +389,7 @@ int play_game( GameParameters* params )
 
     if (0 == params->gameOverFlag) {
       hour = 6;
-      min = 45;
+      min = 59;
       return 0;
     } else {
       return 1;
