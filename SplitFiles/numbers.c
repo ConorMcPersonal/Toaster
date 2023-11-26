@@ -262,41 +262,13 @@ void draw_number(const unsigned int x, const unsigned int y, const char c)
 void screenTime(const unsigned int x, const unsigned int y, const int hour, const int min)
 {
     pair here = {x - 1, y - 1};
-    switch (hour) {
-        case 7:
-        case 8:
-        case 9:
-            draw_numeral(&here, 0);
-            draw_numeral(&here, hour);
-            break;
-        case 10:
-            draw_numeral(&here, 1);
-            draw_numeral(&here, 0);
-            break;
-        default:
-            draw_numeral(&here, 1);
-            draw_numeral(&here, 1);
-    }
+    draw_numeral(&here, hour/10);
+    draw_numeral(&here, hour%10);
 
     draw_numeral(&here, 10);
 
-    switch (min) {
-        case 0:
-            draw_numeral(&here, 0);
-            draw_numeral(&here, 0);
-            break;
-        case 15:
-            draw_numeral(&here, 1);
-            draw_numeral(&here, 5);
-            break;
-        case 30:
-            draw_numeral(&here, 3);
-            draw_numeral(&here, 0);
-            break;
-        default:
-            draw_numeral(&here, 4);
-            draw_numeral(&here, 5);
-    }
+    draw_numeral(&here, min/10);
+    draw_numeral(&here, min%10);
 }
 
 /* how many base 10 digits in the number? */
