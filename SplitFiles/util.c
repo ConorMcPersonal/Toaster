@@ -35,6 +35,7 @@
 // frame counter
 
 unsigned int G_frames = 0;
+unsigned int G_frames_local = 0;
 
 // There are a lot of ways to define an interrupt service routine
 // This one is being done with a macro.  What makes a regular function
@@ -51,6 +52,7 @@ IM2_DEFINE_ISR_8080(isr)
 {
    // update the clock
    ++G_frames;
+   ++G_frames_local;
 }
 
 void start_frame_count() {

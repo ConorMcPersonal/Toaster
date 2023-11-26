@@ -57,6 +57,8 @@ struct GameParameters_Struct {
   int        hotelOpen;  // Are we open for business?
   int        maxCustomers; //How many customers are we allowing now?
   int        minReputation; //How bad do you have to be to get the sack?
+  int        wait_frames;   //Minimum frames per loop
+  int        toast_ticks;   //How often toast is updated
 };
 
 

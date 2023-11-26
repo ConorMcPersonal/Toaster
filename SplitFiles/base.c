@@ -19,6 +19,8 @@ GameParameters* get_game_parameters() {
     params->hotelOpen = 1;     //Open by default
     params->maxCustomers = 6;  //Start with a reasonable cuustomeer queue, goes up each day
     params->minReputation = 0; //Rep needs to go negative initially
+    params->wait_frames = 1;   //Minimum number of frames per cycle
+    params->toast_ticks = 3;   //Toast only gets updated this frequenntly; 1 = all the time
     return params;
 }
 
