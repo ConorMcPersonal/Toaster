@@ -167,6 +167,8 @@ int main_game( int hiScore )
 
     while (params->gameOverFlag == 0) {
         params->ticks = 0;
+        hour = 6;
+        min = 59;
         // We're still open!
         params->hotelOpen = 1;
 
@@ -191,13 +193,13 @@ int main_game( int hiScore )
                   "you go. You're fired!       \n");
               params->gameOverFlag = 1;
             } else {
-              params->minReputation = params->reputation;
+              params->minReputation = params->reputation - 100;
               printf(PRINTAT "\x01\x08"
                   "You're not much cop at this,\n"
                   "but ");
             }
           } else {
-            params->minReputation += 1000;
+            params->minReputation += 900;
             printf(PRINTAT "\x01\x08"
                   "You have done so well that \n");
           }
@@ -238,6 +240,9 @@ int play_game( GameParameters* params )
     zx_cls(PAPER_WHITE);
     game_do_day(game_day);
     game_day++;
+    //Reset the clock to (just before) 7am
+    hour = 6;
+    min = 59;
     zx_cls(PAPER_WHITE);
     for (i = 0; i < 2; i++) {
       for (j = 0; j < 32; j++) {
@@ -331,7 +336,7 @@ int play_game( GameParameters* params )
       *zx_pxy2saddr(i, 191) |= zx_px2bitmask(i);
     }
     
-    printf(PRINTAT"%c%c""%-12s", 18, 12, "Commands");
+    //printf(PRINTAT"%c%c""%-12s", 18, 12, "Commands");
     printf(PRINTAT"%c%c""%-12s", 18, 3,  "Order Queue");
     //bread_restack(newBreadBin);
 
