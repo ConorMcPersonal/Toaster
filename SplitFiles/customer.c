@@ -60,7 +60,7 @@ void customer_func(GameComponent* customers, GameParameters* params) {
         while (thisCustomer != NULL) {
             if (bread->type->letter == thisCustomer->breadOrder->letter) {
                 //We have a match
-                params->score += bread->type->cost * 2 //SHOCKING markup
+                params->score += (long)bread->type->cost * 2 //SHOCKING markup
                          + MIN(10, MAX(-10, rep_based_markup++))
                          + MIN(50, MAX(-300, 50 - abs(bread->toastedness - 100))) //100 toastedness gets 50 bonus points
                          + thisCustomer->ticksLeft;  //Speedy toast = points!
