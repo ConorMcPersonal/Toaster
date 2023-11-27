@@ -18,13 +18,13 @@
 // zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_GAME slot.c slot_monitor.c game.c control.c music.c util.c bread.c customer.c base.c -o game -create-app
 
 static int hour = 6;
-static int min = 45;
+static int min = 59;
 static int game_day = 1;
 
 void update_clock() {
   int start_x = 1;
   int start_y = 1;
-  min = (min + 15)%60;
+  min = (min + 1)%60;
   if (min == 0) {
     hour++;
   }
@@ -33,7 +33,9 @@ void update_clock() {
 
 void draw_tick_line(const unsigned int tick)
 {
-  const int increment = MAX_TICKS / 256;
+  static const int increment = MAX_TICKS / 256;
+  static const int timediv = MAX_TICKS / 240 ;   /* assumes clock runs from 7am to 11am - 240 minutes */
+
   const int ticks_left = MAX_TICKS - tick;
   unsigned char point, previous_point;
   static int tick_progress = MAX_TICKS;
@@ -43,7 +45,7 @@ void draw_tick_line(const unsigned int tick)
     // zero out lower bit
     int old_byte = *zx_pxy2saddr(previous_point, 191);
     *zx_pxy2saddr(previous_point, 191) = (old_byte << 1);
-    int next_progress = ticks_left / TICK_DIV;
+    int next_progress = ticks_left / timediv;
     if (next_progress != tick_progress) {
       update_clock();
       tick_progress = next_progress;
@@ -134,11 +136,6 @@ void game_do_day(const unsigned int day)
 int main_game( int hiScore )
 {
     int retScore;
-
-    //reset clock
-    hour = 6;
-    min = 45;
-    game_day = 1;
 
     start_frame_count();
     //Clear screen
@@ -402,7 +399,7 @@ int play_game( GameParameters* params )
 
     if (0 == params->gameOverFlag) {
       hour = 6;
-      min = 45;
+      min = 59;
       return 0;
     } else {
       return 1;
