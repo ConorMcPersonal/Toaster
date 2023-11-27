@@ -154,10 +154,6 @@ void customer_func(GameComponent* customers, GameParameters* params) {
         redraw_customers(base, params->maxCustomers);
     }
 
-    if (1 == mustDrawFace) {
-        screenFace(18, 1, params->reputation);
-        mustDrawFace = 0;        
-    }
     if (params->reputation != initialRep) {
         screenFace(18, 1, params->reputation);
     }

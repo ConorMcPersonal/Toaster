@@ -32,5 +32,4 @@ typedef struct CustomerBaseStruct CustomerBase;
 
 void redraw_customers(CustomerBase *, int);
 void customer_func(GameComponent* , GameParameters* );
-extern int mustDrawFace;
 #endif
