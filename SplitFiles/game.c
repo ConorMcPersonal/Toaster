@@ -20,6 +20,7 @@
 static int hour = 6;
 static int min = 59;
 static int game_day = 1;
+int mustDrawFace = 0;
 
 void update_clock() {
   int start_x = 1;
@@ -131,6 +132,7 @@ void game_do_day(const unsigned int day)
   }
   draw_number(16, 12, day);
   for (i = 0; i < 20000; i++) {;}
+  mustDrawFace = 1;
 }
 
 int main_game( int hiScore )
