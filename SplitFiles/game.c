@@ -162,7 +162,6 @@ int main_game( int hiScore )
     BreadBin* newBreadBin = get_bread_bin();
     GameParameters* params =  get_game_parameters();
     params->breadBin = newBreadBin;
-    //params->reputation = 100;
     params->minReputation = params->reputation - 10;
 
     while (params->gameOverFlag == 0) {
@@ -336,10 +335,7 @@ int play_game( GameParameters* params )
       *zx_pxy2saddr(i, 191) |= zx_px2bitmask(i);
     }
     
-    //printf(PRINTAT"%c%c""%-12s", 18, 12, "Commands");
     printf(PRINTAT"%c%c""%-12s", 18, 3,  "Order Queue");
-    //bread_restack(newBreadBin);
-
 
     for (i = 0;
          params->gameOverFlag == 0 && 
@@ -376,12 +372,7 @@ int play_game( GameParameters* params )
       screenTime(1, 1, 11, 0);
     }
     screenNumber(21, 1, score_to_display(params->score));
-    //printf(PRINTAT "\x01\x18" "Final score %d ", score_to_display(params->score));
 
-    //if (params->messageAddress == 999) {
-    //  printf(PRINTAT "\x01\x0C" "%s", (char *)params->message);
-    //}
-    //bit_beepfx(BEEPFX_AWW);
     //we malloc this so free it
     free(buff.buffer);
     free(music_player);
