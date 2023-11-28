@@ -57,22 +57,22 @@ enum emotion {
     ANGRY = 0, SAD = 1, NEUTRAL = 2, HAPPY = 3, START = 4
 };
 
-void screenFace(const unsigned int x, const unsigned int y, const int reputation)
+void screenFace(const unsigned int x, const unsigned int y, const int reputation, const int force)
 {
     static enum emotion lastEmo = START;
-    if (reputation < 0 && lastEmo != ANGRY) {
+    if (reputation < 0 && (1 == force || lastEmo != ANGRY)) {
         angryFace(x, y);
         lastEmo = ANGRY;
     }
-    else if (lastEmo != SAD && reputation < 1000 && reputation >= 0) {
+    else if ((1 == force || lastEmo != SAD) &&  reputation < 1000 && reputation >= 0) {
         sadFace(x, y);
         lastEmo = SAD;
     }
-    else if (lastEmo != NEUTRAL && reputation >= 1000 && reputation < 1200) {
+    else if ((1 == force || lastEmo != NEUTRAL) && reputation >= 1000 && reputation < 1200) {
         neutralFace(x, y);
         lastEmo = NEUTRAL;
     }
-    else if (lastEmo != HAPPY && reputation >= 1200) {
+    else if ((1 == force || lastEmo != HAPPY) && reputation >= 1200) {
         happyFace(x, y);
         lastEmo = HAPPY;
     }
