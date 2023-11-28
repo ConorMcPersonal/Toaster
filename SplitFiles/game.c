@@ -156,7 +156,7 @@ int main_game( int hiScore )
     int rando = wait_for_a_key(NULL, NULL);
     // get a random seed based on frame count
     srand(rando);
-    int gameDay = 0;
+    game_day = 0; // We ended up with two variables with slightly different names :-(
 
     //Now the parameters - we do this only once per game
     BreadBin* newBreadBin = get_bread_bin();
@@ -172,21 +172,21 @@ int main_game( int hiScore )
         // We're still open!
         params->hotelOpen = 1;
 
+        game_day += 1;
         play_game(params);
         // Put a message up on screen#
-        gameDay += 1;
         if (params->gameOverFlag == 0) {
           zx_cls(PAPER_WHITE);
           printf(PRINTAT "\x01\x03"
                  //12345678901234567890123456789012
                   "Well done - you made it though\n"
-                  "          Day %d!!", gameDay);
+                  "          Day %d!!", game_day);
           printf(PRINTAT "\x01\x06"
                   "Your current score is: %d\n", score_to_display(params->score));
           //Increase min rep required to survive
           if (params->reputation < params->minReputation + 1000) {
             // Game over!
-            if (params->reputation < (gameDay - 2) * 1000) {
+            if (params->reputation < (game_day - 2) * 1000) {
               printf(PRINTAT "\x01\x08"
                   "Unfortunately you're rubbish\n"
                   "at your job so we're letting\n"
@@ -209,7 +209,7 @@ int main_game( int hiScore )
           printf("we're opening\n"
                   "up to more customers.\n");
           in_wait_nokey();
-          printf("\nPress any key to start Day %d\n", gameDay + 1);
+          printf("\nPress any key to start Day %d\n", game_day + 1);
           //printf("%d %d %d         ", params->gameOverFlag, params->reputation, params->minReputation);
           wait_for_a_new_key();
         }
@@ -239,7 +239,7 @@ int play_game( GameParameters* params )
     int i, j;
     zx_cls(PAPER_WHITE);
     game_do_day(game_day);
-    game_day++;
+    //game_day++;
     //Reset the clock to (just before) 7am
     hour = 6;
     min = 59;

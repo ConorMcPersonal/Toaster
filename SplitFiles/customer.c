@@ -65,10 +65,13 @@ void customer_func(GameComponent* customers, GameParameters* params) {
                          + MIN(50, MAX(-300, 50 - abs(bread->toastedness - 100))) //100 toastedness gets 50 bonus points
                          + thisCustomer->ticksLeft;  //Speedy toast = points!
 
+                //printf(PRINTAT"%c%c""%-8d", 14, 16, MIN(50, MAX(-50, (50 - abs(bread->toastedness - 100)))));
+                //printf(PRINTAT"%c%c""%-7d", 19, 15, params->reputation);
                 params->reputation += 20 // They got served - that is worth something
-                        + MIN(50, MAX(-50, (50 - abs(bread->toastedness - 100))/ 10)) //Decent toast will give a bump
+                        + MIN(50, MAX(-50, (50 - abs(bread->toastedness - 100)))) //Decent toast will give a bump
                         //+ thisCustomer->ticksLeft / 50; // As will speed
                         ;
+                //printf(PRINTAT"%c%c""%-7d", 19, 17, params->reputation);
                 (params->slices) += 1;
                 params->messageAddress = 0;
                 params->message = NULL;
