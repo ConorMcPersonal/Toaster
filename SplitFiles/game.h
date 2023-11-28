@@ -17,4 +17,6 @@ typedef struct dispatcher_struct DispatcherState;
 
 int play_game( GameParameters* params );
 
+extern int mustRedraw;
+
 #endif

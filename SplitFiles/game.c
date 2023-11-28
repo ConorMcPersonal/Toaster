@@ -17,8 +17,8 @@
 // Compile with:
 // zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_GAME slot.c slot_monitor.c game.c control.c music.c util.c bread.c customer.c base.c -o game -create-app
 
-static int hour = 6;
-static int min = 59;
+static int hour;
+static int min;
 static int game_day = 1;
 
 void update_clock() {
@@ -131,6 +131,9 @@ void game_do_day(const unsigned int day)
   }
   draw_number(16, 12, day);
   for (i = 0; i < 20000; i++) {;}
+  mustRedraw = 1;
+  hour = 6;
+  min = 59;
 }
 
 int main_game( int hiScore )
@@ -166,8 +169,6 @@ int main_game( int hiScore )
 
     while (params->gameOverFlag == 0) {
         params->ticks = 0;
-        hour = 6;
-        min = 59;
         // We're still open!
         params->hotelOpen = 1;
 
@@ -238,10 +239,7 @@ int play_game( GameParameters* params )
     int i, j;
     zx_cls(PAPER_WHITE);
     game_do_day(game_day);
-    //game_day++;
-    //Reset the clock to (just before) 7am
-    hour = 6;
-    min = 59;
+  
     zx_cls(PAPER_WHITE);
     for (i = 0; i < 2; i++) {
       for (j = 0; j < 32; j++) {
@@ -394,8 +392,6 @@ int play_game( GameParameters* params )
     free(s4state);
 
     if (0 == params->gameOverFlag) {
-      hour = 6;
-      min = 59;
       return 0;
     } else {
       return 1;
