@@ -20,6 +20,7 @@
 static int hour;
 static int min;
 static int game_day = 1;
+extern int g_mustRedraw;
 
 void update_clock() {
   int start_x = 1;
@@ -131,7 +132,7 @@ void game_do_day(const unsigned int day)
   }
   draw_number(16, 12, day);
   for (i = 0; i < 20000; i++) {;}
-  mustRedraw = 1;
+  g_mustRedraw = 1;
   hour = 6;
   min = 59;
 }
@@ -187,6 +188,8 @@ int main_game( int hiScore )
           if (params->reputation < params->minReputation + 1000) {
             // Game over!
             if (params->reputation < (game_day - 2) * 1000) {
+              /* Angry face! */
+              screenEmotion(18, 1, 0);
               printf(PRINTAT "\x01\x08"
                   "Unfortunately you're rubbish\n"
                   "at your job so we're letting\n"
@@ -357,6 +360,8 @@ int play_game( GameParameters* params )
       //Min one frame per loop
       while (G_frames_local < last_frame_count + params->wait_frames) {}
       if (params->score < 0 || params->reputation < params->minReputation) {
+          /* Angry face! */
+          screenEmotion(18, 1, 0);
           params->gameOverFlag = 1;
           params->messageAddress = 999;
           params->message = INK"\x32"PAPER"\x36"FLASHON

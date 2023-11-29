@@ -19,7 +19,8 @@
 #include "music.h"
 #include "face.h"
 
-int mustRedraw;
+/* Global to manage forced reputation face drawing */
+int g_mustRedraw;
 
 unsigned int reputation_to_waittime(int reputation) {
     return MAX(25, MIN(2000, 16384 / (reputation / 8 + 1)));
@@ -157,9 +158,9 @@ void customer_func(GameComponent* customers, GameParameters* params) {
         redraw_customers(base, params->maxCustomers);
     }
 
-    if (params->reputation != initialRep || 1 == mustRedraw) {
-        screenFace(18, 1, params->reputation, mustRedraw);
-        mustRedraw = 0;
+    if (params->reputation != initialRep || 1 == g_mustRedraw) {
+        screenFace(18, 1, params->reputation, g_mustRedraw);
+        g_mustRedraw = 0;
     }
 }
 

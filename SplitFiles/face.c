@@ -3,6 +3,12 @@
 #include "util.h"
 #include "face.h"
 
+/* Reputation ranges */
+#define ANGER 0
+#define SADNESS 1000
+#define NOTBOTHERED 2000
+#define HAPPINESS 3000
+
 void cheeky_face(const int x, const int y, char* pix) 
 {
     int px = (x - 1) * 8;
@@ -60,19 +66,19 @@ enum emotion {
 void screenFace(const unsigned int x, const unsigned int y, const int reputation, const int force)
 {
     static enum emotion lastEmo = START;
-    if (reputation < 0 && (1 == force || lastEmo != ANGRY)) {
+    if (reputation < ANGER && ( lastEmo != ANGRY || 1 == force)) {
         angryFace(x, y);
         lastEmo = ANGRY;
     }
-    else if ((1 == force || lastEmo != SAD) &&  reputation < 1000 && reputation >= 0) {
+    else if (( lastEmo != SAD || 1 == force) &&  reputation < SADNESS) {
         sadFace(x, y);
         lastEmo = SAD;
     }
-    else if ((1 == force || lastEmo != NEUTRAL) && reputation >= 1000 && reputation < 1200) {
+    else if (( lastEmo != NEUTRAL || 1 == force) && reputation < NOTBOTHERED) {
         neutralFace(x, y);
         lastEmo = NEUTRAL;
     }
-    else if ((1 == force || lastEmo != HAPPY) && reputation >= 1200) {
+    else if (( lastEmo != HAPPY || 1 == force) && reputation >= HAPPINESS) {
         happyFace(x, y);
         lastEmo = HAPPY;
     }
