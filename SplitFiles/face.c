@@ -6,8 +6,7 @@
 /* Reputation ranges */
 #define ANGER 0
 #define SADNESS 1000
-#define NOTBOTHERED 2000
-#define HAPPINESS 3000
+#define HAPPINESS 2000
 
 void cheeky_face(const int x, const int y, char* pix) 
 {
@@ -70,11 +69,11 @@ void screenFace(const unsigned int x, const unsigned int y, const int reputation
         angryFace(x, y);
         lastEmo = ANGRY;
     }
-    else if (( lastEmo != SAD || 1 == force) &&  reputation < SADNESS) {
+    else if (( lastEmo != SAD || 1 == force) &&  reputation < SADNESS && reputation >= ANGER) {
         sadFace(x, y);
         lastEmo = SAD;
     }
-    else if (( lastEmo != NEUTRAL || 1 == force) && reputation < NOTBOTHERED) {
+    else if (( lastEmo != NEUTRAL || 1 == force) && reputation >= SADNESS && reputation < HAPPINESS ) {
         neutralFace(x, y);
         lastEmo = NEUTRAL;
     }
