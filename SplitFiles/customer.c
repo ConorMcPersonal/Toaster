@@ -159,7 +159,7 @@ void customer_func(GameComponent* customers, GameParameters* params) {
     }
 
     if (params->reputation != initialRep || 1 == g_mustRedraw) {
-        screenFace(18, 1, params->reputation, g_mustRedraw);
+        screenFace(18, 1, params->reputation - params->minReputation, g_mustRedraw);
         g_mustRedraw = 0;
     }
 }
