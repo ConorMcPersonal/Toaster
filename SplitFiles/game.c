@@ -140,6 +140,7 @@ void game_do_day(const unsigned int day)
 int main_game( int hiScore )
 {
     int retScore;
+    int happyEnding = 0;
 
     start_frame_count();
     //Clear screen
@@ -185,9 +186,9 @@ int main_game( int hiScore )
           printf(PRINTAT "\x01\x06"
                   "Your current score is: %d\n", score_to_display(params->score));
           //Increase min rep required to survive
-          if (params->reputation < params->minReputation + 1000) {
+          if (params->reputation < params->minReputation + 500) {
             // Game over!
-            if (params->reputation < (game_day - 2) * 1000) {
+            if (params->reputation < (game_day - 2) * 500) {
               /* Angry face! */
               screenEmotion(18, 1, 0);
               printf(PRINTAT "\x01\x08"
@@ -202,7 +203,7 @@ int main_game( int hiScore )
                   "but ");
             }
           } else {
-            params->minReputation += 900;
+            params->minReputation += 500;
             printf(PRINTAT "\x01\x08"
                   "You have done so well that \n");
           }
@@ -220,12 +221,19 @@ int main_game( int hiScore )
 
     if (params->messageAddress == 999) {
       printf(PRINTAT"\x01\x0C" "%s", (char *)params->message);
+    } else if (params->messageAddress == 998) {
+      printf(PRINTAT"\x01\x0A" "%s", (char *)params->message);
+      happyEnding = 1;
     }
  
     printf(PRINTAT"\x01\x01%s", HAPPY_CUSTOMER);
     retScore = score_to_display(params->score);
     printf(PRINTAT"\x01\x12" "   Final score %d ", retScore);
-    bit_beepfx(BEEPFX_AWW);
+    if (happyEnding == 0) {
+      bit_beepfx(BEEPFX_AWW);
+    } else {
+      bit_beepfx(BEEPFX_YEAH);
+    }
 
     printf(PRINTAT"\x01\x13" "   Press SPACE to restart");
     in_wait_nokey();
@@ -368,6 +376,18 @@ int play_game( GameParameters* params )
           " You have ruined the reputation \n"
           "      of the Hotel Excess!      \n"
           "        YOU ARE FIRED!!         \n"
+          HAPPY_CUSTOMER FLASHOFF " ";
+      } else if (params->score >= params->winningScore) {
+          /* Angry face! */
+          screenEmotion(18, 1, 3);
+          params->gameOverFlag = 1;
+          params->messageAddress = 998;
+          params->message = INK"\x31"PAPER"\x35"FLASHON
+          "You are the greatest toast host \n"
+          " and far too good for the Hotel \n"
+          " Excess. You've been poached by \n"
+          "         Happy Eater.           \n"
+          "   CONGRATULATIONS!! YOU WON!   \n"
           HAPPY_CUSTOMER FLASHOFF " ";
       }
     }
