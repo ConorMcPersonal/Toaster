@@ -21,14 +21,53 @@
 #define SLOT_RANGE 64
 #define SLOT_VALUE_MAX 256
 
+const char topLabel[] = {
+    0x70, //0b01110000
+    0x20, //0b00100000
+    0x20, //0b00100000
+    0x20, //0b00100000
+    0x0c, //0b00001100
+    0x0A, //0b00001010
+    0x0c, //0b00001100
+    0x08  //0b00001000
+    };
+
+const char bottomLabel[] = {
+    0x6C, //0b01101100
+    0x54, //0b01010100
+    0x44, //0b01000100
+    0x00, //0b00000000
+    0x0E, //0b00001110
+    0x04, //0b00000100
+    0x04, //0b00000100
+    0x04  //0b00000100
+    };
+
 void plot_tickmarks(SlotMonitor* slotMon) {
-    //Get row above the bat
+    int i;
+    //Get row above the toastedness bar
     unsigned int y          = (slotMon->yBase - 1) * 8 + 3 * 4 - 1;
     unsigned int step_value = SLOT_VALUE_MAX / SLOT_RANGE;
     unsigned int x          = (slotMon->xBase - 1) * 8 + 100 / step_value;
     *zx_pxy2saddr(x,y) |= zx_px2bitmask(x);
+    //Move to row below
     y+= 4;
     *zx_pxy2saddr(x,y) |= zx_px2bitmask(x);
+
+    //Now plot the labels
+    y = (slotMon->yBase - 1) * 8;
+    x = (slotMon->xBase - 1) * 8 - 8;
+    *zx_cxy2aaddr(slotMon->xBase - 2, slotMon->yBase - 1) = PAPER_CYAN + INK_BLUE;
+    for (i = 0; i < 8; ++i) {
+        *zx_pxy2saddr(x, y) = topLabel[i];
+        ++y;
+    }
+    *zx_cxy2aaddr(slotMon->xBase - 2, slotMon->yBase) = PAPER_YELLOW + INK_BLACK;
+    for (i = 0; i < 8; ++i) {
+        *zx_pxy2saddr(x, y) = bottomLabel[i];
+        ++y;
+    }
+
 }
 
 int plot_value(SlotMonitor* slotMon, const int value, const unsigned int task,

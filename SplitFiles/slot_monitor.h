@@ -45,6 +45,4 @@ SlotState* get_slot(unsigned char x, unsigned char y, int slotIndex, int thermal
 
 void slot_func(GameComponent* input, GameParameters* params);
 
-//void draw_moisture(const int slot, const int moisture, const int max);
-
 #endif
