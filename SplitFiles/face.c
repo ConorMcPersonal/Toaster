@@ -4,9 +4,9 @@
 #include "face.h"
 
 /* Reputation ranges */
-#define ANGER 0
-#define SADNESS 1000
-#define HAPPINESS 2000
+#define ANGER 5
+#define SADNESS 250
+#define HAPPINESS 1000
 
 void cheeky_face(const int x, const int y, char* pix) 
 {
@@ -81,6 +81,7 @@ void screenFace(const unsigned int x, const unsigned int y, const int reputation
         happyFace(x, y);
         lastEmo = HAPPY;
     }
+    //printf(PRINTAT"%c%c""%7d", 17, 17,  reputation);
 }
 
 void screenEmotion(const unsigned int x, const unsigned int y, const unsigned int emotion)

@@ -59,6 +59,7 @@ struct GameParameters_Struct {
   int        minReputation; //How bad do you have to be to get the sack?
   int        wait_frames;   //Minimum frames per loop
   int        toast_ticks;   //How often toast is updated
+  long       winningScore;  //Score needed to win the game
 };
 
 
