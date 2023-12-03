@@ -179,11 +179,11 @@ int main_game( int hiScore )
         // Put a message up on screen#
         if (params->gameOverFlag == 0) {
           zx_cls(PAPER_WHITE);
-          printf(PRINTAT "\x01\x03"
+          printf(PRINTAT "\x01\x01"
                  //12345678901234567890123456789012
-                  "Well done - you made it though\n"
-                  "          Day %d!!", game_day);
-          printf(PRINTAT "\x01\x06"
+                  "Shift over: time for the lunch\n"
+                  "crew to take over for Day %d", game_day);
+          printf(PRINTAT "\x01\x03"
                   "Your current score is: %d\n", score_to_display(params->score));
           //Increase min rep required to survive
           if (params->reputation < params->minReputation + 500) {
@@ -192,26 +192,37 @@ int main_game( int hiScore )
               /* Angry face! */
               screenEmotion(18, 1, 0);
               printf(PRINTAT "\x01\x08"
-                  "Unfortunately you're rubbish\n"
-                  "at your job so we're letting\n"
-                  "you go. You're fired!       \n");
+                  "Unfortunately the truth is\n"
+                  "that you and toast are not\n"
+                  "a good partnership.\n"
+                  "Let me me spell it out in\n"
+                  "the simplest of terms.\n"
+                  "\x12\x31\x10\x32"
+                  "YOU ARE FIRED. GOODBYE.\n"
+                  "\x12\x30\x10\x30");
               params->gameOverFlag = 1;
             } else {
               params->minReputation = params->reputation - 100;
-              printf(PRINTAT "\x01\x08"
-                  "You're not much cop at this,\n"
-                  "but ");
+              printf(PRINTAT "\x01\x05"
+                  "Have you ever made a slice\n"
+                  "of toast in your life?\n");
+              printf(PRINTAT "\x01\x08" "      \x12\x31\x10\x32" 
+                  "You stink at this!\x12\x30\x10\x30\n");
+              printf(PRINTAT "\x01\x0A"
+                  "But it's hard to get decent\n"
+                  "staff on minimum wage so you\n"
+                  "have one more chance and...\n\n");
             }
           } else {
             params->minReputation += 500;
             printf(PRINTAT "\x01\x08"
-                  "You have done so well that \n");
+                  "You have done so well that...\n");
           }
         }
 
         if (params->gameOverFlag == 0) {
-          printf("we're opening\n"
-                  "up to more customers.\n");
+          printf("\x10\x34We're opening up to more\n"
+                 "customers than ever before.\x10\x30\n");
           in_wait_nokey();
           printf("\nPress any key to start Day %d\n", game_day + 1);
           //printf("%d %d %d         ", params->gameOverFlag, params->reputation, params->minReputation);
