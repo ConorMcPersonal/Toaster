@@ -55,9 +55,9 @@ BreadState* get_bread(BreadBin* bin, unsigned char typeLetter) {
     }
     BreadState* newBread = malloc(sizeof(BreadState));
     newBread->temperature = 0;
-    newBread->moisture = type->moisture + (rand() % type->moistureVariability);
+    newBread->moisture = type->moisture + (rand() & type->moistureVariability);
     newBread->toastedness = 0;
-    newBread->thermalMass = type->thermalMass + (rand() % type->massVariability);
+    newBread->thermalMass = type->thermalMass + (rand() & type->massVariability);
     newBread->thermalAggregation = 0;
     newBread->type = type;
     return newBread;
@@ -89,9 +89,9 @@ BreadBin* get_bread_bin() {
             'W', //letter
             "White", //desc
             62, //thermal Mass
-            1, //variability
+            7, //variability
             64, //moisture
-            48, // moisture variability
+            63, // moisture variability
             50, // cost
             64  //callProb
         )
@@ -102,9 +102,9 @@ BreadBin* get_bread_bin() {
             'M', //letter
             "Melba", //desc
             31, //thermal Mass
-            3, //variability
+            7, //variability
             32, //moisture
-            24, // moisture variability
+            15, // moisture variability
             50, // cost
             32  //callProb
         )
@@ -115,9 +115,9 @@ BreadBin* get_bread_bin() {
             'B', //letter
             "Brown", //desc
             82, //thermal Mass
-            10, //variability
+            15, //variability
             96, //moisture
-            64, // moisture variability
+            63, // moisture variability
             75, // cost
             32  //callProb
         )
@@ -128,9 +128,9 @@ BreadBin* get_bread_bin() {
             'G', //letter
             "baGel", //desc
             150, //thermal Mass
-            28, //variability
+            31, //variability
             64, //moisture
-            192, // moisture variability
+            255, // moisture variability
             125, // cost
             16  //callProb
         )
@@ -141,9 +141,9 @@ BreadBin* get_bread_bin() {
             'C', //letter
             "Ciabatta", //desc
             180, //thermal Mass
-            40, //variability
+            31, //variability
             32, //moisture
-            12, // moisture variability
+            15, // moisture variability
             100, // cost
             12  //callProb
         )
@@ -155,9 +155,9 @@ BreadBin* get_bread_bin() {
             'F', //letter
             "gluten Free", //desc
             255, //thermal Mass
-            0, //variability
+            1, //variability
             128, //moisture
-            24, // moisture variability
+            15, // moisture variability
             150, // cost
             8  //callProb
         )
