@@ -18,17 +18,54 @@
 #include "slot_monitor.h"
 #include "util.h"
 
-void draw_moisture(const int slot, const int moisture, const int max)
-{
-    //draw initial moisture
-    const unsigned int step = max / 64; //TO-DO: fix magic number
-    const int offset = slot * 4 * 8 + 8;
-    int x = 16;
-    for (int i = 0; i < moisture; i+= step) {
-        *zx_pxy2saddr(x, offset) |= zx_px2bitmask(x);
-        *zx_pxy2saddr(x, offset + 1) |= zx_px2bitmask(x);
-        *zx_pxy2saddr(x, offset + 2) |= zx_px2bitmask(x);
-        x++;
+#define SLOT_RANGE 64
+#define SLOT_VALUE_MAX 256
+
+const char topLabel[] = {
+    0x70, //0b01110000
+    0x20, //0b00100000
+    0x20, //0b00100000
+    0x20, //0b00100000
+    0x0c, //0b00001100
+    0x0A, //0b00001010
+    0x0c, //0b00001100
+    0x08  //0b00001000
+    };
+
+const char bottomLabel[] = {
+    0x6C, //0b01101100
+    0x54, //0b01010100
+    0x44, //0b01000100
+    0x00, //0b00000000
+    0x0E, //0b00001110
+    0x04, //0b00000100
+    0x04, //0b00000100
+    0x04  //0b00000100
+    };
+
+void plot_tickmarks(SlotMonitor* slotMon) {
+    int i;
+    //Get row above the toastedness bar
+    unsigned int y          = (slotMon->yBase - 1) * 8 + 3 * 4 - 1;
+    unsigned int step_value = SLOT_VALUE_MAX / SLOT_RANGE;
+    unsigned int x          = (slotMon->xBase - 1) * 8 + 100 / step_value;
+    *zx_pxy2saddr(x,y) |= zx_px2bitmask(x);
+    //Move to row below
+    y+= 4;
+    *zx_pxy2saddr(x,y) |= zx_px2bitmask(x);
+
+    //Now plot the labels
+    y = (slotMon->yBase - 1) * 8;
+    x = (slotMon->xBase - 1) * 8 - 8;
+    *zx_cxy2aaddr(slotMon->xBase - 2, slotMon->yBase - 1) = PAPER_CYAN + INK_BLUE;
+    for (i = 0; i < 8; ++i) {
+        *zx_pxy2saddr(x, y) = topLabel[i];
+        ++y;
+    }
+    *zx_cxy2aaddr(slotMon->xBase - 2, slotMon->yBase) = PAPER_YELLOW + INK_BLACK;
+    for (i = 0; i < 8; ++i) {
+        *zx_pxy2saddr(x, y) = bottomLabel[i];
+        ++y;
     }
 
 }
@@ -70,19 +107,19 @@ int plot_value(SlotMonitor* slotMon, const int value, const unsigned int task,
 
 void draw_slot(SlotMonitor* slotMon, SlotState* slot) {
     // Removed - only works for a one slot setup
-    slotMon->slot_old_temperature = plot_value(slotMon, slot->temperature, 0, 64,
-        256, slotMon->slot_old_temperature);
-    slotMon->slot_old_power = plot_value(slotMon, slot->power, 1, 64,
-        256, slotMon->slot_old_power);
+    slotMon->slot_old_temperature = plot_value(slotMon, slot->temperature, 0, SLOT_RANGE,
+        SLOT_VALUE_MAX, slotMon->slot_old_temperature);
+    slotMon->slot_old_power = plot_value(slotMon, slot->power, 1, SLOT_RANGE,
+        SLOT_VALUE_MAX, slotMon->slot_old_power);
     if (slot->bread) {
-        slotMon->bread_old_moisture = plot_value(slotMon, slot->bread->moisture, 2, 64,
-            256, slotMon->bread_old_moisture);
-        slotMon->bread_old_toastedness = plot_value(slotMon, slot->bread->toastedness, 3, 64,
-            256, slotMon->bread_old_toastedness);
+        slotMon->bread_old_moisture = plot_value(slotMon, slot->bread->moisture, 2, SLOT_RANGE,
+            SLOT_VALUE_MAX, slotMon->bread_old_moisture);
+        slotMon->bread_old_toastedness = plot_value(slotMon, slot->bread->toastedness, 3, SLOT_RANGE,
+            SLOT_VALUE_MAX, slotMon->bread_old_toastedness);
     } else if (slotMon->bread_old_moisture != 0 || slotMon->bread_old_toastedness != 0) {
         //no bread so wipe it - once
-        plot_value(slotMon, 0, 2, 64, 256, 256);
-        plot_value(slotMon, 0, 3, 64, 256, 256);
+        plot_value(slotMon, 0, 2, SLOT_RANGE, SLOT_VALUE_MAX, SLOT_VALUE_MAX);
+        plot_value(slotMon, 0, 3, SLOT_RANGE, SLOT_VALUE_MAX, SLOT_VALUE_MAX);
         slotMon->bread_old_toastedness = 0;
         slotMon->bread_old_moisture = 0;
     }
@@ -124,11 +161,16 @@ SlotMonitor* get_slot_monitor(unsigned char x, unsigned char y, int slotIndex) {
         *zx_cxy2aaddr(x1++, y1) = PAPER_WHITE + INK_RED;
         *zx_cxy2aaddr(x1++, y1) = PAPER_WHITE + INK_RED;
         *zx_cxy2aaddr(x1++, y1) = PAPER_WHITE + INK_BLACK;
-        *zx_cxy2aaddr(x1, y1) = PAPER_WHITE + INK_BLACK;
+        *zx_cxy2aaddr(x1, y1) =   PAPER_WHITE + INK_BLACK;
     }
+    //Set up tick marks at 'perfect toast' level
+    plot_tickmarks(slotMon);
     printf(PRINTAT"%c%c""Slot %d", x, y - 1, slotIndex);
     return slotMon;
 }
+
+
+#ifdef _TEST_SLOT_MONITOR
 
 int main_slot_monitor()
 {
@@ -181,7 +223,6 @@ int main_slot_monitor()
   return i;
 }
 
-#ifdef _TEST_SLOT_MONITOR
 
 int main() {
     return main_slot_monitor();
