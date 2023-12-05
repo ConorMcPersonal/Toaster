@@ -192,7 +192,7 @@ BreadBin* get_bread_bin() {
     add_bread(bin, 
         create_bread_type(
             'A', //letter
-            "sAvoury waffle", //desc
+            "tato wAffle", //desc
             255, //thermal Mass
             0, //variability
             128, //moisture
