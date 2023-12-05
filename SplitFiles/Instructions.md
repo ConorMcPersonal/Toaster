@@ -16,7 +16,7 @@ There are different types of bread all with different moisture contents and thic
 
 You are paid on a piece rate - that's measured by the score. Sid and Doris are modern employers so they won't ask you to pay them if you go into negative territory, but you will be asked to leave. Get to be too good and you will also be asked to leave, but we call that winning. If you manage that, do let us know!
 
-Money isn't everything of course. There is also your reputation. And even more importantly there is Sid and Doris's reputation and so Sid keeps a beady eye on your behaviour. If you make him angry by serving too much bad toast you will be asked to leave.
+Money isn't everything of course. There is also your reputation. And even more importantly there is Sid and Doris's reputation and so Sid keeps a beady eye on your behaviour. If you make him angry by serving too much bad toast, or by failing to handle customer orders in a timely fashion, you will be asked to leave.
 
 Sid is also one of those people for whom enough is never good enough, so every day you work for him he is likely to have higher and higher expectations.
 Good luck. We think you're going to need it.
