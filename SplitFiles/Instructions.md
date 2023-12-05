@@ -1,6 +1,6 @@
 When humanity discovered fire what do you think was the first food they plunged into it? It was, of course, bread, the very staff of life, and so the best thing since before sliced bread - toast - was born.
 
-Now in this new age of decadence things have moved on but not by far. We need something on which to lay our smashed avocado. And so toast is once again king of the foodstuffs.
+Now in this new age of decadence things have moved on, but not by much. We need something on which to lay our smashed avocado. And so toast is once again king of the foodstuffs.
 
 That, anyway, is the vision of The Hotel Excess, your two (and a half) star slice of paradise (geddit?) right here on Neasden High Road. Owners Sid and Doris Bonkers have invested a lot of money in an all new, (only five previous owners), Murky Riddards ToastOMatic machine. For some foolish reason you have applied for the job as operator, and for an even more foolish reason they have given you it.
 
@@ -8,7 +8,7 @@ _So how hard could it be?_
 
 You turn up at 7am and your shift ends at 11am. In between customers come to the bar and ask for toast. It will be quiet when you start but gets busy quickly before a calmer period and then a small rush mid-morning. You can see the orders and all you have to do is select one by typing the letter corresponding to the type. The ToastOMatic will select a free slot for your order.
 
-Toasting is a scientific task and the ToastOmMatic lets you know how it's going, monitoring, in order, the temperature, the power in the slot and the moisture in the bread. Once the bread has dried it starts to toast and you need to pop it at the ideal moment (handily marked for you). Pop too soon and our customers will not be happy, too late and it starts to burn and you can set the smoke alarm off.
+Toasting is a scientific task and the ToastOMatic lets you know how it's going: monitoring, in order, the temperature, the power in the slot and the moisture in the bread. Once the bread has dried it starts to toast and you need to pop it at the ideal moment (handily marked for you). Pop too soon and our customers will not be happy, too late and it starts to burn and you can set the smoke alarm off. Obviously, _duh_, ignoring customer orders is also not a good idea and orders might start to turn red if you do that.
 
 Popping is easy though - just pick the slot and press the number.
 
