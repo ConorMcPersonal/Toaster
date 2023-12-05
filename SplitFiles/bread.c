@@ -155,13 +155,40 @@ BreadBin* get_bread_bin() {
             'F', //letter
             "gluten Free", //desc
             255, //thermal Mass
-            1, //variability
+            0, //variability
             128, //moisture
-            15, // moisture variability
+            31, // moisture variability
             150, // cost
             8  //callProb
         )
    );
+
+    add_bread(bin, 
+        create_bread_type(
+            'S', //letter
+            "Soda bread", //desc
+            255, //thermal Mass
+            0, //variability
+            60, //moisture
+            31, // moisture variability
+            90, // cost
+            6  //callProb
+        )
+   );
+
+       add_bread(bin, 
+        create_bread_type(
+            'P', //letter
+            "Potato bread", //desc
+            75, //thermal Mass
+            0, //variability
+            128, //moisture
+            128, // moisture variability
+            90, // cost
+            6  //callProb
+        )
+   );
+
    return bin;
 }
 
@@ -188,14 +215,14 @@ BreadType*  create_bread_type(
         return newType;
 }
 
-void print_all_bread_types(BreadBin* bin) {
+/* void print_all_bread_types(BreadBin* bin) {
     for (int i = 0; i < BREADBINSIZE; ++i) {
         if (bin->breadTypes[i] != NULL) {
             printf("%d %c %s\n", i, bin->breadTypes[i]->letter, bin->breadTypes[i]->desc);
         }
-    }
-}
-
+    } 
+} */
+/*
 int main_bread() {
     start_frame_count();
     //Set up the bin
@@ -232,3 +259,4 @@ int main() {
     return main_bread();
 }
 #endif
+*/

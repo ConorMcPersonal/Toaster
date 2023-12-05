@@ -329,15 +329,9 @@ int play_game( GameParameters* params )
       &slot3 //next
     };
 
-    ControlBuffer buff = {
-        0,
-        0,
-        0,
-        NULL
-    };
-    initialise_control_buffer(&buff);
+    
     GameComponent ctrl = {
-        &buff,
+        NULL,
         &command_entry_func_instant,
         &slot4
     };
@@ -408,7 +402,6 @@ int play_game( GameParameters* params )
     screenNumber(21, 1, score_to_display(params->score));
 
     //we malloc this so free it
-    free(buff.buffer);
     free(music_player);
     if (s1state->bread) {
       free(s1state->bread);
