@@ -183,7 +183,7 @@ BreadBin* get_bread_bin() {
             75, //thermal Mass
             0, //variability
             128, //moisture
-            128, // moisture variability
+            127, // moisture variability
             90, // cost
             6  //callProb
         )
