@@ -109,7 +109,7 @@ void smoke_alarm_func(GameComponent* input, GameParameters* params) {
   input;
   if (params->maxToast > BURNT_TOAST) {
     params->effect = TUNE_EFFECT;
-    zx_border(params->ticks % 8);
+    zx_border(params->ticks & 7);
   }
   params->maxToast = 0; //Reset for next loop
 }
