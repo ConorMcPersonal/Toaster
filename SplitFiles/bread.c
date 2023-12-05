@@ -189,6 +189,19 @@ BreadBin* get_bread_bin() {
         )
    );
 
+    add_bread(bin, 
+        create_bread_type(
+            'A', //letter
+            "sAvoury waffle", //desc
+            255, //thermal Mass
+            0, //variability
+            128, //moisture
+            127, // moisture variability
+            160, // cost
+            4  //callProb
+        )
+    );
+
    return bin;
 }
 
