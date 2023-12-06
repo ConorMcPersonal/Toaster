@@ -13,20 +13,6 @@
 // Compile with:
 // zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_CONTROL control.c -o control -create-app
 
-
-void execute_command_instant(unsigned char c, GameParameters* params) {
-    if (c >= '0' && c <= '9') {
-        //Pop that slot
-        params->messageAddress = 200 + c - '0';
-    } else if (get_bread_type(params->breadBin, c) != NULL) {
-        //Toast it - somewhere
-        params->messageAddress = 100;
-        BreadState* new_slice = get_bread(params->breadBin, c);
-        params->message = new_slice;
-    }
-}
-
-
 void command_entry_func_instant(GameComponent* input, GameParameters* params) {
     unsigned char c;
     static unsigned char lastCharSeen = 0;
@@ -35,9 +21,16 @@ void command_entry_func_instant(GameComponent* input, GameParameters* params) {
         c -= 32;
     }
     if (c && c != lastCharSeen) {
-        params->effect = TUNE_EFFECT_TICK;
         // Execute immediately
-        execute_command_instant(c, params);
+        if (c >= '0' && c <= '9') {
+            //Pop that slot
+            params->messageAddress = 200 + c - '0';
+        } else if (get_bread_type(params->breadBin, c) != NULL) {
+            //Toast it - somewhere
+            params->messageAddress = 100;
+            BreadState* new_slice = get_bread(params->breadBin, c);
+            params->message = new_slice;
+        }
     }
     lastCharSeen = c;
 }
