@@ -143,7 +143,7 @@ void customer_func(GameComponent* customers, GameParameters* params) {
             newCustomer = malloc(sizeof(Customer));
             newCustomer->breadOrder = rand_bread_type(params->breadBin);
             newCustomer->nextCustomer = NULL;
-            newCustomer->ticksLeft = newCustomer->breadOrder->cost * (8 + rand() % 4);
+            newCustomer->ticksLeft = newCustomer->breadOrder->cost * (8 + (rand() & 3));
             newCustomer->customerMood = 0;
             redraw = 1;
             base->customerCount += 1;

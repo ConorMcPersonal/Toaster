@@ -109,7 +109,7 @@ void smoke_alarm_func(GameComponent* input, GameParameters* params) {
   input;
   if (params->maxToast > BURNT_TOAST) {
     params->effect = TUNE_EFFECT;
-    zx_border(params->ticks % 8);
+    zx_border(params->ticks & 7);
   }
   params->maxToast = 0; //Reset for next loop
 }
@@ -120,7 +120,7 @@ void game_do_day(const unsigned int day)
   /* Fill screen with faces */
   for (i = 1; i < 24; i+=2) {
     for (j = 1; j < 32; j+=2) {
-     emo = rand() % 4; 
+     emo = rand() & 3; 
      screenEmotion(j, i, emo);
     }
   }
@@ -329,15 +329,9 @@ int play_game( GameParameters* params )
       &slot3 //next
     };
 
-    ControlBuffer buff = {
-        0,
-        0,
-        0,
-        NULL
-    };
-    initialise_control_buffer(&buff);
+    
     GameComponent ctrl = {
-        &buff,
+        NULL,
         &command_entry_func_instant,
         &slot4
     };
@@ -408,7 +402,6 @@ int play_game( GameParameters* params )
     screenNumber(21, 1, score_to_display(params->score));
 
     //we malloc this so free it
-    free(buff.buffer);
     free(music_player);
     if (s1state->bread) {
       free(s1state->bread);
