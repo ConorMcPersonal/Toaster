@@ -183,6 +183,33 @@ void write_block(int x1, int y1, int x2, int y2) {
 
 }
 
+int attractor() {
+    AttrFont* use_font = &font5;
+    int i = 0;
+    zx_border(INK_BLACK);
+    zx_cls(PAPER_BLACK | INK_BLACK);
+
+    while (in_inkey() == 0) {
+        zx_border(INK_BLACK);
+        zx_cls(PAPER_BLACK | INK_BLACK);
+        attr_write(use_font, 't', 1, 7, random_colour(1));
+        attr_write(use_font, 'o', 7, 8, random_colour(1));
+        attr_write(use_font, 'a', 13, 7, random_colour(1));
+        attr_write(use_font, 's', 19, 6, random_colour(1));
+        attr_write(use_font, 't', 25, 7, random_colour(1));
+
+        attr_write(use_font, 'h', 3, 12, random_colour(0));
+        attr_write(use_font, 'o', 10, 10, random_colour(0));
+        attr_write(use_font, 's', 17, 13, random_colour(0));
+        attr_write(use_font, 't', 23, 11, random_colour(0));
+        //for (i = 0; i < 10000; ++i) {}
+    }
+    zx_border(INK_WHITE);
+    zx_cls(PAPER_WHITE | INK_BLACK);
+    
+    return 0;
+}
+
 #ifdef _TEST_ATTRSCREEN
 
 int wait_for_a_new_key() {
@@ -202,6 +229,8 @@ int main() {
 
     write_block(15, 16, 31, 22);
     wait_for_a_new_key();
+
+    attractor();
 
     while (1) {
         zx_border(INK_BLACK);

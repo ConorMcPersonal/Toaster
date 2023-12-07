@@ -144,6 +144,7 @@ int main_game( int hiScore )
     int happyEnding = 0;
 
     start_frame_count();
+    attractor();
     //Clear screen
     zx_cls(PAPER_WHITE);
     printf(PRINTAT"\x01\x01%s", HAPPY_CUSTOMER);

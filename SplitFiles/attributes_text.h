@@ -19,6 +19,8 @@ char random_colour(int ink);
 
 void write_block(int x1, int y1, int x2, int y2);
 
+int attractor();
+
 int write_fat(char letter, int x, int y, char colour);
 
 int write_thin(char letter, int x, int y, char colour);
