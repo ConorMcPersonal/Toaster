@@ -13,6 +13,7 @@
 #include "customer.h"
 #include "numbers.h"
 #include "face.h"
+#include "attributes_text.h"
 
 // Compile with:
 // zcc +zx -vn -startup=1 -clib=sdcc_iy -D_TEST_GAME slot.c slot_monitor.c game.c control.c music.c util.c bread.c customer.c base.c -o game -create-app
@@ -350,6 +351,7 @@ int play_game( GameParameters* params )
     }
     
     printf(PRINTAT"%c%c""%-12s", 18, 3,  "Order Queue");
+    write_block(15, 16, 31, 22);
 
     for (i = 0;
          params->gameOverFlag == 0 && 
