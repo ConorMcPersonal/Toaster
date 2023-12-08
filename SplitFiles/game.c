@@ -190,7 +190,7 @@ int main_game( int hiScore )
 
         game_day += 1;
         //Actually increase the number of customers
-        params->maxCustomers = MIN(params->maxCustomers + 1, 10);
+        params->maxCustomers = MIN(params->maxCustomers + 1, CUSTOMER_MAX);
         play_game(params);
         // Put a message up on screen#
         if (params->gameOverFlag == 0) {
@@ -237,8 +237,10 @@ int main_game( int hiScore )
         }
 
         if (params->gameOverFlag == 0) {
-          printf("\x10\x34We're opening up to more\n"
-                 "customers than ever before.\x10\x30\n");
+          if (params ->maxCustomers < CUSTOMER_MAX) {
+            printf("\x10\x34We're opening up to more\n"
+                  "customers than ever before.\x10\x30\n");
+          }
           in_wait_nokey();
           printf("\nPress any key to start Day %d\n", game_day + 1);
           //printf("%d %d %d         ", params->gameOverFlag, params->reputation, params->minReputation);
