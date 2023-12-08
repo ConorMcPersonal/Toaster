@@ -159,8 +159,20 @@ int main_game( int hiScore )
 
     printf(PRINTAT "\x01\x13" "High score: %d", hiScore);
     
+    MusicPlayer *mplayer = get_music_player(3);
+    mplayer->add_music(mplayer, TUNE_TIMING, 2);//Keep speed constant-ish
+    mplayer->add_music(mplayer, TUNE_RICKROLL, 1);
+    int rando = 0;
+    while (in_inkey() == 0) {
+      mplayer->play(mplayer);
+      rando += 1;
+    }
+    while (in_inkey() != 0) {
+      //mplayer->play(mplayer);
+      rando += 17;
+    }
 
-    int rando = wait_for_a_key(NULL, NULL);
+    //int rando = wait_for_a_key(NULL, NULL);
     // get a random seed based on frame count
     srand(rando);
     game_day = 0; // We ended up with two variables with slightly different names :-(
@@ -177,6 +189,8 @@ int main_game( int hiScore )
         params->hotelOpen = 1;
 
         game_day += 1;
+        //Actually increase the number of customers
+        params->maxCustomers = MIN(params->maxCustomers + 1, 10);
         play_game(params);
         // Put a message up on screen#
         if (params->gameOverFlag == 0) {
