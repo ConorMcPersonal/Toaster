@@ -1,3 +1,6 @@
+# Toast Host
+### from Studio AC/MC
+
 When humanity discovered fire what do you think was the first food they plunged into it? It was, of course, bread, the very staff of life, and so the best thing since before sliced bread - toast - was born.
 
 Now in this new age of decadence things have moved on, but not by much. We need something on which to lay our smashed avocado. And so toast is once again king of the foodstuffs.
