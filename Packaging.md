@@ -22,7 +22,7 @@ read from the original basic loader in the standard .tap file produced by z88dk.
 
 Assuming 33156 is correct, create the tap like so:
 
-z88dk-appmake +zx -b game_CODE.bin -o game_code.tap --org 22528 --noloader --blockname game
+z88dk-appmake +zx -b game_CODE.bin -o game_code.tap --org 33156 --noloader --blockname game
 
 ## Writing your own loader
 
