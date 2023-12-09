@@ -51,4 +51,10 @@ The loader need to be written in Spectrum Basic on the emulator and then saved t
 
 45 REM Game - RAND is T, USR is Extended-L
 
-Save this to TAP from Fuse (Media/Write, then SAVE "Loader" LINE 10) (save is on S, line is on ext-ctrl-3)
+Save this to TAP from Fuse - make sure your tape is clear (Media/Tape/Clear), then SAVE "Loader" LINE 10 (save is on S, line is on ext-ctrl-3), then Media/Write to NewLoader.tap.
+
+# Final Packaging
+
+Pulling that all together is quite easy - in cygwin/mingw/git just:
+
+cat NewLoader.tap screen_attr.tap game_code.tap > ToastHost.tap
