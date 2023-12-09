@@ -240,6 +240,8 @@ int main_game( int hiScore )
           if (params ->maxCustomers < CUSTOMER_MAX) {
             printf("\x10\x34We're opening up to more\n"
                   "customers than ever before.\x10\x30\n");
+          } else {
+            printf("\x10\x34We'll just keep going.")
           }
           in_wait_nokey();
           printf("\nPress any key to start Day %d\n", game_day + 1);
