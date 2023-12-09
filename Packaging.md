@@ -32,10 +32,16 @@ The loader need to be written in Spectrum Basic on the emulator and then saved t
 
 16 REM Paper is the same but Shift-c.  BORDER is on B
 
-20 LOAD "" CODE
+20 CLS
 
-25 REM LOAD is on J, CODE is Extended mode and I
+25 REM CLS is on V 
 
-30 CLEAR 33155: LOAD "" CODE : RANDOMIZE USR 33156
+30 LOAD "" CODE
 
-35 REM CLEAR is X, RAND is T, USR is Extended-L
+35 REM LOAD is on J, CODE is Extended mode and I
+
+40 CLEAR 33155: LOAD "" CODE : RANDOMIZE USR 33156
+
+45 REM CLEAR is X, RAND is T, USR is Extended-L
+
+Save this to TAP from Fuse (Media/Write, then SAVE "Loader" LINE 10) (save is on S, line is on ext-shift-3)
