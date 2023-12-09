@@ -3,6 +3,7 @@
 #include <input.h>
 
 #include "attributes_text.h"
+#include "music.h"
 
 // Compile with zcc +zx -startup=1 -clib=sdcc_iy -D_TEST_ATTRSCREEN attributes_text.c -o attr -create-app
 
@@ -201,6 +202,11 @@ void write_block(int x1, int y1, int x2, int y2) {
 }
 
 int attractor() {
+  
+    MusicPlayer *mplayer = get_music_player(3);
+    mplayer->add_music(mplayer, TUNE_TIMING, 2);//Keep speed constant-ish
+    mplayer->add_music(mplayer, TUNE_RICKROLL, 1);
+
     AttrFont* use_font = &font5;
     int i = 0;
     zx_border(INK_BLACK);
@@ -208,15 +214,24 @@ int attractor() {
 
     while (in_inkey() == 0) {
         attr_write(use_font, 't', 1, 7, random_colour(1));
+        mplayer->play(mplayer);
         attr_write(use_font, 'o', 7, 8, random_colour(1));
+        mplayer->play(mplayer);
         attr_write(use_font, 'a', 13, 7, random_colour(1));
+        mplayer->play(mplayer);
         attr_write(use_font, 's', 19, 6, random_colour(1));
+        mplayer->play(mplayer);
         attr_write(use_font, 't', 25, 7, random_colour(1));
+        mplayer->play(mplayer);
 
         attr_write(use_font, 'h', 3, 12, random_colour(0));
+        mplayer->play(mplayer);
         attr_write(use_font, 'o', 10, 10, random_colour(0));
+        mplayer->play(mplayer);
         attr_write(use_font, 's', 17, 13, random_colour(0));
+        mplayer->play(mplayer);
         attr_write(use_font, 't', 23, 11, random_colour(0));
+        mplayer->play(mplayer);
     }
     zx_border(INK_WHITE);
     zx_cls(PAPER_WHITE | INK_BLACK);
