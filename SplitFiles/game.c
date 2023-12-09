@@ -158,8 +158,7 @@ int main_game( int hiScore )
     printf(PRINTAT "\x05\x0B" "Press any key to start ");
 
     printf(PRINTAT "\x01\x13" "High score: %d", hiScore);
-    
-
+  
     int rando = wait_for_a_key(NULL, NULL);
     // get a random seed based on frame count
     srand(rando);
@@ -177,6 +176,8 @@ int main_game( int hiScore )
         params->hotelOpen = 1;
 
         game_day += 1;
+        //Actually increase the number of customers
+        params->maxCustomers = MIN(params->maxCustomers + 1, CUSTOMER_MAX);
         play_game(params);
         // Put a message up on screen#
         if (params->gameOverFlag == 0) {
@@ -223,8 +224,12 @@ int main_game( int hiScore )
         }
 
         if (params->gameOverFlag == 0) {
-          printf("\x10\x34We're opening up to more\n"
-                 "customers than ever before.\x10\x30\n");
+          if (params ->maxCustomers < CUSTOMER_MAX) {
+            printf("\x10\x34We're opening up to more\n"
+                  "customers than ever before.\x10\x30\n");
+          } else {
+            printf("\x10\x34We'll just keep going.")
+          }
           in_wait_nokey();
           printf("\nPress any key to start Day %d\n", game_day + 1);
           //printf("%d %d %d         ", params->gameOverFlag, params->reputation, params->minReputation);

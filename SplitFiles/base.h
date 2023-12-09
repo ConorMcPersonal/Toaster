@@ -62,6 +62,8 @@ struct GameParameters_Struct {
   long       winningScore;  //Score needed to win the game
 };
 
+//Absolute max customers
+#define CUSTOMER_MAX 11
 
 // 4.) Now we actually detail the members of the structure
 struct GameComponent_struct {
