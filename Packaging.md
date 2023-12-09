@@ -2,6 +2,7 @@
 
 The package will contain a basic loader, an attributes code file and then the game itself.
 
+This is useful:
 https://www.z88dk.org/forum/viewtopic.php?p=15821&sid=ff45c2c0dda6baac623d276263cf7e69#p15821
 
 ## Building the attributes code file
@@ -18,7 +19,7 @@ z88dk-appmake +zx -b screen_attr.code -o screen_attr.tap --org 22528 --noloader 
 
 To build the code file we need to know where the program starts.  By default this seems to be 33156, but this can be
 read from the original basic loader in the standard .tap file produced by z88dk.  To see this, set Fuse to run without
-"tape traps" (in Options/Media) to have it load in real time, then hit Ctrl-Break once the first element is loaded.
+"tape traps" (in Options/Media) to have it load in real time, then hit Ctrl-Space once the first element is loaded.
 
 Assuming 33156 is correct, create the tap like so:
 
@@ -28,11 +29,15 @@ z88dk-appmake +zx -b game_CODE.bin -o game_code.tap --org 33156 --noloader --blo
 
 The loader need to be written in Spectrum Basic on the emulator and then saved to a tap file.  Suggested:
 
-10 INK 0 : PAPER 0 : BORDER 0
+10  CLEAR 33155: INK 0 : PAPER 0 : BORDER 0
 
-15 REM Ink is Ctrl-Shift to get to extended mode, then Shift-x.
+14 REM CLEAR is on X, Clear number should be 1 less than the program start address
 
-16 REM Paper is the same but Shift-c.  BORDER is on B
+15 REM Colon is Ctrl-Z
+
+16 REM Ink is Ctrl-Shift to get to extended mode, then Shift-x.
+
+17 REM Paper is the same but Shift-c.  BORDER is on B30
 
 20 CLS
 
@@ -40,10 +45,10 @@ The loader need to be written in Spectrum Basic on the emulator and then saved t
 
 30 LOAD "" CODE
 
-35 REM LOAD is on J, CODE is Extended mode and I
+35 REM Attributes - LOAD is on J, CODE is Extended mode and I
 
-40 CLEAR 33155: LOAD "" CODE : RANDOMIZE USR 33156
+40 LOAD "" CODE : RANDOMIZE USR 33156
 
-45 REM CLEAR is X, RAND is T, USR is Extended-L
+45 REM Game - RAND is T, USR is Extended-L
 
-Save this to TAP from Fuse (Media/Write, then SAVE "Loader" LINE 10) (save is on S, line is on ext-shift-3)
+Save this to TAP from Fuse (Media/Write, then SAVE "Loader" LINE 10) (save is on S, line is on ext-ctrl-3)
