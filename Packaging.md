@@ -2,6 +2,8 @@
 
 The package will contain a basic loader, an attributes code file and then the game itself.
 
+https://www.z88dk.org/forum/viewtopic.php?p=15821&sid=ff45c2c0dda6baac623d276263cf7e69#p15821
+
 ## Building the attributes code file
 
 The attributes cane be built by following the compile instructions in attributes_text.c to build this as a standalone app.  
